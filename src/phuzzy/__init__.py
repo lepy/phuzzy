@@ -26,14 +26,14 @@ class Fuzzy_Number(object):
     def __init__(self, **kwargs):
         self.name = kwargs.get("name", "Fuzzy")
         self._df = pd.DataFrame(columns=["alpha", "min", "max"])
-        self._alpha_levels = kwargs.get("number_of_alpha_levels", 10)
+        self._number_of_alpha_levels = kwargs.get("number_of_alpha_levels", 10)
         self.df = kwargs.get("df")
 
-    def _get_alpha_levels(self):
-        return self._alpha_levels
-    def _set_alpha_levels(self, value):
-        self._alpha_levels = int(value)
-    alpha_levels = property(fget=_get_alpha_levels, fset=_set_alpha_levels, doc="number of alpha levels")
+    def _get_number_of_alpha_levels(self):
+        return self._number_of_alpha_levels
+    def _set_number_of_alpha_levels(self, value):
+        self._number_of_alpha_levels = int(value)
+    number_of_alpha_levels = property(fget=_get_number_of_alpha_levels, fset=_set_number_of_alpha_levels, doc="number of alpha levels")
 
     def _get_df(self):
         return self._df
@@ -44,7 +44,7 @@ class Fuzzy_Number(object):
     def convert_df(self, alpha_levels=None):
         df = self.df.copy()
         if alpha_levels is not None:
-            self.alpha_levels = alpha_levels
+            self.number_of_alpha_levels = alpha_levels
         df.sort_values(['alpha'], ascending=[True], inplace=True)
         # print("!",df)
         xs_l = df["min"].values
@@ -52,7 +52,7 @@ class Fuzzy_Number(object):
         xs_r = df["max"].values[::-1]
         alphas_r = df["alpha"].values[::-1]
 
-        alphas_new = np.linspace(0., 1., self.alpha_levels)
+        alphas_new = np.linspace(0., 1., self.number_of_alpha_levels)
         xs_l_new = np.interp(alphas_new, alphas_l, xs_l)
         xs_r_new = np.interp(alphas_new, alphas_r[::-1], xs_r[::-1])
         #
@@ -105,7 +105,7 @@ class Triangle(Fuzzy_Number):
         Fuzzy_Number.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")
-        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.alpha_levels)
+        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
         assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
@@ -120,7 +120,7 @@ class Trapezoid(Fuzzy_Number):
         Fuzzy_Number.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")
-        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.alpha_levels)
+        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
         assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
@@ -141,10 +141,11 @@ class TruncNorm(Fuzzy_Number):
         self.ppf = kwargs.get("ppf") or [.001, .999]
         self.xs = []
         self.ys = []
-        self._loc = kwargs.get("mean") or 0.
-        self._scale = kwargs.get("std") or 1.
+        self._loc = kwargs.get("mean") or np.array(alpha0).mean()
+        self._scale = kwargs.get("std") or (alpha0[1]-alpha0[0])/6.
+        print("!", (alpha0[1]-alpha0[0])/6)
         self._distr = None
-        self.discretize(alpha0=self.clip, alpha1=alpha1, alpha_levels=self.alpha_levels)
+        self.discretize(alpha0=self.clip, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
     # def __str__(self):
     #     return "tnorm(%s [%.3g,%.3g])" % (self.did, self.loc, self.std)
     #
@@ -172,6 +173,23 @@ class TruncNorm(Fuzzy_Number):
 
     def discretize(self, alpha0, alpha1, alpha_levels):
         assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
-        assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
-        self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[0]]], dtype=np.float)
+        # assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
+        nn = 501
+        pp = np.linspace(0,1,nn)
+        ppf = self.distr.ppf(pp)
+        x = np.linspace(alpha0[0],alpha0[1],nn)
+        pdf = self.distr.pdf(x)
+        # alphas = np.linspace(0,pdf/pdf.max(),alpha_levels)
+        alphas = pdf/pdf.max()
+        data = []
+        for i in range(len(x)//2):
+            data.append([alphas[i], x[i], x[::-1][i]])
+        data.append([alphas[i+1], x[i+1], x[::-1][i+1]])
+        # print(alphas)
+        # print(self.distr.mean(), self.distr.std())
+        # print("x", x)
+        # print("ppf", ppf)
+        # print("pdf", pdf)
+        self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=data, dtype=np.float)
+        self.convert_df(alpha_levels)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
