@@ -28,7 +28,7 @@ setup_params = dict(
     packages=setuptools.find_packages(exclude=["tests"]),
     zip_safe=False,
 
-    install_requires=['numpy', 'pandas']
+    install_requires=['numpy', 'pandas', 'scipy']
 
 )
 
