@@ -6,9 +6,10 @@
 
 ---
 
-## Design goals I
+## Design goals
 
-* python representation of fuzzy number|data
+* python representation of fuzzy numbers|data
+* specify uncertainty easily
 
 ---
 
