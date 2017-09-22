@@ -5,6 +5,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import phuzzy
 
+def extend_instance(obj, cls):
+    """Apply mixins to a class instance after creation"""
+    base_cls = obj.__class__
+    base_cls_name = obj.__class__.__name__
+    obj.__class__ = type(base_cls_name, (base_cls, cls),{})
+
+
+def mix_mpl(obj):
+    base_cls = obj.__class__
+    base_cls_name = obj.__class__.__name__
+    obj.__class__ = type(base_cls_name, (base_cls, MPL_Mixin),{})
+
+
 class MPL_Mixin():
 
     def plot(self, filepath=None, show=False, range=None):

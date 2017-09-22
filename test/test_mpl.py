@@ -1,31 +1,37 @@
 import phuzzy
 
-from phuzzy.mpl import MPL_Mixin, Trapezoid, Triangle, TruncNorm
-import numpy as np
+from phuzzy.mpl import mix_mpl
 
-p = Trapezoid(alpha0=[1,4], alpha1=[2,3])
-print(p)
-print(p.df)
-p.convert_df(5)
-print(p.df)
+def test_dyn_mix():
+    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3])
+    print(p)
+    print(p.df)
+    p.convert_df(5)
+    print(p.df)
+    assert not hasattr(p, "plot")
+    mix_mpl(p)
+    assert hasattr(p, "plot")
 
-# p.plot(show=True)
-
-
-
-p = Triangle(alpha0=[1,4], alpha1=[2,3])
-print(p)
-print(p.df)
-p.convert_df(5)
-print(p.df)
-
-# p.plot(show=True)
+    p.plot(show=False)
+    print(p.__class__)
 
 
-p = TruncNorm(alpha0=[0,2], alpha1=[2,3])
-print(p)
-print(p.df)
-p.convert_df(5)
-print(p.df)
-print(p.distr.ppf([.05,.5, .95]))
-# p.plot(show=True)
+
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3])
+    print(p)
+    print(p.df)
+    p.convert_df(5)
+    print(p.df)
+
+    mix_mpl(p)
+    p.plot(show=False)
+
+    p = phuzzy.TruncNorm(alpha0=[0,2], alpha1=[2,3])
+    print(p)
+    print(p.df)
+    p.convert_df(5)
+    print(p.df)
+    print(p.distr.ppf([.05,.5, .95]))
+
+    mix_mpl(p)
+    p.plot(show=True)
