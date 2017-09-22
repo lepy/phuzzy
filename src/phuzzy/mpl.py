@@ -67,7 +67,7 @@ class MPL_Mixin():
             ax.set_xlim(range)
         fig.tight_layout()
         if filepath:
-            fig.savefig(filepath, dpi=150)
+            fig.savefig(filepath, dpi=90)
         if show is True:
             print("show")
             plt.show()
