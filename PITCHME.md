@@ -23,7 +23,10 @@ fuzzy membership function
 
 +++
 
+## phuzzy.Triangle
+
     p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+
     p.df
 
        alpha   min  max
@@ -44,7 +47,10 @@ fuzzy membership function
 
 +++
 
+## phuzzy.Trapezoid
+
     p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+
     p.df
 
        alpha   min   max
@@ -64,7 +70,10 @@ fuzzy membership function
 
 +++
 
+## phuzzy.TruncNorm
+
     p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
+
     p.df
 
            alpha       min       max
