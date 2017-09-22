@@ -6,4 +6,6 @@
 
 
 
+![](doc/triangle.png)
+![](doc/trapezoid.png)
 ![](doc/truncnorm.png)

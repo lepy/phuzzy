@@ -12,7 +12,7 @@ def test_dyn_mix():
     mix_mpl(p)
     assert hasattr(p, "plot")
 
-    p.plot(show=False)
+    p.plot(show=False, filepath="trapezoid.png")
     print(p.__class__)
 
 
@@ -24,7 +24,7 @@ def test_dyn_mix():
     print(p.df)
 
     mix_mpl(p)
-    p.plot(show=False)
+    p.plot(show=False, filepath="triangle.png")
 
     p = phuzzy.TruncNorm(alpha0=[0,2], alpha1=[2,3])
     print(p)
@@ -34,4 +34,4 @@ def test_dyn_mix():
     print(p.distr.ppf([.05,.5, .95]))
 
     mix_mpl(p)
-    p.plot(show=True)
+    p.plot(show=True, filepath="truncnorm.png")
