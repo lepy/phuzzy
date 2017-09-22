@@ -69,7 +69,7 @@ fuzzy membership function
 ## phuzzy.TruncNorm
 
     p = phuzzy.TruncNorm(alpha0=[1,3],
-                         number_of_alpha_levels=15, name="x")
+                         number_of_alpha_levels=15, name="y")
 
 ![](doc/truncnorm.png)
 
@@ -78,7 +78,7 @@ fuzzy membership function
 ## phuzzy.TruncNorm
 
     p = phuzzy.TruncNorm(alpha0=[1,3],
-                         number_of_alpha_levels=15, name="x")
+                         number_of_alpha_levels=15, name="y")
 
     p.df
 
