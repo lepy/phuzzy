@@ -12,7 +12,7 @@ def extend_instance(obj, cls):
 
 def test_dynamic_mixin_on_instance():
 
-    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
+    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="y")
     print(p)
     print(p.df)
 
