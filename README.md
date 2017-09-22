@@ -5,7 +5,7 @@
 
 ## phuzzy.Triangle
 
-    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3])
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
 
     p.df
 
@@ -20,7 +20,7 @@
 
 ## phuzzy.Trapezoid
 
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3])
+    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
 
     p.df
 
@@ -36,8 +36,6 @@
 ## phuzzy.TruncNorm
 
     p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
-
-![](doc/truncnorm.png)
 
     p.df
 
@@ -57,3 +55,5 @@
     12  0.857143  1.814923  2.185077
     13  0.928571  1.871675  2.128325
     14  1.000000  2.000000  2.000000
+
+![](doc/truncnorm.png)
