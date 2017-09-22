@@ -18,6 +18,7 @@ import collections
 import numpy as np
 import pandas as pd
 from scipy.stats import truncnorm, norm
+import copy
 
 logger = logging.getLogger("phuzzy")
 
@@ -62,6 +63,17 @@ class Fuzzy_Number(object):
         # print((np.vstack((alphas_new, xs_l_new, xs_r_new[::-1]))))
         data = np.vstack((alphas_new, xs_l_new, xs_r_new)).T
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=data, dtype=np.float)
+
+
+    def __add__(self, other):
+        new = Fuzzy_Number()
+        old0 = copy.deepcopy(self)
+        old1 = copy.deepcopy(other)
+        levels = max(len(old0.df), len(old1.df))
+        old0.convert_df(levels)
+        old1.convert_df(levels)
+        new.df = pd.DataFrame.from_dict({"alpha":old0.df.alpha, "min":old0.df["min"] + old1.df["min"], "max":old0.df["max"] + old1.df["max"]} )
+        return new
 
     @property
     def alpha0(self):
