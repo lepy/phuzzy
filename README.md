@@ -5,7 +5,7 @@
 
 ## phuzzy.Triangle
 
-    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2], number_of_alpha_levels=5)
 
     p.df
 

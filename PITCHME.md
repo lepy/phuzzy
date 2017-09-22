@@ -17,7 +17,8 @@ fuzzy membership function
 
 ## phuzzy.Triangle
 
-    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2],
+                        number_of_alpha_levels=5)
 
 ![](doc/triangle.png)
 
@@ -25,7 +26,8 @@ fuzzy membership function
 
 ## phuzzy.Triangle
 
-    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2],
+                        number_of_alpha_levels=5)
 
     p.df
 
@@ -41,7 +43,8 @@ fuzzy membership function
 
 ## phuzzy.Trapezoid
 
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3],
+                         number_of_alpha_levels=5)
 
 ![](doc/trapezoid.png)
 
@@ -49,7 +52,8 @@ fuzzy membership function
 
 ## phuzzy.Trapezoid
 
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3],
+                         number_of_alpha_levels=5)
 
     p.df
 
@@ -64,7 +68,8 @@ fuzzy membership function
 
 ## phuzzy.TruncNorm
 
-    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
+    p = phuzzy.TruncNorm(alpha0=[1,3],
+                         number_of_alpha_levels=15, name="x")
 
 ![](doc/truncnorm.png)
 
@@ -72,7 +77,8 @@ fuzzy membership function
 
 ## phuzzy.TruncNorm
 
-    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
+    p = phuzzy.TruncNorm(alpha0=[1,3],
+                         number_of_alpha_levels=15, name="x")
 
     p.df
 
