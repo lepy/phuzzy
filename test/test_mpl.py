@@ -3,7 +3,7 @@ import phuzzy
 from phuzzy.mpl import mix_mpl
 
 def test_dyn_mix():
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3])
+    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
     print(p)
     print(p.df)
     p.convert_df(5)
@@ -17,7 +17,7 @@ def test_dyn_mix():
 
 
 
-    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3])
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
     print(p)
     print(p.df)
     p.convert_df(5)
@@ -26,10 +26,10 @@ def test_dyn_mix():
     mix_mpl(p)
     p.plot(show=False, filepath="triangle.png")
 
-    p = phuzzy.TruncNorm(alpha0=[0,2], alpha1=[2,3])
+    # p = phuzzy.TruncNorm(alpha0=[0,2], alpha1=[2,3])
+    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
+
     print(p)
-    print(p.df)
-    p.convert_df(5)
     print(p.df)
     print(p.distr.ppf([.05,.5, .95]))
 
