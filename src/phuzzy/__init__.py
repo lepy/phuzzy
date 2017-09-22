@@ -112,6 +112,7 @@ class Triangle(Fuzzy_Number):
         assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[0]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
+        self.convert_df(alpha_levels=alpha_levels)
 
 class Trapezoid(Fuzzy_Number):
     """triange fuzzy number"""
@@ -127,6 +128,7 @@ class Trapezoid(Fuzzy_Number):
         assert isinstance(alpha1, collections.Sequence) and len(alpha1) == 2
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[1]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
+        self.convert_df(alpha_levels=alpha_levels)
 
 class TruncNorm(Fuzzy_Number):
     """abgeschnittene Normalverteilung"""
@@ -193,3 +195,4 @@ class TruncNorm(Fuzzy_Number):
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=data, dtype=np.float)
         self.convert_df(alpha_levels)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
+        self.convert_df(alpha_levels=alpha_levels)
