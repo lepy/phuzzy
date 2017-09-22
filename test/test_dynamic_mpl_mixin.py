@@ -12,10 +12,10 @@ def extend_instance(obj, cls):
 
 def test_dynamic_mixin_on_instance():
 
-    p = phuzzy.Triangle(alpha0=[1,3], alpha1=[2], number_of_alpha_levels=15)
+    p = phuzzy.TruncNorm(alpha0=[1,3], alpha1=[2], number_of_alpha_levels=15, name="x")
     print(p)
     print(p.df)
 
     extend_instance(p, MPL_Mixin)
 
-    p.plot(show=True)
+    p.plot(show=True, filepath="truncnorm.png")
