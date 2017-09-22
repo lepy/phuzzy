@@ -17,6 +17,6 @@
 
 ## phuzzy.TruncNorm
 
-    p = phuzzy.TruncNorm(alpha0=[1,3], alpha1=[2], number_of_alpha_levels=15, name="x")
+    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
 
 ![](doc/truncnorm.png)
