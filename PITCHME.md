@@ -1,8 +1,10 @@
 ---
 
 # phuzzy
-## fuzzy data
 
+fuzzy membership function
+
+![](doc/truncnorm.png)
 
 ---
 
@@ -17,6 +19,11 @@
 
     p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
 
+![](doc/triangle.png)
+
++++
+
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
     p.df
 
        alpha   min  max
@@ -26,14 +33,18 @@
     3   0.75  1.75  2.5
     4   1.00  2.00  2.0
 
-![](doc/triangle.png)
 
-+++
+---
 
 ## phuzzy.Trapezoid
 
     p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
 
+![](doc/trapezoid.png)
+
++++
+
+    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
     p.df
 
        alpha   min   max
@@ -43,14 +54,17 @@
     3   0.75  1.75  3.25
     4   1.00  2.00  3.00
 
-![](doc/trapezoid.png)
-
-+++
+---
 
 ## phuzzy.TruncNorm
 
     p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
 
+![](doc/truncnorm.png)
+
++++
+
+    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
     p.df
 
            alpha       min       max
@@ -69,9 +83,6 @@
     12  0.857143  1.814923  2.185077
     13  0.928571  1.871675  2.128325
     14  1.000000  2.000000  2.000000
-
-![](doc/truncnorm.png)
-
 
 ---
 
