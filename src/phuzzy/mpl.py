@@ -26,10 +26,10 @@ class MPL_Mixin():
         df = self.df
 
 
-        H = 170.  # mm
-        B = 170.  # mm
+        H = 100.  # mm
+        B = 100.  # mm
         fig, ax = plt.subplots(dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-        ax.set_title("%s" % self.name)
+        ax.set_title("%s" % self.__class__.__name__)
         ax.set_xlabel('%s' % self.name)
         ax.set_ylabel(r'$\alpha$')
         ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
@@ -65,8 +65,9 @@ class MPL_Mixin():
         ax.set_ylim(0, 1.1)
         if range is not None:
             ax.set_xlim(range)
+        fig.tight_layout()
         if filepath:
-            fig.savefig(filepath, dpi=300)
+            fig.savefig(filepath, dpi=150)
         if show is True:
             print("show")
             plt.show()
