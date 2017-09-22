@@ -24,7 +24,7 @@ logger = logging.getLogger("phuzzy")
 class Fuzzy_Number(object):
     """convex fuzzy number"""
     def __init__(self, **kwargs):
-        self.name = kwargs.get("name", "Fuzzy")
+        self.name = kwargs.get("name", "x")
         self._df = pd.DataFrame(columns=["alpha", "min", "max"])
         self._number_of_alpha_levels = kwargs.get("number_of_alpha_levels", 10)
         self.df = kwargs.get("df")
