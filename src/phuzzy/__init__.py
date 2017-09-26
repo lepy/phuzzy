@@ -42,15 +42,17 @@ class Fuzzy_Number(object):
         self._df = value
     df = property(fget=_get_df, fset=_set_df, doc="number of alpha levels")
 
-    def convert_df(self, alpha_levels=None):
+    def convert_df(self, alpha_levels=None, zero=1e-10):
         df = self.df.copy()
         if alpha_levels is not None:
             self.number_of_alpha_levels = alpha_levels
         df.sort_values(['alpha'], ascending=[True], inplace=True)
         # print("!",df)
         xs_l = df["min"].values
+        xs_l[xs_l==0] = zero
         alphas_l = df["alpha"].values
         xs_r = df["max"].values[::-1]
+        xs_r[xs_r==0] = zero
         alphas_r = df["alpha"].values[::-1]
 
         alphas_new = np.linspace(0., 1., self.number_of_alpha_levels)
@@ -64,16 +66,79 @@ class Fuzzy_Number(object):
         data = np.vstack((alphas_new, xs_l_new, xs_r_new)).T
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=data, dtype=np.float)
 
-
-    def __add__(self, other):
-        new = Fuzzy_Number()
+    def _unify(self, other):
         old0 = copy.deepcopy(self)
         old1 = copy.deepcopy(other)
         levels = max(len(old0.df), len(old1.df))
         old0.convert_df(levels)
         old1.convert_df(levels)
-        new.df = pd.DataFrame.from_dict({"alpha":old0.df.alpha, "min":old0.df["min"] + old1.df["min"], "max":old0.df["max"] + old1.df["max"]} )
+        return old0, old1
+
+    def __add__(self, other):
+        new = Fuzzy_Number()
+        old0, old1 = self._unify(other)
+        new.df = pd.DataFrame.from_dict({"alpha":old0.df.alpha,
+                                         "min":old0.df["min"] + old1.df["min"],
+                                         "max":old0.df["max"] + old1.df["max"]} )
         return new
+
+    def __sub__(self, other):
+        new = Fuzzy_Number()
+        old0, old1 = self._unify(other)
+        new.df = pd.DataFrame.from_dict({"alpha":old0.df.alpha,
+                                         "min":old0.df["min"] - old1.df["max"],
+                                         "max":old0.df["max"] - old1.df["min"]} )
+        # new.make_convex()
+        return new
+
+    def __mul__(self, other):
+        # fixme: zeros, infs, nans
+        new = Fuzzy_Number()
+        old0, old1 = self._unify(other)
+        new.df = pd.DataFrame.from_dict({"alpha":old0.df.alpha,
+                                         "min":old0.df["min"] * old1.df["min"],
+                                         "max":old0.df["max"] * old1.df["max"]} )
+        return new
+
+
+    def __div__(self, other):
+        # fixme: zeros, infs, nans
+        new = Fuzzy_Number()
+        old0, old1 = self._unify(other)
+        quotients = np.vstack([old0.df["min"] / old1.df["min"],
+                               old0.df["min"] / old1.df["max"],
+                               old0.df["max"] / old1.df["min"],
+                               old0.df["max"] / old1.df["max"]])
+        new.df = pd.DataFrame.from_dict({"alpha":old0.df.alpha,
+                                         "min":np.nanmin(quotients, axis=0),
+                                         "max":np.nanmin(quotients, axis=0)} )
+        return new
+
+    def __pow__(self, other):
+        # fixme: zeros, infs, nans
+        new = Fuzzy_Number()
+        if isinstance(other, (int, float)):
+            other = Trapezoid(alpha0=[other,other], alpha1=[other, other], number_of_alpha_levels=len(self.df))
+        old0, old1 = self._unify(other)
+        quotients = np.vstack([old0.df["min"] ** old1.df["min"],
+                               old0.df["min"] ** old1.df["max"],
+                               old0.df["max"] ** old1.df["min"],
+                               old0.df["max"] ** old1.df["max"]])
+        new.df = pd.DataFrame.from_dict({"alpha":old0.df.alpha,
+                                         "min":np.nanmin(quotients, axis=0),
+                                         "max":np.nanmax(quotients, axis=0)} )
+        new.make_convex()
+        return new
+
+
+    def make_convex(self):
+        for i in self.df.index:
+
+            self.df.loc[i, "min"] = self.df.loc[i:, "min"].min()
+            self.df.loc[i, "max"] = self.df.loc[i:, "max"].max()
+            # self.df.loc[i, "min"] = np.nanmin(self.df.loc[i:, "min"])
+            # self.df.loc[i, "max"] = np.nanmax(self.df.loc[i:, "max"])
+            # print(i, self.df.loc[i:, "min"].min(), self.df.loc[i:, "max"].max())
 
     @property
     def alpha0(self):
@@ -148,18 +213,14 @@ class TruncNorm(Fuzzy_Number):
         Fuzzy_Number.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")
-
-        self.color = "k"
-
         self.clip = kwargs.get("alpha0") or [0, np.inf]
         self.ppf = kwargs.get("ppf") or [.001, .999]
-        self.xs = []
-        self.ys = []
         self._loc = kwargs.get("mean") or np.array(alpha0).mean()
         self._scale = kwargs.get("std") or (alpha0[1]-alpha0[0])/6.
-        print("!", (alpha0[1]-alpha0[0])/6)
+        # print("!", (alpha0[1]-alpha0[0])/6)
         self._distr = None
         self.discretize(alpha0=self.clip, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
+
     # def __str__(self):
     #     return "tnorm(%s [%.3g,%.3g])" % (self.did, self.loc, self.std)
     #
