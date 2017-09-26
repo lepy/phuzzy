@@ -101,4 +101,34 @@ fuzzy membership function
 
 ---
 
+## x+y
+
+![](doc/x+y.png)
+
+---
+
+## x-y
+
+![](doc/x-y.png)
+
+---
+
+## x*y
+
+![](doc/x*y.png)
+
+---
+
+## x:y
+
+![](doc/x:y.png)
+
+---
+
+## x^y
+
+![](doc/x^y.png)
+
+---
+
 # The End
