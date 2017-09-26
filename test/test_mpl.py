@@ -42,7 +42,7 @@ def plot_add():
     H = 100.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0])
 
@@ -56,13 +56,14 @@ def plot_add():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
+    fig.savefig("x+y.png")
     plt.show()
 
 def plot_sub():
     H = 100.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0])
 
@@ -76,6 +77,7 @@ def plot_sub():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
+    fig.savefig("x-y.png")
     plt.show()
 
 def plot_mul():
@@ -96,6 +98,7 @@ def plot_mul():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
+    fig.savefig("x*y.png")
     plt.show()
 
 def plot_div():
@@ -116,6 +119,7 @@ def plot_div():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
+    fig.savefig("x:y.png")
     plt.show()
 
 def plot_pow():
@@ -136,12 +140,13 @@ def plot_pow():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
+    fig.savefig("x^y.png")
     plt.show()
 
 if __name__ == '__main__':
-    # plot_add()
-    # plot_sub()
-    # plot_mul()
-    # plot_div()
+    plot_add()
+    plot_sub()
+    plot_mul()
+    plot_div()
     plot_pow()
 
