@@ -105,7 +105,7 @@ fuzzy membership function
 
 ![](doc/x+y.png)
 
----
++++
 
 ## x-y
 
