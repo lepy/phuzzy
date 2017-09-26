@@ -20,15 +20,15 @@ def mix_mpl(obj):
 
 class MPL_Mixin():
 
-    def plot(self, filepath=None, show=False, range=None):
+    def plot(self, ax=None, filepath=None, show=False, range=None):
         """plots fuzzy number with mpl"""
         logging.debug("plots fuzzy number with mpl")
         df = self.df
 
-
-        H = 100.  # mm
-        B = 100.  # mm
-        fig, ax = plt.subplots(dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
+        if ax is None:
+            H = 100.  # mm
+            B = 100.  # mm
+            fig, ax = plt.subplots(dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
         ax.set_title("%s" % self.__class__.__name__)
         ax.set_xlabel('%s' % self.name)
         ax.set_ylabel(r'$\alpha$')
@@ -65,11 +65,10 @@ class MPL_Mixin():
         ax.set_ylim(0, 1.1)
         if range is not None:
             ax.set_xlim(range)
-        fig.tight_layout()
         if filepath:
+            fig.tight_layout()
             fig.savefig(filepath, dpi=90)
         if show is True:
-            print("show")
             plt.show()
 
 class Triangle(phuzzy.Triangle, MPL_Mixin):
