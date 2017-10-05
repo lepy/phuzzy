@@ -2,7 +2,7 @@ import phuzzy
 
 def test_fuzzy():
 
-    n = phuzzy.Fuzzy_Number()
+    n = phuzzy.FuzzyNumber()
     print(n)
     print(n.__class__.__name__)
 
@@ -18,3 +18,7 @@ def test_fuzzy():
     print(p.df)
     print(len(p.df))
     assert len(p.df)==5
+
+    p = phuzzy.Uniform(alpha0=[1,4], number_of_alpha_levels=5)
+    print(p.alpha0)
+    print(p.to_str())

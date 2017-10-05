@@ -81,6 +81,10 @@ class MPL_Mixin():
         if show is True:
             plt.show()
 
+class Uniform(phuzzy.Uniform, MPL_Mixin):
+    def __init__(self, **kwargs):
+        phuzzy.Uniform.__init__(self, **kwargs)
+
 class Triangle(phuzzy.Triangle, MPL_Mixin):
     def __init__(self, **kwargs):
         phuzzy.Triangle.__init__(self, **kwargs)
