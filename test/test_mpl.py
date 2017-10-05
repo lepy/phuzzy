@@ -35,7 +35,15 @@ def test_dyn_mix():
     print(p.distr.ppf([.05,.5, .95]))
 
     mix_mpl(p)
-    p.plot(show=True, filepath="truncnorm.png")
+    p.plot(show=False, filepath="truncnorm.png")
+
+
+    p = phuzzy.Uniform(alpha0=[1,3], number_of_alpha_levels=15, name="x")
+
+    print(p)
+    print(p.df)
+    mix_mpl(p)
+    p.plot(show=True, filepath="uniform.png")
 
 def plot_add():
     print("plot_add")

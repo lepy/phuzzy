@@ -141,7 +141,6 @@ class FuzzyNumber(object):
         new.make_convex()
         return new
 
-
     def make_convex(self):
         for i in self.df.index:
 
@@ -192,6 +191,55 @@ class FuzzyNumber(object):
     def __repr__(self):
         return "(%s)" % self.name
 
+    def to_str(self):
+        raise NotImplementedError
+
+    @classmethod
+    def from_str(cls, s):
+        raise NotImplementedError
+
+class Uniform(FuzzyNumber):
+    """triange fuzzy number"""
+
+    def __init__(self, **kwargs):
+        FuzzyNumber.__init__(self, **kwargs)
+        alpha0 = kwargs.get("alpha0")
+        self.discretize(alpha0=alpha0, alpha1=None, alpha_levels=self.number_of_alpha_levels)
+
+    def discretize(self, alpha0, alpha1, alpha_levels):
+        assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
+        self._a = alpha0[0]
+        self._b = alpha0[1]
+        self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=[[0., alpha0[0], alpha0[1]], [1., alpha0[0], alpha0[1]]], dtype=np.float)
+        self.df.sort_values(['alpha'], ascending=[True], inplace=True)
+        self.convert_df(alpha_levels=alpha_levels)
+
+    def pdf(self, x):
+        """https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)"""
+        a = self._a
+        b = self._b
+        condlist = [x <= self._a, x < self._b, x >= self._b]
+        choicelist = [0.,
+                      1. / (b-a),
+                      0.]
+        return np.select(condlist, choicelist)
+
+    def cdf(self, x):
+        a = self._a
+        b = self._b
+        condlist = [x <= self._a, x < self._b,  x >= self._b]
+        choicelist = [0.,
+                      (x-a) / (b-a),
+                      1.]
+        return np.select(condlist, choicelist)
+
+    def to_str(self):
+        return "Uniform[{:.4g},{:.4g}]".format(self.alpha0["min"], self.alpha0["max"])
+
+    @classmethod
+    def from_str(cls, s):
+        raise NotImplementedError
+
 class Triangle(FuzzyNumber):
     """triange fuzzy number"""
 
@@ -204,6 +252,9 @@ class Triangle(FuzzyNumber):
     def discretize(self, alpha0, alpha1, alpha_levels):
         assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
+        self._a = alpha0[0]
+        self._b = alpha0[1]
+        self._c = alpha1[0]
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[0]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
@@ -231,6 +282,30 @@ class Triangle(FuzzyNumber):
 
         return p
 
+    def pdf(self, x):
+        """https://en.wikipedia.org/wiki/Triangular_distribution"""
+        a = self._a
+        b = self._b
+        c = self._c
+        condlist = [x <= self._a, x <= self._c, x==c, x < self._b, x >= self._b]
+        choicelist = [0.,
+                      2. * (x-a) / (b-a) / (c-a),
+                      2. / (b-a),
+                      2. * (b-x) / (b-a) / (b-c),
+                      0.]
+        return np.select(condlist, choicelist)
+
+    def cdf(self, x):
+        a = self._a
+        b = self._b
+        c = self._c
+        condlist = [x <= self._a, x <= self._c, x < self._b,  x >= self._b]
+        choicelist = [0.,
+                      (x-a)**2/(c-a)/(b-a),
+                      1. - (b-x)**2 / (b-a) / (b-c),
+                      1.]
+        return np.select(condlist, choicelist)
+
 class Trapezoid(FuzzyNumber):
     """triange fuzzy number"""
 
@@ -243,9 +318,41 @@ class Trapezoid(FuzzyNumber):
     def discretize(self, alpha0, alpha1, alpha_levels):
         assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         assert isinstance(alpha1, collections.Sequence) and len(alpha1) == 2
+        self._a = alpha0[0]
+        self._b = alpha1[0]
+        self._c = alpha1[1]
+        self._d = alpha0[1]
+        # todo: check a <= c <= d <= b
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[1]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
+
+    def pdf(self, x):
+        """https://en.wikipedia.org/wiki/Trapezoidal_distribution"""
+        a = self._a
+        b = self._b
+        c = self._c
+        d = self._d
+        condlist = [x <= self._a, x <= self._b, x <= self._c,  x < self._d, x >= self._d]
+        choicelist = [0.,
+                      2. / (c+d-a-b) * (x-a) / (b-a),
+                      2. / (c+d-a-b),
+                      2. / (c+d-a-b) * (d-x) / (d-c),
+                      0.]
+        return np.select(condlist, choicelist)
+
+    def cdf(self, x):
+        a = self._a
+        b = self._b
+        c = self._c
+        d = self._d
+        condlist = [x <= self._a, x <= self._b, x <= self._c,  x < self._d, x >= self._d]
+        choicelist = [0.,
+                      (x-a)**2/(c+d-a-b)/(b-a),
+                      (2*x-a-b) / (d+c-a-b),
+                      1 - (d-x)**2/(d-c)/(d+c-a-b),
+                      1.]
+        return np.select(condlist, choicelist)
 
 class TruncNorm(FuzzyNumber):
     """abgeschnittene Normalverteilung"""
