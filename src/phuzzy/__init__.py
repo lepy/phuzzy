@@ -180,6 +180,12 @@ class FuzzyNumber(object):
         if self.df is not None:
             self.df.to_csv(filepath)
 
+    @classmethod
+    def from_data(cls, **kwargs):
+        p = cls(**kwargs)
+
+        return p
+
     def __str__(self):
         return "({0.__class__.__name__}({0.name}))".format(self)
 
@@ -201,6 +207,29 @@ class Triangle(FuzzyNumber):
         self.df = pd.DataFrame(columns=["alpha", "min", "max"], data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[0]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
+
+    @classmethod
+    def from_data(cls, **kwargs):
+        n = kwargs.get("n", 100)
+        data = kwargs.get("data")
+        data = np.asarray(data)
+        kwargs["alpha0"] = [data.min(), data.max()]
+        means = []
+        mean = 3 * data.mean() - data.min() - data.max()
+        means.append(mean)
+        print("!",mean)
+        for i in range(n):
+            train_data = np.random.choice(data, int(len(data)*50))
+
+            mean = 3 * train_data.mean() - train_data.min() - train_data.max()
+            means.append(mean)
+
+        mean = np.array(means).mean()
+        kwargs["alpha1"] = [mean]
+        p = cls(**kwargs)
+        print("!!",mean)
+
+        return p
 
 class Trapezoid(FuzzyNumber):
     """triange fuzzy number"""
