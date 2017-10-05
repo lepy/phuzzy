@@ -20,7 +20,7 @@ def mix_mpl(obj):
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=False, range=None):
+    def plot(self, ax=None, filepath=None, show=False, range=None, labels=True):
         """plots fuzzy number with mpl"""
         logging.debug("plots fuzzy number with mpl")
         df = self.df
@@ -29,10 +29,11 @@ class MPL_Mixin():
             H = 100.  # mm
             B = 100.  # mm
             fig, ax = plt.subplots(dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-        ax.set_title("%s" % self.__class__.__name__)
-        ax.set_xlabel('%s' % self.name)
-        ax.set_ylabel(r'$\alpha$')
-        ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
+        if labels is True:
+            # ax.set_title("%s" % self.__class__.__name__)
+            ax.set_xlabel('%s' % self.name)
+            ax.set_ylabel(r'$\alpha$')
+            ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
 
 
         xs = np.hstack([df["min"].values, df["max"].values[::-1]])
@@ -46,18 +47,23 @@ class MPL_Mixin():
         for i, row in df.iterrows():
             ax.plot([row["min"], row["max"]], [row.alpha, row.alpha], lw=.8, alpha=.7, ls="--", c="gray")
 
-        a0 = self.alpha0
-        ax.annotate('%.2f' % a0["min"], xy=(a0["min"], a0["alpha"]), xycoords='data',
+        if labels is True:
+            a0 = self.alpha0
+            # ax.set_title("%s" % self.__class__.__name__)
+            ax.set_xlabel('%s' % self.name)
+            ax.set_ylabel(r'$\alpha$')
+            ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
+            ax.annotate('%.2f' % a0["min"], xy=(a0["min"], a0["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-        ax.annotate('%.2f' % a0["max"], xy=(a0["max"], a0["alpha"]), xycoords='data',
+            ax.annotate('%.2f' % a0["max"], xy=(a0["max"], a0["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
-        a1 = self.alpha1
-        ax.annotate('%.2f' % a1["min"], xy=(a1["min"], a1["alpha"]), xycoords='data',
+            a1 = self.alpha1
+            ax.annotate('%.2f' % a1["min"], xy=(a1["min"], a1["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-        ax.annotate('%.2f' % a1["max"], xy=(a1["max"], a1["alpha"]), xycoords='data',
+            ax.annotate('%.2f' % a1["max"], xy=(a1["max"], a1["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
         dx = abs(self.alpha0["max"] - self.alpha0["min"])
@@ -65,9 +71,13 @@ class MPL_Mixin():
         ax.set_ylim(0, 1.1)
         if range is not None:
             ax.set_xlim(range)
-        if filepath:
+        try:
             fig.tight_layout()
-            fig.savefig(filepath, dpi=90)
+            if filepath:
+                fig.savefig(filepath, dpi=90)
+        except UnboundLocalError as exp:
+            pass
+
         if show is True:
             plt.show()
 
