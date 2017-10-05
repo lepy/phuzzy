@@ -66,8 +66,6 @@ fuzzy membership function
 
 ---
 
----
-
 ## phuzzy.Uniform
 
     p = phuzzy.Uniform(alpha0=[1,4]
@@ -86,10 +84,10 @@ fuzzy membership function
 
        alpha   min   max
     0   0.00  1.00  4.00
-    1   0.00  1.00  4.00
-    2   0.00  1.00  4.00
-    3   0.00  1.00  4.00
-    4   0.00  1.00  4.00
+    1   0.25  1.00  4.00
+    2   0.50  1.00  4.00
+    3   0.75  1.00  4.00
+    4   1.00  1.00  4.00
 
 ---
 
