@@ -20,7 +20,7 @@ def mix_mpl(obj):
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=False, range=None, labels=True):
+    def plot(self, ax=None, filepath=None, show=False, range=None, labels=True, title=False):
         """plots fuzzy number with mpl"""
         logging.debug("plots fuzzy number with mpl")
         df = self.df
@@ -29,8 +29,10 @@ class MPL_Mixin():
             H = 100.  # mm
             B = 100.  # mm
             fig, ax = plt.subplots(dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
+
+        if title is True:
+            ax.set_title("%s" % self.__class__.__name__)
         if labels is True:
-            # ax.set_title("%s" % self.__class__.__name__)
             ax.set_xlabel('%s' % self.name)
             ax.set_ylabel(r'$\alpha$')
             ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])

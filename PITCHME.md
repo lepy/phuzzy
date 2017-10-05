@@ -66,6 +66,33 @@ fuzzy membership function
 
 ---
 
+---
+
+## phuzzy.Uniform
+
+    p = phuzzy.Uniform(alpha0=[1,4]
+                         number_of_alpha_levels=5)
+
+![](doc/uniform.png)
+
++++
+
+## phuzzy.Uniform
+
+    p = phuzzy.Trapezoid(alpha0=[1,4],
+                         number_of_alpha_levels=5)
+
+    p.df
+
+       alpha   min   max
+    0   0.00  1.00  4.00
+    1   0.00  1.00  4.00
+    2   0.00  1.00  4.00
+    3   0.00  1.00  4.00
+    4   0.00  1.00  4.00
+
+---
+
 ## phuzzy.TruncNorm
 
     p = phuzzy.TruncNorm(alpha0=[1,3],
