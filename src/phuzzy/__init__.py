@@ -18,6 +18,7 @@ import collections
 import numpy as np
 import pandas as pd
 from scipy.stats import truncnorm, norm
+from scipy.integrate import cumtrapz
 import copy
 
 logger = logging.getLogger("phuzzy")
@@ -197,6 +198,25 @@ class FuzzyNumber(object):
     @classmethod
     def from_str(cls, s):
         raise NotImplementedError
+
+    def pdf(self, x):
+        y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
+        x_ = np.hstack((self.df["min"], self.df["max"][::-1]))
+        I = np.trapz(y_, x_)
+        y = np.interp(x, x_, y_/I, left=0., right=0.)
+        return y
+
+    def cdf(self, x, n=100):
+        y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
+        x_ = np.hstack((self.df["min"], self.df["max"][::-1]))
+
+        x__ = np.linspace(self.alpha0["min"], self.alpha0["max"], n)
+        y__ = np.interp(x__, x_, y_)
+
+        I = cumtrapz(y__, x__, initial=0)
+        I /= I[-1]
+        y = np.interp(x, x__, I, left=0., right=1.)
+        return y
 
 class Uniform(FuzzyNumber):
     """triange fuzzy number"""
