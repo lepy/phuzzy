@@ -31,7 +31,7 @@ fuzzy membership function
 
     p.df
 
-       alpha   min  max
+       alpha   low high
     0   0.00  1.00  4.0
     1   0.25  1.25  3.5
     2   0.50  1.50  3.0
@@ -57,7 +57,7 @@ fuzzy membership function
 
     p.df
 
-       alpha   min   max
+       alpha   low  high
     0   0.00  1.00  4.00
     1   0.25  1.25  3.75
     2   0.50  1.50  3.50
@@ -82,7 +82,7 @@ fuzzy membership function
 
     p.df
 
-       alpha   min   max
+       alpha   low  high
     0   0.00  1.00  4.00
     1   0.25  1.00  4.00
     2   0.50  1.00  4.00
@@ -107,7 +107,7 @@ fuzzy membership function
 
     p.df
 
-           alpha       min       max
+           alpha       low      high
     0   0.000000  1.000000  3.000000
     1   0.071429  1.234184  2.765816
     2   0.142857  1.342402  2.657598
