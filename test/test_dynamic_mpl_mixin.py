@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import phuzzy
 from phuzzy.mpl import MPL_Mixin
 import matplotlib.pyplot as plt
