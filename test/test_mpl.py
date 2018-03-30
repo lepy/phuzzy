@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import phuzzy
 
 from phuzzy.mpl import mix_mpl
@@ -191,11 +192,37 @@ def plot_pow2():
     fig.savefig("x^y.png")
     plt.show()
 
+def plot_gennorm_mix():
+    beta = 2
+    p = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=50, beta=1)
+    p2 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=50, beta=2)
+    p10 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=50, beta=7)
+    print(p)
+    # print(p.df)
+    # # p.convert_df(5)
+    # print(p.df)
+    assert not hasattr(p, "plot")
+    mix_mpl(p)
+    mix_mpl(p2)
+    mix_mpl(p10)
+
+    assert hasattr(p, "plot")
+    H = 100.  # mm
+    B = 300.  # mm
+    fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
+    p.plot(ax=axs[0])
+    p2.plot(ax=axs[1])
+    p10.plot(ax=axs[2])
+    fig.tight_layout()
+    # fig.savefig("x^y.png")
+    plt.show()
+
 if __name__ == '__main__':
     # plot_add()
     # plot_sub()
     # plot_mul()
     # plot_div()
     # plot_pow()
-    plot_pow2()
+    # plot_pow2()
+    plot_gennorm_mix()
 
