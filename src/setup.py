@@ -17,7 +17,7 @@ def extract_version():
 setup_params = dict(
     name="phuzzy",
     description = ("fuzzy data"),
-    version=extract_version(),
+    version=extract_version()["__version__"],
     author="Lepy",
     author_email="lepy@mailbox.org",
     url="https://github.com/lepy/phuzzy",
