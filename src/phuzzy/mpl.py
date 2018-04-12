@@ -84,17 +84,31 @@ class MPL_Mixin():
             plt.show()
 
 class Uniform(phuzzy.Uniform, MPL_Mixin):
+    """Uniform fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
         phuzzy.Uniform.__init__(self, **kwargs)
 
 class Triangle(phuzzy.Triangle, MPL_Mixin):
+    """Triangle fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
         phuzzy.Triangle.__init__(self, **kwargs)
 
 class Trapezoid(phuzzy.Trapezoid, MPL_Mixin):
+    """Trapezoid fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
         phuzzy.Trapezoid.__init__(self, **kwargs)
 
 class TruncNorm(phuzzy.TruncNorm, MPL_Mixin):
+    """TruncNorm fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
         phuzzy.TruncNorm.__init__(self, **kwargs)
+
+class TruncGenNorm(phuzzy.TruncGenNorm, MPL_Mixin):
+    """Truncates general normal fuzzy number with matplotlib mixin"""
+    def __init__(self, **kwargs):
+        phuzzy.TruncGenNorm.__init__(self, **kwargs)
+
+class Superellipse(phuzzy.Superellipse, MPL_Mixin):
+    """Superellipse fuzzy number with matplotlib mixin"""
+    def __init__(self, **kwargs):
+        phuzzy.Superellipse.__init__(self, **kwargs)
