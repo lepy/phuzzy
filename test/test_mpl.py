@@ -193,10 +193,10 @@ def plot_pow2():
     plt.show()
 
 def plot_gennorm_mix():
-    beta = 2
-    p = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=50, beta=1)
-    p2 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=50, beta=2)
-    p10 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=50, beta=7)
+    n = 50
+    p = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=n, beta=1)
+    p2 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=n, beta=2)
+    p10 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=n, beta=5)
     print(p)
     # print(p.df)
     # # p.convert_df(5)
