@@ -24,8 +24,9 @@ class Superellipse(FuzzyNumber):
     def shape(self, x):
         """shape function
 
-        :param x:
-        :return:
+        :param x: x values
+        :type x: array or float
+        :return: y values
         """
 
         a = self._a

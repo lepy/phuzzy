@@ -17,14 +17,7 @@ __license__ = """MIT"""
 import logging
 logger = logging.getLogger("phuzzy")
 
-import os
-import numpy as np
-import pandas as pd
-import copy
-# import phuzzy.shapes
-
-
-from phuzzy.shapes import FuzzyNumber, Trapezoid, Triangle
+from phuzzy.shapes import FuzzyNumber, Trapezoid, Triangle, Uniform
 from phuzzy.shapes.superellipse import Superellipse
 from phuzzy.shapes.truncnorm import TruncGenNorm, TruncNorm
 
