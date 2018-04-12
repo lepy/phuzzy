@@ -17,6 +17,9 @@ def test_superellipse():
 
     assert np.allclose(p.df.values.tolist(), ref)
 
+def plot():
+    alpha0 = [-1, 2]
+
     p = Superellipse(alpha0=alpha0, alpha1=None, m=2, n=None, number_of_alpha_levels=17)
     p.plot(show=True)
     plt.show()
