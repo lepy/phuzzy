@@ -6,7 +6,7 @@ def test_trapz():
 
     x = np.linspace(-2, 5, 11)
 
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     P = p.cdf(x)
     print(P)
 
@@ -19,7 +19,7 @@ def plot_traz_cdf():
 
     x = np.linspace(0, 6, 200)
 
-    f = phuzzy.Trapezoid(alpha0=[1,5], alpha1=[2,3], number_of_alpha_levels=5)
+    f = phuzzy.Trapezoid(alpha0=[1, 5], alpha1=[2, 3], number_of_alpha_levels=5)
     p = f.pdf(x)
     P = f.cdf(x)
     axs[0].plot(x, p, label="pdf", lw=2)
@@ -37,7 +37,7 @@ def plot_tria_cdf():
 
     x = np.linspace(0, 6, 200)
 
-    t = phuzzy.Triangle(alpha0=[1,4], alpha1=[2], number_of_alpha_levels=5)
+    t = phuzzy.Triangle(alpha0=[1, 4], alpha1=[2], number_of_alpha_levels=5)
     p = t.pdf(x)
     P = t.cdf(x)
     axs[0].plot(x, p, label="pdf", lw=2)
@@ -45,7 +45,7 @@ def plot_tria_cdf():
     axs[0].legend(loc="best")
     axs[1].legend(loc="best")
 
-    f = phuzzy.FuzzyNumber(alpha0=[1,2], alpha1=[1.1,1.4], number_of_alpha_levels=5)
+    f = phuzzy.FuzzyNumber(alpha0=[1, 2], alpha1=[1.1, 1.4], number_of_alpha_levels=5)
     f.df = t.df.copy()
     print(f.df)
     pf = f.pdf(x)
@@ -68,7 +68,7 @@ def plot_uniform_cdf():
 
     x = np.linspace(0, 6, 200)
 
-    f = phuzzy.Uniform(alpha0=[1,4], number_of_alpha_levels=5)
+    f = phuzzy.Uniform(alpha0=[1, 4], number_of_alpha_levels=5)
     p = f.pdf(x)
     P = f.cdf(x)
     axs[0].plot(x, p, label="pdf", lw=2)
@@ -86,13 +86,13 @@ def plot_fuzzynumber_cdf():
 
     x = np.linspace(0, 5, 200)
 
-    t = phuzzy.Trapezoid(alpha0=[1,5], alpha1=[2,3], number_of_alpha_levels=5)
+    t = phuzzy.Trapezoid(alpha0=[1, 5], alpha1=[2, 3], number_of_alpha_levels=5)
     p = t.pdf(x)
     P = t.cdf(x)
     axs[0].plot(x, p, label="pdf", lw=1)
     axs[1].plot(x, P, label="cdf", lw=1)
 
-    f = phuzzy.FuzzyNumber(alpha0=[1,2], alpha1=[1.1,1.4], number_of_alpha_levels=5)
+    f = phuzzy.FuzzyNumber(alpha0=[1, 2], alpha1=[1.1, 1.4], number_of_alpha_levels=5)
     f.df = t.df.copy()
     print(f.df)
     pf = f.pdf(x)
@@ -115,13 +115,13 @@ def plot_truncnorm_cdf():
 
     x = np.linspace(0, 5, 200)
 
-    t = phuzzy.TruncNorm(alpha0=[1,5], number_of_alpha_levels=25)
+    t = phuzzy.TruncNorm(alpha0=[1, 5], number_of_alpha_levels=25)
     p = t.pdf(x)
     P = t.cdf(x)
     axs[0].plot(x, p, label="pdf ana", lw=1)
     axs[1].plot(x, P, label="cdf ana", lw=1)
 
-    f = phuzzy.FuzzyNumber(alpha0=[1,2], alpha1=[1.1,1.4], number_of_alpha_levels=5)
+    f = phuzzy.FuzzyNumber(alpha0=[1, 2], alpha1=[1.1, 1.4], number_of_alpha_levels=5)
     f.df = t.df.copy()
     print(f.df)
     pf = f.pdf(x)

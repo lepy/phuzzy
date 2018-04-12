@@ -5,11 +5,11 @@ from phuzzy.mpl import mix_mpl
 def atest_add():
 
 
-    t = phuzzy.TruncNorm(alpha0=[1,3], alpha1=[2], number_of_alpha_levels=15)
+    t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=15)
     print(t)
     assert len(t.df)==15
 
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     print(p)
     assert len(p.df)==5
 
@@ -27,11 +27,11 @@ def atest_add():
 def atest_sub():
 
 
-    t = phuzzy.TruncNorm(alpha0=[1,3], alpha1=[2], number_of_alpha_levels=15, name="t")
+    t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=15, name="t")
     print(t)
     assert len(t.df)==15
 
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5, name="p")
+    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5, name="p")
     print(p)
     assert len(p.df)==5
 
@@ -58,11 +58,11 @@ def atest_sub():
 def atest_mul():
 
 
-    t = phuzzy.TruncNorm(alpha0=[1,3], alpha1=[2], number_of_alpha_levels=15, name="t")
+    t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=15, name="t")
     print(t)
     assert len(t.df)==15
 
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5, name="p")
+    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5, name="p")
     print(p)
     assert len(p.df)==5
 
@@ -89,11 +89,11 @@ def atest_mul():
 def test_div():
 
 
-    t = phuzzy.TruncNorm(alpha0=[2,3], alpha1=[], number_of_alpha_levels=15, name="t")
+    t = phuzzy.TruncNorm(alpha0=[2, 3], alpha1=[], number_of_alpha_levels=15, name="t")
     print(t)
     assert len(t.df)==15
 
-    p = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5, name="p")
+    p = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5, name="p")
     print(p)
     assert len(p.df)==5
 

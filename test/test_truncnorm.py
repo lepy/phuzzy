@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 
 import numpy as np
-import phuzzy
-from phuzzy.mpl import mix_mpl, MPL_Mixin, Trapezoid, Triangle, TruncNorm
+from phuzzy.mpl import TruncNorm
 
 def test_truncnorm():
 
