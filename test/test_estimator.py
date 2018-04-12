@@ -4,7 +4,6 @@ import phuzzy
 from phuzzy.mpl import mix_mpl
 
 def normal_estimator():
-
     import matplotlib.pyplot as plt
     H = 100.  # mm
     B = 300.  # mm
