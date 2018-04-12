@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def test_dyn_mix():
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     print(p)
     print(p.df)
     p.convert_df(5)
@@ -20,7 +20,7 @@ def test_dyn_mix():
 
 
 
-    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Triangle(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     print(p)
     print(p.df)
     p.convert_df(5)
@@ -30,7 +30,7 @@ def test_dyn_mix():
     p.plot(show=False, filepath="triangle.png", title=True)
 
     # p = phuzzy.TruncNorm(alpha0=[0,2], alpha1=[2,3])
-    p = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="x")
+    p = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="x")
 
     print(p)
     print(p.df)
@@ -40,7 +40,7 @@ def test_dyn_mix():
     p.plot(show=False, filepath="truncnorm.png", title=True)
 
 
-    p = phuzzy.Uniform(alpha0=[1,4], number_of_alpha_levels=5, name="x")
+    p = phuzzy.Uniform(alpha0=[1, 4], number_of_alpha_levels=5, name="x")
 
     print(p)
     print(p.df)
@@ -52,11 +52,11 @@ def plot_add():
     H = 100.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0])
 
-    y = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="y")
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
     mix_mpl(y)
     y.plot(ax=axs[1])
 
@@ -73,11 +73,11 @@ def plot_sub():
     H = 100.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0])
 
-    y = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="y")
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
     mix_mpl(y)
     y.plot(ax=axs[1])
 
@@ -94,11 +94,11 @@ def plot_mul():
     H = 100.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0])
 
-    y = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="y")
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
     mix_mpl(y)
     y.plot(ax=axs[1])
 
@@ -115,11 +115,11 @@ def plot_div():
     H = 100.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0])
 
-    y = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="y")
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
     mix_mpl(y)
     y.plot(ax=axs[1])
 
@@ -136,11 +136,11 @@ def plot_pow():
     H = 100.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(1, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0])
 
-    y = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="y")
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
     mix_mpl(y)
     y.plot(ax=axs[1])
 
@@ -157,11 +157,11 @@ def plot_pow2():
     H = 300.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(3, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
-    x = phuzzy.Trapezoid(alpha0=[0,4], alpha1=[2,3], number_of_alpha_levels=5)
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0,0])
 
-    y = phuzzy.TruncNorm(alpha0=[1,3], number_of_alpha_levels=15, name="y")
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
     mix_mpl(y)
     y.plot(ax=axs[0,1])
 
@@ -194,9 +194,9 @@ def plot_pow2():
 
 def plot_gennorm_mix():
     n = 50
-    p = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=n, beta=1)
-    p2 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=n, beta=2)
-    p10 = phuzzy.TruncGenNorm(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=n, beta=5)
+    p = phuzzy.TruncGenNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=n, beta=1)
+    p2 = phuzzy.TruncGenNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=n, beta=2)
+    p10 = phuzzy.TruncGenNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=n, beta=5)
     print(p)
     # print(p.df)
     # # p.convert_df(5)

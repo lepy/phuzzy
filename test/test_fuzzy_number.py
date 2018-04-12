@@ -7,7 +7,7 @@ def test_fuzzy():
     print(n.__class__.__name__)
 
 def test_triangle():
-    t = phuzzy.Triangle(alpha0=[1,3], alpha1=[2], number_of_alpha_levels=15)
+    t = phuzzy.Triangle(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=15)
     print(t)
     print(t.__class__.__name__)
     print(t.df)
@@ -16,7 +16,7 @@ def test_triangle():
     print(t.get_01())
 
 def test_trapezoid():
-    p = phuzzy.Trapezoid(alpha0=[1,4], alpha1=[2,3], number_of_alpha_levels=5)
+    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     print(p)
     print("number_of_alpha_levels", p.number_of_alpha_levels)
     print(p.df)
@@ -25,7 +25,7 @@ def test_trapezoid():
     print(p.get_01())
 
 def test_uniform():
-    p = phuzzy.Uniform(alpha0=[1,4], number_of_alpha_levels=5)
+    p = phuzzy.Uniform(alpha0=[1, 4], number_of_alpha_levels=5)
     print(p.alpha0)
     print(p.df)
     print(p.to_str())
