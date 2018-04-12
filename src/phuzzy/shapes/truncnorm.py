@@ -27,6 +27,11 @@ class TruncNorm(FuzzyNumber):
     # __repr__ = __str__
 
     def _get_loc(self):
+        """mean value
+
+        :rtype: float
+        :return: mean value aka location
+        """
         return self._loc
 
     def _set_loc(self, value):
@@ -35,6 +40,11 @@ class TruncNorm(FuzzyNumber):
     mean = loc = property(fget=_get_loc, fset=_set_loc)
 
     def _get_scale(self):
+        """standard deviation
+
+        :rtype: float
+        :return: standard deviation
+        """
         return self._scale
 
     def _set_scale(self, value):
@@ -44,6 +54,11 @@ class TruncNorm(FuzzyNumber):
 
     @property
     def distr(self):
+        """calculate truncated normal distribution
+
+        :return: distribution object
+        """
+
         if self._distr is None:
             a, b = (self.clip[0] - self.loc) / self.std, (self.clip[1] - self.loc) / self.std
             self._distr = truncnorm(a=a, b=b, loc=self.mean, scale=self.std)

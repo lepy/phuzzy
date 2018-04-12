@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 logger = logging.getLogger("phuzzy")
 
 import numpy as np
@@ -8,6 +9,7 @@ import pandas as pd
 import copy
 import collections
 from scipy.integrate import cumtrapz
+
 
 class FuzzyNumber(object):
     """convex fuzzy number"""
@@ -23,6 +25,11 @@ class FuzzyNumber(object):
         self.df = kwargs.get("df")
 
     def _get_number_of_alpha_levels(self):
+        """number of alpha levels
+
+        :rtype: int
+        :return: number of alpha levels
+        """
         return self._number_of_alpha_levels
 
     def _set_number_of_alpha_levels(self, value):
@@ -32,12 +39,27 @@ class FuzzyNumber(object):
                                       doc="number of alpha levels")
 
     def _get_df(self):
+        """returns alpha levels
+
+        :rtype: pandas.Dataframe
+        :return: alpha level dataframe
+        """
         return self._df
 
     def _set_df(self, value):
         self._df = value
 
     df = property(fget=_get_df, fset=_set_df, doc="number of alpha levels")
+
+    def discretize(self, alpha0, alpha1, alpha_levels):
+        """discretize shape function
+
+        :param alpha0: range at alpha=0
+        :param alpha1: range at alpha=1
+        :param alpha_levels: number of alpha levels
+        :return: None
+        """
+        raise NotImplementedError
 
     def convert_df(self, alpha_levels=None, zero=1e-10):
         df = self.df.copy()
@@ -64,6 +86,11 @@ class FuzzyNumber(object):
         self.df = pd.DataFrame(columns=["alpha", "low", "high"], data=data, dtype=np.float)
 
     def _unify(self, other):
+        """equalize number of alpha levels
+
+        :param other:
+        :return: (fuzzy_number_1, fuzzy_number_2)
+        """
         old0 = copy.deepcopy(self)
         old1 = copy.deepcopy(other)
         levels = max(len(old0.df), len(old1.df))
@@ -72,6 +99,12 @@ class FuzzyNumber(object):
         return old0, old1
 
     def __add__(self, other):
+        """adds a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
         quotients = np.vstack([old0.df.low + old1.df.low,
@@ -84,6 +117,12 @@ class FuzzyNumber(object):
         return new
 
     def __sub__(self, other):
+        """substract a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
         quotients = np.vstack([old0.df.low - old1.df.low,
@@ -96,6 +135,12 @@ class FuzzyNumber(object):
         return new
 
     def __mul__(self, other):
+        """multiply with a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
@@ -109,6 +154,12 @@ class FuzzyNumber(object):
         return new
 
     def __div__(self, other):
+        """divide by a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
@@ -122,6 +173,12 @@ class FuzzyNumber(object):
         return new
 
     def __pow__(self, other):
+        """apply power of a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
         if isinstance(other, (int, float)):
@@ -138,6 +195,10 @@ class FuzzyNumber(object):
         return new
 
     def make_convex(self):
+        """make fuzzy number convex
+
+        :return: None
+        """
         for i in self.df.index:
             self.df.loc[i, "low"] = self.df.loc[i:, "low"].min()
             self.df.loc[i, "high"] = self.df.loc[i:, "high"].max()
@@ -159,25 +220,47 @@ class FuzzyNumber(object):
 
     @property
     def area(self):
+        """integral of the fuzzy number
+
+        :return: area
+        """
+        raise NotImplementedError
         A = ((self.alpha0.high - self.alpha0.low) - (self.df.high.values - self.df.low.values)).sum()
         return A
 
     def import_csv(self, fh):
+        """load alpha levels from csv
+
+        :param fh: csv file path or file handle
+        :return: alpha level dataframe
+        """
         if isinstance(fh, str):
             fh = open(fh, "r")
 
         self.df = pd.DataFrame.from_csv(fh)
-        print((self.df.head()))
+        print(self.df.head())
+        return self.df
 
     def export_csv(self, filepath):
+        """export alpha levels to csv
+
+        :param filepath: csv file path
+        :return:
+        """
         logger.info("export df '%s'" % filepath)
         if self.df is not None:
             self.df.to_csv(filepath)
 
     @classmethod
     def from_data(cls, **kwargs):
-        p = cls(**kwargs)
+        """instantiate fuzzy number from attributes
 
+        :param kwargs:
+        :rtype: phuzzy.FuzzyNumber or derived object
+        :return: fuzzy number
+        """
+
+        p = cls(**kwargs)
         return p
 
     def __str__(self):
@@ -187,20 +270,40 @@ class FuzzyNumber(object):
         return "(%s)" % self.name
 
     def to_str(self):
+        """serialize fuzzy number to string
+
+        :return: fuzzy number string
+        """
         raise NotImplementedError
 
     @classmethod
     def from_str(cls, s):
+        """deserialize fuzzy number to string
+
+        :return: fuzzy number string
+        """
         raise NotImplementedError
 
     def pdf(self, x):
+        """Probability density function
+
+        :param x: x values
+        :return:
+        """
+
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.low, self.df.high[::-1]))
         I = np.trapz(y_, x_)
         y = np.interp(x, x_, y_ / I, left=0., right=0.)
         return y
 
-    def cdf(self, x, n=100):
+    def cdf(self, x, n=1000):
+        """Cumulative distribution function
+
+        :param x: x values
+        :param n: number of integration points
+        :return: y
+        """
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.low, self.df.high[::-1]))
 
@@ -213,7 +316,12 @@ class FuzzyNumber(object):
         return y
 
     def get_01(self):
+        """get alpha=0 and alpha=1 values
+
+        :return: [[a0_low, a0_high], [a1_low, a1_high]]
+        """
         return self.df.iloc[[0, -1]][["low", "high"]].values.tolist()
+
 
 class Triangle(FuzzyNumber):
     """triange fuzzy number"""
@@ -225,6 +333,13 @@ class Triangle(FuzzyNumber):
         self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
+        """discretize shape function
+
+        :param alpha0: range at alpha=0
+        :param alpha1: range at alpha=1
+        :param alpha_levels: number of alpha levels
+        :return: None
+        """
         assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
         self._a = alpha0[0]
@@ -237,6 +352,13 @@ class Triangle(FuzzyNumber):
 
     @classmethod
     def from_data(cls, **kwargs):
+        """instantiate fuzzy number from attributes
+
+        :param kwargs:
+        :rtype: phuzzy.FuzzyNumber or derived object
+        :return: fuzzy number
+        """
+
         n = kwargs.get("n", 100)
         data = kwargs.get("data")
         data = np.asarray(data)
@@ -299,6 +421,14 @@ class Trapezoid(FuzzyNumber):
         self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
+        """discretize shape function
+
+        :param alpha0: range at alpha=0
+        :param alpha1: range at alpha=1
+        :param alpha_levels: number of alpha levels
+        :return: None
+        """
+
         assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         assert isinstance(alpha1, collections.Sequence) and len(alpha1) == 2
         self._a = alpha0[0]
@@ -344,3 +474,55 @@ class Trapezoid(FuzzyNumber):
                                                                  self.df.iloc[-1].low, self.df.iloc[-1].high)
         else:
             return "trap[nan, nan, nan, nan]"
+
+
+class Uniform(FuzzyNumber):
+    """triange fuzzy number"""
+
+    def __init__(self, **kwargs):
+        FuzzyNumber.__init__(self, **kwargs)
+        alpha0 = kwargs.get("alpha0")
+        self.discretize(alpha0=alpha0, alpha1=None, alpha_levels=self.number_of_alpha_levels)
+
+    def discretize(self, alpha0, alpha1, alpha_levels):
+        """discretize shape function
+
+        :param alpha0: range at alpha=0
+        :param alpha1: range at alpha=1
+        :param alpha_levels: number of alpha levels
+        :return: None
+        """
+
+        assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
+        self._a = alpha0[0]
+        self._b = alpha0[1]
+        self.df = pd.DataFrame(columns=["alpha", "low", "high"],
+                               data=[[0., alpha0[0], alpha0[1]], [1., alpha0[0], alpha0[1]]], dtype=np.float)
+        self.df.sort_values(['alpha'], ascending=[True], inplace=True)
+        self.convert_df(alpha_levels=alpha_levels)
+
+    def pdf(self, x):
+        """https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)"""
+        a = self._a
+        b = self._b
+        condlist = [x <= self._a, x < self._b, x >= self._b]
+        choicelist = [0.,
+                      1. / (b - a),
+                      0.]
+        return np.select(condlist, choicelist)
+
+    def cdf(self, x):
+        a = self._a
+        b = self._b
+        condlist = [x <= self._a, x < self._b, x >= self._b]
+        choicelist = [0.,
+                      (x - a) / (b - a),
+                      1.]
+        return np.select(condlist, choicelist)
+
+    def to_str(self):
+        return "Uniform[{:.4g},{:.4g}]".format(self.alpha0.low, self.alpha0.high)
+
+    @classmethod
+    def from_str(cls, s):
+        raise NotImplementedError
