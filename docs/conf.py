@@ -70,7 +70,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
@@ -81,10 +81,14 @@ todo_include_todos = False
 
 # -- Options for HTML output -------------------------------------------
 
+html_favicon = "favicon.ico"
+
+
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+# html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a
 # theme further.  For a list of options available for each theme, see the
@@ -159,5 +163,48 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+from pygments.lexer import RegexLexer
+from pygments import token
+from sphinx.highlighting import lexers
+
+class LSDYNA_Lexer(RegexLexer):
+    name = 'lsdyna'
+
+    tokens = {
+        'root': [
+            (r'\*AIRBAG\_HYBRID\_ID', token.Keyword),
+            (r'AIRBAG', token.Keyword),
+            (r'#.*?$', token.Comment.Singleline),
+            (r'^\*[a-zA-Z]', token.Name),
+            (r'\s', token.Text)
+        ]
+    }
+
+lexers['lsdyna'] = LSDYNA_Lexer(startinline=True)
+
+
+# from pygments.style import Style
+# from pygments.token import Keyword, Name, Comment, String, Error, \
+#      Number, Operator, Generic
+#
+# class ScaleFemStyle(Style):
+#     default_style = ""
+#     styles = {
+#         Comment:                'italic #888',
+#         Keyword:                'bold #005',
+#         Name:                   '#f00',
+#         Name.Function:          '#0f0',
+#         Name.Class:             'bold #0f0',
+#         String:                 'bg:#eee #111'
+#     }
+#
+#
+
+pygments_style = 'sphinx'
+# pygments_style = 'pastie'
+
+from pygments.styles import get_all_styles
+styles = list(get_all_styles())
+print("styles", styles)
 
 
