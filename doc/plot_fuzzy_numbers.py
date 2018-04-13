@@ -156,7 +156,7 @@ def plot_pow():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
-    fig.savefig("x^y.png")
+    fig.savefig("x**y.png")
     plt.show()
 
 
@@ -167,8 +167,13 @@ def plot_pow2():
 
     for i in range(3):
         axs[0,i].get_shared_x_axes().join(axs[0,i],axs[1,i],axs[2,i])
+    for i in range(1,3):
+        axs[i,0].set_xlabel("x")
+        axs[i,1].set_xlabel("y")
+        axs[i,2].set_xlabel("x^y")
 
-        axs[i,0].get_shared_y_axes().join(axs[i,0],axs[i,1],axs[i,1])
+    i=2
+    axs[i,0].get_shared_y_axes().join(axs[i,0],axs[i,1],axs[i,2])
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
@@ -222,7 +227,7 @@ def plot_pow2():
         ax.set_ylim(0, None)
 
     fig.tight_layout()
-    fig.savefig("x^y.png")
+    fig.savefig("x**y_pdf_cdf.png")
     plt.show()
 
 
@@ -282,7 +287,7 @@ if __name__ == '__main__':
     # plot_sub()
     # plot_mul()
     # plot_div()
-    # plot_pow()
+    plot_pow()
     plot_pow2()
     # plot_gennorm_mix()
     # plot_superellipse()
