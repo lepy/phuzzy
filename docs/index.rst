@@ -12,6 +12,9 @@ Welcome to phuzzy's documentation!
     contributing
     authors
     history
+
+..
+
     lsdyna
 
 Indices and tables
