@@ -110,3 +110,6 @@ def atest_div():
     print(a.df)
 
     a.plot(show=True)
+
+if __name__ == '__main__':
+    atest_add()
