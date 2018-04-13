@@ -2,6 +2,9 @@
 
 [![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/lepy/phuzzy/master?grs=github&t=beige)
 [![Coverage Status](https://coveralls.io/repos/github/lepy/phuzzy/badge.svg?branch=master)](https://coveralls.io/github/lepy/phuzzy?branch=master)
+[![Travis](https://img.shields.io/travis/lepy/phuzzy.svg)](https://travis-ci.org/lepy/phuzzy)
+[![Dokumentation Status](https://readthedocs.org/projects/phuzzy/badge/?version=latest)](https://phuzzy.readthedocs.io/en/latest/?badge=latest)
+[![Updates](https://pyup.io/repos/github/lepy/phuzzy/shield.svg)](https://pyup.io/repos/github/lepy/phuzzy/)
 
 ## phuzzy.Triangle
 
