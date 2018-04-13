@@ -129,7 +129,8 @@ fuzzy membership function
 ## phuzzy.TruncGenNorm
 
     p = phuzzy.TruncGenNorm(alpha0=[1,3],
-                         number_of_alpha_levels=15, name="y", beta=5)
+                         number_of_alpha_levels=15, name="y", 
+                         beta=5)
 
 ![](doc/truncgennorm.png)
 
@@ -137,8 +138,9 @@ fuzzy membership function
 
 ## phuzzy.Superellipse
 
-    p = phuzzy.TruncGenNorm(alpha0=[1,3],
-                         number_of_alpha_levels=15, name="y", m=2, n=.5)
+    p = phuzzy.Superellipse(alpha0=[1,3],
+                         number_of_alpha_levels=15, name="y", 
+                         m=2, n=.5)
 
 ![](doc/superellipse.png)
 
