@@ -9,11 +9,10 @@ python:
 
 # Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install: pip install -U tox-travis
-install: pip install -U tox
 install: pip install -r requirements.txt
 
 # Command to run tests, e.g. python setup.py test
-script: tox
+script: py.test
 
 # Assuming you have installed the travis-ci CLI tool, after you
 # create the Github repo and add it to Travis, run the
