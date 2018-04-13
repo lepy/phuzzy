@@ -81,8 +81,8 @@ todo_include_todos = False
 
 # -- Options for HTML output -------------------------------------------
 
-html_favicon = "favicon.ico"
-
+# html_favicon = "favicon.ico"
+html_favicon = "_static/favicon.ico"
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
@@ -172,12 +172,13 @@ class LSDYNA_Lexer(RegexLexer):
 
     tokens = {
         'root': [
-            (r'\*AIRBAG\_HYBRID\_ID', token.Keyword),
-            (r'AIRBAG', token.Keyword),
-            (r'#.*?$', token.Comment.Singleline),
-            (r'^\*[a-zA-Z]', token.Name),
+            (r'^\*.*?$', token.Keyword),
+            (r'\$.*?$', token.Comment.Singleline),
+            (r'(\d+\.\d*|\d*\.\d+)([eE][+-]?[0-9]+)?j?', token.Number.Float),
+            (r'\d+j?', token.Number.Integer),
+            (r'\&.*?\s', token.String),
             (r'\s', token.Text)
-        ]
+        ],
     }
 
 lexers['lsdyna'] = LSDYNA_Lexer(startinline=True)
@@ -193,16 +194,17 @@ lexers['lsdyna'] = LSDYNA_Lexer(startinline=True)
 #         Comment:                'italic #888',
 #         Keyword:                'bold #005',
 #         Name:                   '#f00',
+#         Number:                 '#f00',
 #         Name.Function:          '#0f0',
 #         Name.Class:             'bold #0f0',
 #         String:                 'bg:#eee #111'
 #     }
-#
-#
+
+
 
 pygments_style = 'sphinx'
 # pygments_style = 'pastie'
-
+#
 from pygments.styles import get_all_styles
 styles = list(get_all_styles())
 print("styles", styles)
