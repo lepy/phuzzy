@@ -176,7 +176,7 @@ class LSDYNA_Lexer(RegexLexer):
             (r'\$.*?$', token.Comment.Singleline),
             (r'(\d+\.\d*|\d*\.\d+)([eE][+-]?[0-9]+)?j?', token.Number.Float),
             (r'\d+j?', token.Number.Integer),
-            (r'\&.*?\s', token.String),
+            (r'\&\w{2,9}|\&\w*?\s', token.Name),
             (r'\s', token.Text)
         ],
     }
