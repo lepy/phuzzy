@@ -7,16 +7,6 @@ import numpy as np
 
 import phuzzy.mpl as phm
 
-def test_dyn_mix():
-    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
-    print(p)
-    print(p.df)
-    p.convert_df(5)
-    print(p.df)
-    assert not hasattr(p, "plot")
-    mix_mpl(p)
-    assert hasattr(p, "plot")
-
 
 def plot():
 
@@ -174,6 +164,12 @@ def plot_pow2():
     H = 300.  # mm
     B = 300.  # mm
     fig, axs = plt.subplots(3, 3, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
+
+    for i in range(3):
+        axs[0,i].get_shared_x_axes().join(axs[0,i],axs[1,i],axs[2,i])
+
+        axs[i,0].get_shared_y_axes().join(axs[i,0],axs[i,1],axs[i,1])
+
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     mix_mpl(x)
     x.plot(ax=axs[0, 0])
@@ -187,23 +183,43 @@ def plot_pow2():
     mix_mpl(z)
     z.plot(ax=axs[0, 2])
 
-    b = np.linspace(0, 5, 200)
+    b = np.linspace(-1, 5, 200)
 
     px = x.pdf(b)
     Px = x.cdf(b)
-    axs[1, 0].plot(b, px, label="pdf", lw=2)
-    axs[2, 0].plot(b, Px, label="cdf", lw=2)
+    axs[1, 0].fill_between(b, 0, px, alpha=.2)
+    axs[1, 0].plot(b, px, label="pdf", lw=1)
+    axs[2, 0].fill_between(b, 0, Px, alpha=.2)
+    axs[2, 0].plot(b, Px, label="cdf", lw=1)
 
     py = y.pdf(b)
     Py = y.cdf(b)
-    axs[1, 1].plot(b, py, label="pdf", lw=2)
-    axs[2, 1].plot(b, Py, label="cdf", lw=2)
+    axs[1, 1].fill_between(b, 0, py, alpha=.2)
+    axs[1, 1].plot(b, py, label="pdf", lw=1)
+    axs[2, 1].fill_between(b, 0, Py, alpha=.2)
+    axs[2, 1].plot(b, Py, label="cdf", lw=1)
 
     b = np.linspace(z.alpha0["low"], z.alpha0["high"], 200)
     pz = z.pdf(b)
     Pz = z.cdf(b)
-    axs[1, 2].plot(b, pz, label="pdf", lw=2)
-    axs[2, 2].plot(b, Pz, label="cdf", lw=2)
+    axs[1, 2].fill_between(b, 0, pz, alpha=.2)
+    axs[1, 2].plot(b, pz, label="pdf", lw=1)
+    axs[2, 2].fill_between(b, 0, Pz, alpha=.2)
+    axs[2, 2].plot(b, Pz, label="cdf", lw=1)
+
+    for i in range(3):
+        axs[2,i].axhline(1, alpha=.4, c="k", lw=.5)
+        # axs[1,i].set_ylabel("pdf")
+        # axs[2,i].set_ylabel("cdf")
+        axs[1,i].annotate('pdf', (0.01, 0.99), xycoords='axes fraction', size=8, ha='left', va='top', textcoords='axes fraction')
+        axs[2,i].annotate('cdf', (0.01, 0.99), xycoords='axes fraction', size=8, ha='left', va='top', textcoords='axes fraction')
+
+    # axs[1,1].sharex = axs[0,1]
+    # axs[2,1].sharex = axs[0,1]
+    # axs[1,1].share_x_axes(axs[0,1])
+
+    for ax in axs.ravel():
+        ax.set_ylim(0, None)
 
     fig.tight_layout()
     fig.savefig("x^y.png")
@@ -267,6 +283,6 @@ if __name__ == '__main__':
     # plot_mul()
     # plot_div()
     # plot_pow()
-    # plot_pow2()
+    plot_pow2()
     # plot_gennorm_mix()
-    plot_superellipse()
+    # plot_superellipse()
