@@ -10,19 +10,16 @@ import phuzzy.mpl as phm
 
 def plot():
 
-    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    p = phm.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     print(p)
     print(p.df)
     p.convert_df(5)
     print(p.df)
-    assert not hasattr(p, "plot")
-    mix_mpl(p)
-    assert hasattr(p, "plot")
 
     p.plot(show=False, filepath="trapezoid.png", title=True)
     print(p.__class__)
 
-    p = phuzzy.Triangle(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    p = phm.Triangle(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     print(p)
     print(p.df)
     p.convert_df(5)
@@ -32,7 +29,7 @@ def plot():
     p.plot(show=False, filepath="triangle.png", title=True)
 
     # p = phuzzy.TruncNorm(alpha0=[0,2], alpha1=[2,3])
-    p = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="x")
+    p = phm.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="x")
 
     print(p)
     print(p.df)
@@ -41,7 +38,7 @@ def plot():
     mix_mpl(p)
     p.plot(show=False, filepath="truncnorm.png", title=True)
 
-    p = phuzzy.Uniform(alpha0=[1, 4], number_of_alpha_levels=5, name="x")
+    p = phm.Uniform(alpha0=[1, 4], number_of_alpha_levels=5, name="x")
 
     print(p)
     print(p.df)
@@ -287,7 +284,8 @@ if __name__ == '__main__':
     # plot_sub()
     # plot_mul()
     # plot_div()
-    plot_pow()
-    plot_pow2()
+    # plot_pow()
+    # plot_pow2()
     # plot_gennorm_mix()
     # plot_superellipse()
+    plot()
