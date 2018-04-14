@@ -270,7 +270,7 @@ def plot_superellipse():
         p.plot(ax=ax)
         ax.set_title(r"$m=%.1f$, $n=%.1f$" % (p.m, p.n))
     fig.tight_layout()
-    fig.savefig("superellipse.png")
+    fig.savefig("/tmp/superellipse_var.png")
     plt.show()
 
 
@@ -285,5 +285,5 @@ if __name__ == '__main__':
     # plot_pow()
     # plot_pow2()
     # plot_gennorm_mix()
-    # plot_superellipse()
-    plot()
+    plot_superellipse()
+    # plot()

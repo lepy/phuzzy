@@ -12,4 +12,4 @@ TruncNorm
     :scale: 90 %
     :alt: TruncNorm fuzzy number
 
-    TruncNorm fuzzy number (this is just an interval)
+    TruncNorm fuzzy number

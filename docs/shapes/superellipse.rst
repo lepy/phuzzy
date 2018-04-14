@@ -12,4 +12,10 @@ Superellipse
     :scale: 90 %
     :alt: Superellipse fuzzy number
 
-    Superellipse fuzzy number (this is just an interval)
+    Superellipse fuzzy number
+
+.. figure:: superellipse_var.png
+    :scale: 90 %
+    :alt: Superellipse fuzzy number (variation m, n)
+
+    Superellipse fuzzy number (variation m, n)

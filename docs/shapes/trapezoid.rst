@@ -12,4 +12,4 @@ Trapezoid
     :scale: 90 %
     :alt: Trapezoid fuzzy number
 
-    Trapezoid fuzzy number (this is just an interval)
+    Trapezoid fuzzy number

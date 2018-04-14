@@ -14,4 +14,4 @@ Triangle
     :scale: 90 %
     :alt: Triangle fuzzy number
 
-    Triangle fuzzy number (this is just an interval)
+    Triangle fuzzy number

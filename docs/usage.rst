@@ -49,7 +49,7 @@ Triangle
     :scale: 90 %
     :alt: Triangle fuzzy number
 
-    Triangle fuzzy number (this is just an interval)
+    Triangle fuzzy number
 
 Trapezoid
 ^^^^^^^^^
@@ -65,7 +65,7 @@ Trapezoid
     :scale: 90 %
     :alt: Trapezoid fuzzy number
 
-    Trapezoid fuzzy number (this is just an interval)
+    Trapezoid fuzzy number
 
 TruncNorm
 ^^^^^^^^^
@@ -81,7 +81,7 @@ TruncNorm
     :scale: 90 %
     :alt: TruncNorm fuzzy number
 
-    TruncNorm fuzzy number (this is just an interval)
+    TruncNorm fuzzy number
 
 TruncGenNorm
 ^^^^^^^^^^^^
@@ -97,7 +97,7 @@ TruncGenNorm
     :scale: 90 %
     :alt: TruncGenNorm fuzzy number
 
-    TruncGenNorm fuzzy number (this is just an interval)
+    TruncGenNorm fuzzy number
 
 Superellipse
 ^^^^^^^^^^^^
@@ -113,7 +113,7 @@ Superellipse
     :scale: 90 %
     :alt: Superellipse fuzzy number
 
-    Superellipse fuzzy number (this is just an interval)
+    Superellipse fuzzy number
 
 
 basic operations
@@ -166,7 +166,7 @@ Multiplication
 
 .. math::
 
-    z = x * y
+    z = x  y
 
 .. code-block:: python
     :linenos:
