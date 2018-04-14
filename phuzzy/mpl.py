@@ -72,7 +72,7 @@ class MPL_Mixin():
         ax.set_xlim(self.alpha0["low"] - 0.2 * dx, self.alpha0["high"] + 0.2 * dx)
         ax.set_ylim(0, 1.1)
         if xlim is not None:
-            ax.set_xlim(range)
+            ax.set_xlim(xlim)
         try:
             fig.tight_layout()
             if filepath:
