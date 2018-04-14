@@ -13,4 +13,4 @@ Uniform
     :scale: 90 %
     :alt: uniform fuzzy number
 
-    Uniform fuzzy number (this is just an interval)
+    Uniform fuzzy number
