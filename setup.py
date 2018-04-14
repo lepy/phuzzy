@@ -10,6 +10,7 @@ def extract_version():
             if line.startswith("__version__"):
                 version = line.split("=")[-1].strip()
                 return {"__version__":version}
+                break
         else:
             raise RuntimeError("Missing line starting with '__version__ =' in %s" % (init_py,))
 

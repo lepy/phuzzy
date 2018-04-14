@@ -297,13 +297,15 @@ class FuzzyNumber(object):
         y = np.interp(x, x_, y_ / I, left=0., right=0.)
         return y
 
-    def cdf(self, x, n=1000):
+    def cdf(self, x, **kwargs):
         """Cumulative distribution function
 
         :param x: x values
         :param n: number of integration points
         :return: y
         """
+
+        n = kwargs.get("n", 1000)
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.low, self.df.high[::-1]))
 
@@ -393,7 +395,14 @@ class Triangle(FuzzyNumber):
                       0.]
         return np.select(condlist, choicelist)
 
-    def cdf(self, x):
+    def cdf(self, x, **kwargs):
+        """Cumulative distribution function
+
+        :param x: x values
+        :param n: number of integration points
+        :return: y
+        """
+
         a = self._a
         b = self._b
         c = self._c
@@ -442,7 +451,12 @@ class Trapezoid(FuzzyNumber):
         self.convert_df(alpha_levels=alpha_levels)
 
     def pdf(self, x):
-        """https://en.wikipedia.org/wiki/Trapezoidal_distribution"""
+        """pdf
+
+        :param x:
+        :return:
+        """
+        # https://en.wikipedia.org/wiki/Trapezoidal_distribution
         a = self._a
         b = self._b
         c = self._c
@@ -455,7 +469,14 @@ class Trapezoid(FuzzyNumber):
                       0.]
         return np.select(condlist, choicelist)
 
-    def cdf(self, x):
+    def cdf(self, x, **kwargs):
+        """Cumulative distribution function
+
+        :param x: x values
+        :param n: number of integration points
+        :return: y
+        """
+
         a = self._a
         b = self._b
         c = self._c
@@ -511,7 +532,14 @@ class Uniform(FuzzyNumber):
                       0.]
         return np.select(condlist, choicelist)
 
-    def cdf(self, x):
+    def cdf(self, x, **kwargs):
+        """Cumulative distribution function
+
+        :param x: x values
+        :param n: number of integration points
+        :return: y
+        """
+
         a = self._a
         b = self._b
         condlist = [x <= self._a, x < self._b, x >= self._b]

@@ -71,7 +71,7 @@ class TruncNorm(FuzzyNumber):
         # assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
         nn = 501
         pp = np.linspace(0, 1, nn)
-        ppf = self.distr.ppf(pp)
+        # ppf = self.distr.ppf(pp)
         x = np.linspace(alpha0[0], alpha0[1], nn)
         pdf = self.distr.pdf(x)
         # alphas = np.linspace(0,pdf/pdf.max(),alpha_levels)
@@ -130,8 +130,9 @@ class TruncGenNorm(FuzzyNumber):
 
     @property
     def distr(self):
-        def obj(s, args=[1., 4., 4., .999]):
+        def obj(s, args=None):
             """args = [min, max, beta, ppf]"""
+
             loc = (args[1]+args[0])/2.
             beta = args[2]
             ppf = args[3]

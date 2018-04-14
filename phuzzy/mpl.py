@@ -20,7 +20,7 @@ def mix_mpl(obj):
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=False, range=None, labels=True, title=False):
+    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False):
         """plots fuzzy number with mpl"""
         logging.debug("plots fuzzy number with mpl")
         df = self.df
@@ -71,7 +71,7 @@ class MPL_Mixin():
         dx = abs(self.alpha0["high"] - self.alpha0["low"])
         ax.set_xlim(self.alpha0["low"] - 0.2 * dx, self.alpha0["high"] + 0.2 * dx)
         ax.set_ylim(0, 1.1)
-        if range is not None:
+        if xlim is not None:
             ax.set_xlim(range)
         try:
             fig.tight_layout()
