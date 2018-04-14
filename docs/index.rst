@@ -9,6 +9,7 @@ Welcome to phuzzy's documentation!
     installation
     usage
     modules
+    shapes/shapes
     contributing
     authors
     history
