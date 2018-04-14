@@ -27,9 +27,16 @@ setup_params = dict(
     packages=setuptools.find_packages(exclude=["tests"]),
     zip_safe=False,
 
-    install_requires=['numpy', 'pandas', 'scipy']
+    setup_requires=[
+        'pytest-runner',
+    ],
+    tests_require=[
+        'pytest',
+    ],
 
+    install_requires=['numpy', 'pandas', 'scipy'],
 )
+
 
 if __name__ == "__main__":
     setuptools.setup(**setup_params)
