@@ -66,11 +66,11 @@ class TruncNorm(FuzzyNumber):
         return self._distr
 
     def discretize(self, alpha0, alpha1, alpha_levels):
-        print("alpha0", alpha0)
-        assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
+        # print("alpha0", alpha0)
+        # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         # assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
         nn = 501
-        pp = np.linspace(0, 1, nn)
+        # pp = np.linspace(0, 1, nn)
         # ppf = self.distr.ppf(pp)
         x = np.linspace(alpha0[0], alpha0[1], nn)
         pdf = self.distr.pdf(x)
@@ -148,7 +148,7 @@ class TruncGenNorm(FuzzyNumber):
         return self._distr
 
     def discretize(self, alpha0, alpha1, alpha_levels):
-        assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
+        # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         nn = 501
         pp = np.linspace(0., 1., nn)
         ppf = self.distr.ppf(pp)
