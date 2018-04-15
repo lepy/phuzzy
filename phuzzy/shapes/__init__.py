@@ -218,15 +218,15 @@ class FuzzyNumber(object):
         if self.df is not None:
             return self.df.iloc[-1]
 
-    @property
-    def area(self):
-        """integral of the fuzzy number
-
-        :return: area
-        """
-        raise NotImplementedError
-        A = ((self.alpha0.high - self.alpha0.low) - (self.df.high.values - self.df.low.values)).sum()
-        return A
+    # @property
+    # def area(self):
+    #     """integral of the fuzzy number
+    #
+    #     :return: area
+    #     """
+    #     raise NotImplementedError
+    #     # A = ((self.alpha0.high - self.alpha0.low) - (self.df.high.values - self.df.low.values)).sum()
+    #     # return A
 
     def import_csv(self, fh):
         """load alpha levels from csv
@@ -342,8 +342,8 @@ class Triangle(FuzzyNumber):
         :param alpha_levels: number of alpha levels
         :return: None
         """
-        assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
-        assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
+        # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
+        # assert isinstance(alpha1, collections.Sequence) and len(alpha1) > 0
         self._a = alpha0[0]
         self._b = alpha0[1]
         self._c = alpha1[0]
@@ -438,8 +438,8 @@ class Trapezoid(FuzzyNumber):
         :return: None
         """
 
-        assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
-        assert isinstance(alpha1, collections.Sequence) and len(alpha1) == 2
+        # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
+        # assert isinstance(alpha1, collections.Sequence) and len(alpha1) == 2
         self._a = alpha0[0]
         self._b = alpha1[0]
         self._c = alpha1[1]
@@ -514,7 +514,7 @@ class Uniform(FuzzyNumber):
         :return: None
         """
 
-        assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
+        # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         self._a = alpha0[0]
         self._b = alpha0[1]
         self.df = pd.DataFrame(columns=["alpha", "low", "high"],
