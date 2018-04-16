@@ -3,7 +3,6 @@
 from phuzzy.shapes import FuzzyNumber
 import numpy as np
 import pandas as pd
-import collections
 from scipy.stats import truncnorm, gennorm
 
 class TruncNorm(FuzzyNumber):
@@ -151,7 +150,7 @@ class TruncGenNorm(FuzzyNumber):
         # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         nn = 501
         pp = np.linspace(0., 1., nn)
-        ppf = self.distr.ppf(pp)
+        # ppf = self.distr.ppf(pp)
         x = np.linspace(alpha0[0], alpha0[1], nn)
         pdf = self.distr.pdf(x)
         alphas = pdf / pdf.max()
