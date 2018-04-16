@@ -46,7 +46,7 @@ class MPL_Mixin():
         ax.fill_betweenx(df["alpha"].values, df["low"].min(), df["low"].values, color="gray", alpha=.1)
         ax.fill_betweenx(df["alpha"].values, df["high"].values, df["high"].max(), color="gray", alpha=.1)
         # alphalines
-        for i, row in df.iterrows():
+        for _, row in df.iterrows():
             ax.plot([row["low"], row["high"]], [row.alpha, row.alpha], lw=.8, alpha=.7, ls="--", c="gray")
 
         if labels is True:
@@ -77,7 +77,7 @@ class MPL_Mixin():
             fig.tight_layout()
             if filepath:
                 fig.savefig(filepath, dpi=90)
-        except UnboundLocalError as exp:
+        except UnboundLocalError:
             pass
 
         if show is True:

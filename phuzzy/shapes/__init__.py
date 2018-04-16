@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+r# -*- coding: utf-8 -*-
 
 import logging
 
@@ -368,7 +368,7 @@ class Triangle(FuzzyNumber):
         means = []
         mean = 3 * data.mean() - data.min() - data.max()
         means.append(mean)
-        print("!", mean)
+        # print("!", mean)
         for i in range(n):
             train_data = np.random.choice(data, int(len(data) * 50))
 
