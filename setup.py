@@ -39,7 +39,8 @@ setup_params = dict(
     url="https://github.com/lepy/phuzzy",
     license = "MIT",
     keywords = "data, phuzzy",
-    long_description = os.read("README.md"),
+    long_description = open("README.md").read(),
+    long_description_content_type='text/markdown',
 
     classifiers=CLASSIFIERS,
 
