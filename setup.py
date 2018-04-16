@@ -16,6 +16,20 @@ def extract_version():
             raise RuntimeError("Missing line starting with '__version__ =' in %s" % (init_py,))
 
 
+DOWNLOAD_URL = 'https://github.com/lepy/phuzzy'
+CLASSIFIERS = [
+    'Development Status :: 3 - Alpha',
+    'Environment :: Console',
+    'Operating System :: OS Independent',
+    'Intended Audience :: Science/Research',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.5',
+    'Programming Language :: Python :: 3.6',
+    'Topic :: Scientific/Engineering']
+
 setup_params = dict(
     name="phuzzy",
     description = ("fuzzy data"),
@@ -25,6 +39,10 @@ setup_params = dict(
     url="https://github.com/lepy/phuzzy",
     license = "MIT",
     keywords = "data, phuzzy",
+    long_description = os.read("README.md"),
+
+    classifiers=CLASSIFIERS,
+
 
     packages=setuptools.find_packages(exclude=["tests"]),
     zip_safe=False,
