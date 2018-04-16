@@ -11,35 +11,35 @@ import phuzzy.mpl as phm
 def plot():
 
     uni = phm.Uniform(alpha0=[1, 4], number_of_alpha_levels=5, name="x")
-    uni.plot(show=True, filepath="/tmp/uniform.png", title=True)
+    uni.plot(show=True, filepath="~/tmp/uniform.png", title=True)
     print(uni)
     print(uni.df)
 
 
     tri = phm.Triangle(alpha0=[1, 4], alpha1=[2], number_of_alpha_levels=5)
-    tri.plot(show=False, filepath="/tmp/triangle.png", title=True)
+    tri.plot(show=False, filepath="~/tmp/triangle.png", title=True)
     print(tri)
     print(tri.df)
 
     trap = phm.Trapezoid(alpha0=[1, 5], alpha1=[2, 3], number_of_alpha_levels=5)
-    trap.plot(show=False, filepath="/tmp/trapezoid.png", title=True)
+    trap.plot(show=False, filepath="~/tmp/trapezoid.png", title=True)
     print(trap)
     print(trap.df)
 
     tn = phm.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="x")
-    tn.plot(show=False, filepath="/tmp/truncnorm.png", title=True)
+    tn.plot(show=False, filepath="~/tmp/truncnorm.png", title=True)
     print(tn)
     print(tn.df)
     print(tn.distr.ppf([.05, .5, .95]))
 
     tgn = phm.TruncGenNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=15, beta=3.)
-    tgn.plot(show=False, filepath="/tmp/truncgennorm.png", title=True)
+    tgn.plot(show=False, filepath="~/tmp/truncgennorm.png", title=True)
     print(tgn)
     print(tgn.df)
     print(tgn.distr.ppf([.05, .5, .95]))
 
     se = phm.Superellipse(alpha0=[-1, 2.], alpha1=None, m=1.0, n=.5, number_of_alpha_levels=15)
-    se.plot(show=True, filepath="/tmp/superellipse.png", title=True)
+    se.plot(show=True, filepath="~/tmp/superellipse.png", title=True)
     print(se)
     print(se.df)
 

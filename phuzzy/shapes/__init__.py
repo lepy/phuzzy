@@ -369,7 +369,7 @@ class Triangle(FuzzyNumber):
         mean = 3 * data.mean() - data.min() - data.max()
         means.append(mean)
         # print("!", mean)
-        for i in range(n):
+        for _ in range(n):
             train_data = np.random.choice(data, int(len(data) * 50))
 
             mean = 3 * train_data.mean() - train_data.min() - train_data.max()
