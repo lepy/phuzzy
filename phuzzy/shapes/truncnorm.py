@@ -149,7 +149,7 @@ class TruncGenNorm(FuzzyNumber):
     def discretize(self, alpha0, alpha1, alpha_levels):
         # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         nn = 501
-        pp = np.linspace(0., 1., nn)
+        # pp = np.linspace(0., 1., nn)
         # ppf = self.distr.ppf(pp)
         x = np.linspace(alpha0[0], alpha0[1], nn)
         pdf = self.distr.pdf(x)
