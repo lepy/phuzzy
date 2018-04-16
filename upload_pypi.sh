@@ -1,6 +1,6 @@
 #!/bin/bash
-cd ~/projects/phuzzy/src
+cd ~/projects/phuzzy
 rm dist/*.tar.gz
-python setup.py sdist upload
+python setup.py build sdist upload
 twine upload dist/*
 

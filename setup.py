@@ -5,20 +5,22 @@ import setuptools
 
 def extract_version():
     init_py = os.path.join(os.path.dirname(__file__), "phuzzy", "__init__.py")
+    version = "0.0.0"
     with open(init_py) as init:
         for line in init:
             if line.startswith("__version__"):
-                version = line.split("=")[-1].strip()
+                version = line.split("=")[-1].strip().replace('"', '')
+                print("version", version)
                 return {"__version__":version}
-        # else:
-        #     raise RuntimeError("Missing line starting with '__version__ =' in %s" % (init_py,))
+        if version == "0.0.0":
+            raise RuntimeError("Missing line starting with '__version__ =' in %s" % (init_py,))
 
 
 setup_params = dict(
     name="phuzzy",
     description = ("fuzzy data"),
-    version=extract_version()["__version__"],
-    author="Lepy",
+    version = extract_version()["__version__"],
+    author = "Lepy",
     author_email="lepy@mailbox.org",
     url="https://github.com/lepy/phuzzy",
     license = "MIT",
