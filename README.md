@@ -1,5 +1,6 @@
 # phuzzy
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/05c40922de9340c18e98396bcea1f922)](https://app.codacy.com/app/lepy/phuzzy?utm_source=github.com&utm_medium=referral&utm_content=lepy/phuzzy&utm_campaign=badger)
 [![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/lepy/phuzzy/master?grs=github&t=beige)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4814372e95c543a69c69004c853b17be)](https://www.codacy.com/app/lepy/phuzzy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lepy/phuzzy&amp;utm_campaign=Badge_Grade)
 [![Coverage Status](https://coveralls.io/repos/github/lepy/phuzzy/badge.svg?branch=master)](https://coveralls.io/github/lepy/phuzzy?branch=master)
