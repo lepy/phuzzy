@@ -1,6 +1,41 @@
 import phuzzy
 import numpy as np
 
+def test_operation_class():
+    tra = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    tri = phuzzy.Triangle(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    uni = phuzzy.Uniform(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    x = tra + tra
+    assert isinstance(x, phuzzy.Trapezoid)
+
+    x = uni + uni
+    assert isinstance(x, phuzzy.Uniform)
+
+    x = tri + uni
+    assert isinstance(x, phuzzy.Triangle)
+
+    x = uni + tri
+    print(x.__class__)
+    assert isinstance(x, phuzzy.Triangle)
+
+    x = tra + uni
+    assert isinstance(x, phuzzy.Trapezoid)
+
+    x = uni + tra
+    assert isinstance(x, phuzzy.Trapezoid)
+
+    x = tra + tri
+    assert isinstance(x, phuzzy.Trapezoid)
+
+    x = tri + tra
+    assert isinstance(x, phuzzy.Trapezoid)
+
+    x = uni + tri + tra
+    assert isinstance(x, phuzzy.Trapezoid)
+
+    x = uni + 2.
+    assert isinstance(x, phuzzy.Uniform)
+
 
 def test_add():
     t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=3)
