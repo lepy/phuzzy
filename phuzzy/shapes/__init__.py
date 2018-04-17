@@ -162,7 +162,7 @@ class FuzzyNumber(object):
                                              "r": np.nanmax(quotients, axis=0)})
         return new
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         """divide by a fuzzy number
 
         :param other: phuzzy.FuzzyNumber
@@ -183,6 +183,9 @@ class FuzzyNumber(object):
                                              "l": np.nanmin(quotients, axis=0),
                                              "r": np.nanmax(quotients, axis=0)})
         return new
+
+    __div__ = __truediv__
+    __floordiv__ = __truediv__
 
     def __pow__(self, other):
         """apply power of a fuzzy number
