@@ -255,11 +255,12 @@ class FuzzyNumber(object):
         if isinstance(fh, str):
             fh = open(fh, "r")
 
-        self.df = pd.DataFrame.from_csv(fh)
-        print(self.df.head())
+        # self.df = pd.DataFrame.from_csv(fh)
+        self.df = pd.read_csv(fh)
+        # print(self.df.head())
         return self.df
 
-    def export_csv(self, filepath):
+    def export_csv(self, filepath=None):
         """export alpha levels to csv
 
         :param filepath: csv file path
@@ -267,7 +268,8 @@ class FuzzyNumber(object):
         """
         logger.info("export df '%s'" % filepath)
         if self.df is not None:
-            self.df.to_csv(filepath)
+            res = self.df.to_csv(filepath)
+            return res
 
     @classmethod
     def from_data(cls, **kwargs):
@@ -278,7 +280,26 @@ class FuzzyNumber(object):
         :return: fuzzy number
         """
 
-        p = cls(**kwargs)
+        n = kwargs.get("n", 100)
+        data = kwargs.get("data")
+        data = np.asarray(data)
+        kwargs["alpha0"] = [data.min(), data.max()]
+        # means = []
+        # mean = 3 * data.mean() - data.min() - data.max()
+        mean = data.mean()
+        # means.append(mean)
+        # # print("!", mean)
+        # for _ in range(n):
+        #     train_data = np.random.choice(data, int(len(data) * 50))
+        #
+        #     mean = 3 * train_data.mean() - train_data.min() - train_data.max()
+        #     means.append(mean)
+        #
+        # mean = np.array(means).mean()
+        kwargs["alpha1"] = [mean]
+        p = Triangle(**kwargs)
+        # print("!!", mean)
+
         return p
 
     def __str__(self):
@@ -381,22 +402,26 @@ class Triangle(FuzzyNumber):
 
         n = kwargs.get("n", 100)
         data = kwargs.get("data")
-        data = np.asarray(data)
-        kwargs["alpha0"] = [data.min(), data.max()]
+        data = np.asarray(data, float)
+        datamin = data.min()
+        datamax = data.max()
+        kwargs["alpha0"] = [datamin, datamax]
         means = []
-        mean = 3 * data.mean() - data.min() - data.max()
+        mean = 3 * data.mean() - datamin - datamax
         means.append(mean)
         # print("!", mean)
         for _ in range(n):
             train_data = np.random.choice(data, int(len(data) * 50))
 
-            mean = 3 * train_data.mean() - train_data.min() - train_data.max()
+            # mean = 3 * train_data.mean() - train_data.min() - train_data.max()
+            mean = 3 * train_data.mean() - (train_data.min() + datamin) / 2 - (train_data.max()+datamax) / 2
             means.append(mean)
 
         mean = np.array(means).mean()
         kwargs["alpha1"] = [mean]
         p = cls(**kwargs)
         print("!!", mean)
+        print("!!", data)
 
         return p
 
@@ -405,6 +430,7 @@ class Triangle(FuzzyNumber):
         a = self._a
         b = self._b
         c = self._c
+        x = np.asarray(x)
         condlist = [x <= self._a, x <= self._c, x == c, x < self._b, x >= self._b]
         choicelist = [0.,
                       2. * (x - a) / (b - a) / (c - a),
@@ -424,6 +450,7 @@ class Triangle(FuzzyNumber):
         a = self._a
         b = self._b
         c = self._c
+        x = np.asarray(x)
         condlist = [x <= self._a, x <= self._c, x < self._b, x >= self._b]
         choicelist = [0.,
                       (x - a) ** 2 / (c - a) / (b - a),
@@ -479,6 +506,7 @@ class Trapezoid(FuzzyNumber):
         b = self._b
         c = self._c
         d = self._d
+        x = np.asarray(x)
         condlist = [x <= self._a, x <= self._b, x <= self._c, x < self._d, x >= self._d]
         choicelist = [0.,
                       2. / (c + d - a - b) * (x - a) / (b - a),
@@ -499,6 +527,7 @@ class Trapezoid(FuzzyNumber):
         b = self._b
         c = self._c
         d = self._d
+        x = np.asarray(x)
         condlist = [x <= self._a, x <= self._b, x <= self._c, x < self._d, x >= self._d]
         choicelist = [0.,
                       (x - a) ** 2 / (c + d - a - b) / (b - a),
@@ -544,6 +573,7 @@ class Uniform(FuzzyNumber):
         """https://en.wikipedia.org/wiki/Uniform_distribution_(continuous)"""
         a = self._a
         b = self._b
+        x = np.asarray(x)
         condlist = [x <= self._a, x < self._b, x >= self._b]
         choicelist = [0.,
                       1. / (b - a),
@@ -560,6 +590,7 @@ class Uniform(FuzzyNumber):
 
         a = self._a
         b = self._b
+        x = np.asarray(x)
         condlist = [x <= self._a, x < self._b, x >= self._b]
         choicelist = [0.,
                       (x - a) / (b - a),

@@ -144,4 +144,4 @@ def test_power():
 
 
 if __name__ == '__main__':
-    atest_add()
+    test_add()

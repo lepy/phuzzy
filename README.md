@@ -9,13 +9,21 @@
 [![saythanks.io/to/lepy](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/lepy)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1219617.svg)](https://doi.org/10.5281/zenodo.1219617)
 
+
+* python representation of fuzzy numbers|data
+* specify uncertainty easily
+
+# Usage
+
+To use phuzzy in a project:
+
 ## phuzzy.Triangle
 
     p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2], number_of_alpha_levels=5)
 
     p.df
 
-       alpha   low high
+       alpha     l    r
     0   0.00  1.00  4.0
     1   0.25  1.25  3.5
     2   0.50  1.50  3.0
@@ -30,7 +38,7 @@
 
     p.df
 
-       alpha   low  high
+       alpha     l     r
     0   0.00  1.00  4.00
     1   0.25  1.25  3.75
     2   0.50  1.50  3.50
@@ -45,7 +53,7 @@
 
     p.df
 
-           alpha       low      high
+           alpha         l         r
     0   0.000000  1.000000  3.000000
     1   0.071429  1.234184  2.765816
     2   0.142857  1.342402  2.657598
@@ -63,3 +71,64 @@
     14  1.000000  2.000000  2.000000
 
 ![](doc/truncnorm.png)
+
+## phuzzy.TruncGenNorm
+
+    import phuzzy.mpl as phm
+    tgn = phm.TruncGenNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=15, beta=3.)
+    tgn.plot(show=False, filepath="truncgennorm.png", title=True)
+
+![](doc/truncgennorm.png)
+
+## phuzzy.Superellipse
+
+    import phuzzy.mpl as phm
+    se = phm.Superellipse(alpha0=[-1, 2.], alpha1=None, m=1.0, n=.5, number_of_alpha_levels=17)
+    se.plot(show=True, filepath="superellipse.png", title=True)
+
+![](doc/superellipse.png)
+
+## Addition
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
+    z = x + y
+    z.name = "x+y"
+
+![](docs/operations/x+y.png)
+
+## Substaction
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
+    z = x - y
+    z.name = "x-y"
+
+![](docs/operations/x-y.png)
+
+## Multiplication
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
+    z = x * y
+    z.name = "x*y"
+
+![](docs/operations/x_mul_y.png)
+
+## Division
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
+    z = x / y
+    z.name = "x/y"
+
+![](docs/operations/x:y.png)
+
+## Power
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
+    z = x ** y
+    z.name = "x^y"
+
+![](docs/operations/x_pow_y.png)

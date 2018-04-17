@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import phuzzy
-
+import phuzzy.mpl as phm
 from phuzzy.mpl import mix_mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,6 +16,34 @@ def test_dyn_mix():
     mix_mpl(p)
     assert hasattr(p, "plot")
 
+def test_mpl_plot():
+    p = phm.Uniform(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    assert hasattr(p, "plot")
+
+    p = phm.Triangle(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    assert hasattr(p, "plot")
+
+    p = phm.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    assert hasattr(p, "plot")
+
+    p = phm.TruncNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    assert hasattr(p, "plot")
+
+    p = phm.TruncGenNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    assert hasattr(p, "plot")
+
+    p = phm.Superellipse(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    assert hasattr(p, "plot")
+    fig = p.plot()
+    assert fig is not None
+
+    p = phm.MPL_Mixin()
+    assert hasattr(p, "plot")
+
+    o = phuzzy.Triangle(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    assert not hasattr(o, "plot")
+    phm.extend_instance(o, phm.MPL_Mixin)
+    assert hasattr(o, "plot")
 
 def plot():
 

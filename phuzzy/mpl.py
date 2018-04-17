@@ -83,6 +83,8 @@ class MPL_Mixin():
         if show is True:
             plt.show()
 
+        return fig
+
 class Uniform(phuzzy.Uniform, MPL_Mixin):
     """Uniform fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
