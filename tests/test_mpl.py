@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import matplotlib
+matplotlib.use('Agg')
+
 import phuzzy
 import phuzzy.mpl as phm
 from phuzzy.mpl import mix_mpl
