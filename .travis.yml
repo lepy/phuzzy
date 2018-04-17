@@ -13,6 +13,9 @@ install: pip install -r requirements.txt
 # Command to run tests, e.g. python setup.py test
 script: py.test
 
+notifications:
+  webhooks: https://coveralls.io/webhook?repo_token=y8ErSiXvepk7ddnEBzW4E1gK16G9rbTEN
+
 # Assuming you have installed the travis-ci CLI tool, after you
 # create the Github repo and add it to Travis, run the
 # following command to finish PyPI deployment setup:
