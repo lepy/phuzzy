@@ -160,7 +160,7 @@ fuzzy membership function
 
 ## x*y
 
-![](doc/x*y.png)
+![](doc/x_mul_y.png)
 
 +++
 
@@ -172,7 +172,7 @@ fuzzy membership function
 
 ## x^y
 
-![](doc/x**y.png)
+![](doc/x_pow_y.png)
 
 ---
 

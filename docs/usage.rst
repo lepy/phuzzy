@@ -176,7 +176,7 @@ Multiplication
     z = x * y
     z.name = "x*y"
 
-.. figure:: operations/x*y.png
+.. figure:: operations/x_mul_y.png
     :scale: 90 %
     :alt: add
 
@@ -218,7 +218,7 @@ Power
     z = x ** y
     z.name = "x^y"
 
-.. figure:: operations/x**y.png
+.. figure:: operations/x_pow_y.png
     :scale: 90 %
     :alt: add
 
