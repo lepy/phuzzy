@@ -2,6 +2,10 @@
 phuzzy
 ======
 
+
+.. image:: https://img.shields.io/pypi/v/phuzzy.svg
+        :target: https://pypi.python.org/pypi/phuzzy
+
 .. image:: https://readthedocs.org/projects/phuzzy/badge/?version=latest
         :target: https://phuzzy.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
