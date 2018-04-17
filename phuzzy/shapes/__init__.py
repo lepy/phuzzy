@@ -106,14 +106,17 @@ class FuzzyNumber(object):
         """
 
         new = FuzzyNumber()
-        old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.l + old1.df.l,
-                               old0.df.l + old1.df.r,
-                               old0.df.r + old1.df.l,
-                               old0.df.r + old1.df.r])
-        new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
+        if isinstance(other, (int, float)):
+           new.df = self.df + other
+        else:
+            old0, old1 = self._unify(other)
+            quotients = np.vstack([old0.df.l + old1.df.l,
+                                   old0.df.l + old1.df.r,
+                                   old0.df.r + old1.df.l,
+                                   old0.df.r + old1.df.r])
+            new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                             "l": np.nanmin(quotients, axis=0),
+                                             "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __sub__(self, other):
@@ -124,14 +127,17 @@ class FuzzyNumber(object):
         """
 
         new = FuzzyNumber()
-        old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.l - old1.df.l,
-                               old0.df.l - old1.df.r,
-                               old0.df.r - old1.df.l,
-                               old0.df.r - old1.df.r])
-        new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
+        if isinstance(other, (int, float)):
+           new.df = self.df - other
+        else:
+            old0, old1 = self._unify(other)
+            quotients = np.vstack([old0.df.l - old1.df.l,
+                                   old0.df.l - old1.df.r,
+                                   old0.df.r - old1.df.l,
+                                   old0.df.r - old1.df.r])
+            new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                             "l": np.nanmin(quotients, axis=0),
+                                             "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __mul__(self, other):
@@ -143,14 +149,17 @@ class FuzzyNumber(object):
 
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
-        old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.l * old1.df.l,
-                               old0.df.l * old1.df.r,
-                               old0.df.r * old1.df.l,
-                               old0.df.r * old1.df.r])
-        new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
+        if isinstance(other, (int, float)):
+           new.df = self.df * other
+        else:
+            old0, old1 = self._unify(other)
+            quotients = np.vstack([old0.df.l * old1.df.l,
+                                   old0.df.l * old1.df.r,
+                                   old0.df.r * old1.df.l,
+                                   old0.df.r * old1.df.r])
+            new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                             "l": np.nanmin(quotients, axis=0),
+                                             "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __div__(self, other):
@@ -162,14 +171,17 @@ class FuzzyNumber(object):
 
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
-        old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.l / old1.df.l,
-                               old0.df.l / old1.df.r,
-                               old0.df.r / old1.df.l,
-                               old0.df.r / old1.df.r])
-        new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
+        if isinstance(other, (int, float)):
+           new.df = self.df / other
+        else:
+            old0, old1 = self._unify(other)
+            quotients = np.vstack([old0.df.l / old1.df.l,
+                                   old0.df.l / old1.df.r,
+                                   old0.df.r / old1.df.l,
+                                   old0.df.r / old1.df.r])
+            new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                             "l": np.nanmin(quotients, axis=0),
+                                             "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __pow__(self, other):
@@ -181,16 +193,19 @@ class FuzzyNumber(object):
 
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
+        # if isinstance(other, (int, float)):
+        #     other = Trapezoid(alpha0=[other, other], alpha1=[other, other], number_of_alpha_levels=len(self.df))
         if isinstance(other, (int, float)):
-            other = Trapezoid(alpha0=[other, other], alpha1=[other, other], number_of_alpha_levels=len(self.df))
-        old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.l ** old1.df.l,
-                               old0.df.l ** old1.df.r,
-                               old0.df.r ** old1.df.l,
-                               old0.df.r ** old1.df.r])
-        new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
+           new.df = self.df ** other
+        else:
+            old0, old1 = self._unify(other)
+            quotients = np.vstack([old0.df.l ** old1.df.l,
+                                   old0.df.l ** old1.df.r,
+                                   old0.df.r ** old1.df.l,
+                                   old0.df.r ** old1.df.r])
+            new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                             "l": np.nanmin(quotients, axis=0),
+                                             "r": np.nanmax(quotients, axis=0)})
         new.make_convex()
         return new
 
