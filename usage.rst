@@ -1,16 +1,55 @@
+.. image:: https://img.shields.io/pypi/v/phuzzy.svg
+    :target: https://pypi.python.org/pypi/phuzzy
+
+.. image:: https://readthedocs.org/projects/phuzzy/badge/?version=latest
+    :target: https://phuzzy.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
+.. image:: https://travis-ci.org/lepy/phuzzy.svg?branch=master
+    :target: https://travis-ci.org/lepy/phuzzy
+
+.. image:: https://coveralls.io/repos/github/lepy/phuzzy/badge.svg
+    :target: https://coveralls.io/github/lepy/phuzzy
+
+.. image:: https://pyup.io/repos/github/lepy/phuzzy/shield.svg
+    :target: https://pyup.io/repos/github/lepy/phuzzy/
+    :alt: Updates
+
+.. image:: https://api.codacy.com/project/badge/Grade/4814372e95c543a69c69004c853b17be
+    :target: https://www.codacy.com/app/lepy/phuzzy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lepy/phuzzy&amp;utm_campaign=Badge_Grade
+
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
+    :target: https://saythanks.io/to/lepy
+
+
+PHUZZY
+======
+
+* python representation of fuzzy numbers|data
+* specify uncertainty easily
+
 Usage
 =====
 
 To use phuzzy in a project:
 
+
 .. code-block:: python
 
-    import phuzzy
-    tn = phuzzy.TruncNorm(alpha0=[2, 3], alpha1=[], number_of_alpha_levels=15, name="t")
-    tri = phuzzy.Triangle(alpha0=[1, 4], alpha1=[2], number_of_alpha_levels=5)
-    f = tn + tri
-    print(f.df)
+    # create a fuzzy number
+    p = phuzzy.Triangle(alpha0=[1,4], alpha1=[2],
+                        number_of_alpha_levels=5)
+    # show alpha levels
+    p.df
 
+.. code-block::
+
+       alpha     l    r
+    0   0.00  1.00  4.0
+    1   0.25  1.25  3.5
+    2   0.50  1.50  3.0
+    3   0.75  1.75  2.5
+    4   1.00  2.00  2.0
 
 available shapes
 ----------------
