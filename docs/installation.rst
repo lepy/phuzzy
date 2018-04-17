@@ -1,5 +1,11 @@
 .. highlight:: shell
 
+============
+Installation
+============
+
+.. image:: https://img.shields.io/pypi/v/phuzzy.svg
+        :target: https://pypi.python.org/pypi/phuzzy
 
 .. image:: https://travis-ci.org/lepy/phuzzy.svg?branch=master
     :target: https://travis-ci.org/lepy/phuzzy
@@ -16,10 +22,6 @@
 
 .. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
    :target: https://saythanks.io/to/lepy
-
-============
-Installation
-============
 
 
 Stable release
