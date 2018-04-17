@@ -14,7 +14,7 @@ install: pip install -r requirements.txt
 script: py.test
 
 notifications:
-  webhooks: https://coveralls.io/webhook?repo_token=y8ErSiXvepk7ddnEBzW4E1gK16G9rbTEN
+  webhooks: https://coveralls.io/webhook?repo_token=lTgEF94FlDkvXVwvjcIRZiNsES446BFxe
 
 # Assuming you have installed the travis-ci CLI tool, after you
 # create the Github repo and add it to Travis, run the
