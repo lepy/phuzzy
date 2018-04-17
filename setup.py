@@ -30,6 +30,9 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.6',
     'Topic :: Scientific/Engineering']
 
+with open(os.path.join('usage.rst')) as f:
+      long_description = ''.join(f)
+
 setup_params = dict(
     name="phuzzy",
     description = ("fuzzy data"),
@@ -39,9 +42,9 @@ setup_params = dict(
     url="https://github.com/lepy/phuzzy",
     license = "MIT",
     keywords = "data, phuzzy",
-    long_description = open("README.md").read(),
-    long_description_content_type='text/markdown',
-
+    long_description = long_description,
+    # long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     classifiers=CLASSIFIERS,
 
 

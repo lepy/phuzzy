@@ -38,16 +38,16 @@ class MPL_Mixin():
             ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
 
 
-        xs = np.hstack([df["low"].values, df["high"].values[::-1]])
+        xs = np.hstack([df["l"].values, df["r"].values[::-1]])
         ys = np.hstack([df["alpha"].values, df["alpha"].values[::-1]])
         ax.plot(xs, ys, lw=1, alpha=.7)
         ax.fill_between(xs, 0, ys, alpha=.2)
 
-        ax.fill_betweenx(df["alpha"].values, df["low"].min(), df["low"].values, color="gray", alpha=.1)
-        ax.fill_betweenx(df["alpha"].values, df["high"].values, df["high"].max(), color="gray", alpha=.1)
+        ax.fill_betweenx(df["alpha"].values, df["l"].min(), df["l"].values, color="gray", alpha=.1)
+        ax.fill_betweenx(df["alpha"].values, df["r"].values, df["r"].max(), color="gray", alpha=.1)
         # alphalines
         for _, row in df.iterrows():
-            ax.plot([row["low"], row["high"]], [row.alpha, row.alpha], lw=.8, alpha=.7, ls="--", c="gray")
+            ax.plot([row["l"], row["r"]], [row.alpha, row.alpha], lw=.8, alpha=.7, ls="--", c="gray")
 
         if labels is True:
             a0 = self.alpha0
@@ -55,21 +55,21 @@ class MPL_Mixin():
             ax.set_xlabel('%s' % self.name)
             ax.set_ylabel(r'$\alpha$')
             ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
-            ax.annotate('%.2f' % a0["low"], xy=(a0["low"], a0["alpha"]), xycoords='data',
+            ax.annotate('%.2f' % a0["l"], xy=(a0["l"], a0["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-            ax.annotate('%.2f' % a0["high"], xy=(a0["high"], a0["alpha"]), xycoords='data',
+            ax.annotate('%.2f' % a0["r"], xy=(a0["r"], a0["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
             a1 = self.alpha1
-            ax.annotate('%.2f' % a1["low"], xy=(a1["low"], a1["alpha"]), xycoords='data',
+            ax.annotate('%.2f' % a1["l"], xy=(a1["l"], a1["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-            ax.annotate('%.2f' % a1["high"], xy=(a1["high"], a1["alpha"]), xycoords='data',
+            ax.annotate('%.2f' % a1["r"], xy=(a1["r"], a1["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
-        dx = abs(self.alpha0["high"] - self.alpha0["low"])
-        ax.set_xlim(self.alpha0["low"] - 0.2 * dx, self.alpha0["high"] + 0.2 * dx)
+        dx = abs(self.alpha0["r"] - self.alpha0["l"])
+        ax.set_xlim(self.alpha0["l"] - 0.2 * dx, self.alpha0["r"] + 0.2 * dx)
         ax.set_ylim(0, 1.1)
         if xlim is not None:
             ax.set_xlim(xlim)
