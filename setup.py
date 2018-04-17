@@ -47,7 +47,6 @@ setup_params = dict(
     long_description_content_type='text/x-rst',
     classifiers=CLASSIFIERS,
 
-
     packages=setuptools.find_packages(exclude=["tests"]),
     zip_safe=False,
 
