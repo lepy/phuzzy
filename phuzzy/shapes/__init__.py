@@ -250,9 +250,7 @@ class FuzzyNumber(object):
         """
 
         # fixme: zeros, infs, nans
-        cls = self._get_cls(self, other)
-        # if isinstance(other, (int, float)):
-        #     other = Trapezoid(alpha0=[other, other], alpha1=[other, other], number_of_alpha_levels=len(self.df))
+        cls = FuzzyNumber # self._get_cls(self, other)
         if isinstance(other, (int, float)):
             df = self.df ** other
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
@@ -268,7 +266,6 @@ class FuzzyNumber(object):
             df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
                                              "l": np.nanmin(quotients, axis=0),
                                              "r": np.nanmax(quotients, axis=0)})
-            cls = self._get_cls(self, other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
