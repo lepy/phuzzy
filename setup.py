@@ -51,6 +51,7 @@ setup_params = dict(
     zip_safe=False,
     package_data={'': ['LICENSE', "usage.rst", "AUTHORS.rst", "HISTORY.rst", "CONTRIBUTING.rst", "README.md",
                        'tox.ini']},
+    include_package_data=True,
 
     setup_requires=[
         'pytest-runner',
