@@ -44,7 +44,7 @@ setup_params = dict(
     keywords = "data, phuzzy",
     long_description = long_description,
     # long_description_content_type='text/markdown',
-    long_description_content_type='text/x-rst',
+    # long_description_content_type='text/x-rst',
     classifiers=CLASSIFIERS,
 
     packages=setuptools.find_packages(exclude=["tests"]),
