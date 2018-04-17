@@ -94,8 +94,8 @@ def test_div():
     print(p)
     assert len(p.df) == 2
 
-    a = t / p
-    # a = p / t
+    # a = t / p
+    a = p / t
     a.name = "t/p"
     print(a.df.values.tolist())
     assert np.allclose(a.df.values.tolist(),
@@ -104,14 +104,15 @@ def test_div():
 
     print(a)
     print(a.df)
-
-    b = t / 3.
+    print("_" * 80)
+    b = t / 2.
     print(b)
     print(b.df)
     print(b.df.values.tolist())
     assert np.allclose(b.df.values.tolist(),
-                       [[0.0, 0.6666666666666666, 1.0], [0.3333333333333333, 0.8333333333333334, 0.8333333333333334]]
+                       [[0.0, 1.0, 1.5], [0.5, 1.25, 1.25]]
                        )
+
 
 def test_power():
     t = phuzzy.TruncNorm(alpha0=[2, 3], alpha1=[], number_of_alpha_levels=2, name="t")
@@ -140,6 +141,7 @@ def test_power():
     assert np.allclose(b.df.values.tolist(),
                        [[0.0, 8.0, 27.0], [1.0, 15.625, 15.625]]
                        )
+
 
 if __name__ == '__main__':
     atest_add()
