@@ -4,11 +4,11 @@ phuzzy
 
 
 .. image:: https://img.shields.io/pypi/v/phuzzy.svg
-        :target: https://pypi.python.org/pypi/phuzzy
+    :target: https://pypi.python.org/pypi/phuzzy
 
 .. image:: https://readthedocs.org/projects/phuzzy/badge/?version=latest
-        :target: https://phuzzy.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
+    :target: https://phuzzy.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 
 .. image:: https://travis-ci.org/lepy/phuzzy.svg?branch=master
     :target: https://travis-ci.org/lepy/phuzzy
