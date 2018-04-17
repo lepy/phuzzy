@@ -149,7 +149,7 @@ def plot_mul():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
-    fig.savefig("x*y.png")
+    fig.savefig("x_mul_y.png")
     plt.show()
 
 
@@ -193,7 +193,7 @@ def plot_pow():
     z.plot(ax=axs[2])
 
     fig.tight_layout()
-    fig.savefig("x^y.png")
+    fig.savefig("x_pow_y.png")
     plt.show()
 
 
@@ -233,7 +233,7 @@ def plot_pow2():
     axs[2, 2].plot(b, Pz, label="cdf", lw=2)
 
     fig.tight_layout()
-    fig.savefig("x^y.png")
+    fig.savefig("x_pow_y.png")
     plt.show()
 
 
