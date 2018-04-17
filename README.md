@@ -7,6 +7,7 @@
 [![Dokumentation Status](https://readthedocs.org/projects/phuzzy/badge/?version=latest)](https://phuzzy.readthedocs.io/en/latest/?badge=latest)
 [![Updates](https://pyup.io/repos/github/lepy/phuzzy/shield.svg)](https://pyup.io/repos/github/lepy/phuzzy/)
 [![saythanks.io/to/lepy](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/lepy)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1219617.svg)](https://doi.org/10.5281/zenodo.1219617)
 
 ## phuzzy.Triangle
 
