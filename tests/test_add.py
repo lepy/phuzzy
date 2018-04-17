@@ -15,12 +15,12 @@ def atest_add():
 
     print(a)
     print(a.df)
-    mix_mpl(t)
-    mix_mpl(p)
-    mix_mpl(a)
-    t.plot()
-    p.plot()
-    a.plot(show=True)
+    # mix_mpl(t)
+    # mix_mpl(p)
+    # mix_mpl(a)
+    # t.plot()
+    # p.plot()
+    # a.plot(show=True)
 
 
 def atest_sub():
