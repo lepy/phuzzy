@@ -31,7 +31,7 @@ fuzzy membership function
 
     p.df
 
-       alpha   low high
+       alpha     l    r
     0   0.00  1.00  4.0
     1   0.25  1.25  3.5
     2   0.50  1.50  3.0
@@ -57,7 +57,7 @@ fuzzy membership function
 
     p.df
 
-       alpha   low  high
+       alpha     l     r
     0   0.00  1.00  4.00
     1   0.25  1.25  3.75
     2   0.50  1.50  3.50
@@ -82,7 +82,7 @@ fuzzy membership function
 
     p.df
 
-       alpha   low  high
+       alpha     l     r
     0   0.00  1.00  4.00
     1   0.25  1.00  4.00
     2   0.50  1.00  4.00
@@ -107,7 +107,7 @@ fuzzy membership function
 
     p.df
 
-           alpha       low      high
+           alpha         l         r
     0   0.000000  1.000000  3.000000
     1   0.071429  1.234184  2.765816
     2   0.142857  1.342402  2.657598
@@ -129,7 +129,7 @@ fuzzy membership function
 ## phuzzy.TruncGenNorm
 
     p = phuzzy.TruncGenNorm(alpha0=[1,3],
-                         number_of_alpha_levels=15, name="y", 
+                         number_of_alpha_levels=15, name="y",
                          beta=5)
 
 ![](doc/truncgennorm.png)
@@ -139,7 +139,7 @@ fuzzy membership function
 ## phuzzy.Superellipse
 
     p = phuzzy.Superellipse(alpha0=[1,3],
-                         number_of_alpha_levels=15, name="y", 
+                         number_of_alpha_levels=15, name="y",
                          m=2, n=.5)
 
 ![](doc/superellipse.png)
