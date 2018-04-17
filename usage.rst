@@ -19,7 +19,6 @@ Uniform
 ^^^^^^^
 
 .. code-block:: python
-    :linenos:
 
     import phuzzy.mpl as phm
     uni = phm.Uniform(alpha0=[1, 4], number_of_alpha_levels=5, name="x")
@@ -29,8 +28,6 @@ Triangle
 ^^^^^^^^
 
 .. code-block:: python
-    :linenos:
-
 
     import phuzzy.mpl as phm
 
@@ -41,7 +38,6 @@ Trapezoid
 ^^^^^^^^^
 
 .. code-block:: python
-    :linenos:
 
     import phuzzy.mpl as phm
     trap = phm.Trapezoid(alpha0=[1, 5], alpha1=[2, 3], number_of_alpha_levels=5)
@@ -51,7 +47,6 @@ TruncNorm
 ^^^^^^^^^
 
 .. code-block:: python
-    :linenos:
 
     import phuzzy.mpl as phm
     tn = phm.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="x")
@@ -61,7 +56,6 @@ TruncGenNorm
 ^^^^^^^^^^^^
 
 .. code-block:: python
-    :linenos:
 
     import phuzzy.mpl as phm
     tgn = phm.TruncGenNorm(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=15, beta=3.)
@@ -71,7 +65,6 @@ Superellipse
 ^^^^^^^^^^^^
 
 .. code-block:: python
-    :linenos:
 
     import phuzzy.mpl as phm
     se = phm.Superellipse(alpha0=[-1, 2.], alpha1=None, m=1.0, n=.5, number_of_alpha_levels=17)
@@ -88,7 +81,6 @@ Addition
     z = x + y
 
 .. code-block:: python
-    :linenos:
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
@@ -104,7 +96,6 @@ Substraction
     z = x - y
 
 .. code-block:: python
-    :linenos:
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
@@ -120,7 +111,6 @@ Multiplication
     z = x  y
 
 .. code-block:: python
-    :linenos:
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
@@ -135,7 +125,6 @@ Division
     z = \frac{x}{y}
 
 .. code-block:: python
-    :linenos:
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
@@ -151,7 +140,6 @@ Power
     z = x^y
 
 .. code-block:: python
-    :linenos:
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")
