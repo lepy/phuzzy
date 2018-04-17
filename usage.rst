@@ -76,10 +76,6 @@ basic operations
 Addition
 ^^^^^^^^
 
-.. math::
-
-    z = x + y
-
 .. code-block:: python
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
@@ -90,10 +86,6 @@ Addition
 
 Substraction
 ^^^^^^^^^^^^
-
-.. math::
-
-    z = x - y
 
 .. code-block:: python
 
@@ -106,10 +98,6 @@ Substraction
 Multiplication
 ^^^^^^^^^^^^^^
 
-.. math::
-
-    z = x  y
-
 .. code-block:: python
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
@@ -119,10 +107,6 @@ Multiplication
 
 Division
 ^^^^^^^^
-
-.. math::
-
-    z = \frac{x}{y}
 
 .. code-block:: python
 
@@ -134,10 +118,6 @@ Division
 
 Power
 ^^^^^
-
-.. math::
-
-    z = x^y
 
 .. code-block:: python
 
