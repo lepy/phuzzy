@@ -44,7 +44,7 @@ def atest_sub():
     p.plot()
     a.plot()
     print(a.df)
-    a.df.iloc[10, a.df.columns.get_loc("high")] = 1.5
+    a.df.iloc[10, a.df.columns.get_loc("r")] = 1.5
     a.make_convex()
     a.name += "!"
 
@@ -73,7 +73,7 @@ def atest_mul():
     p.plot()
     a.plot()
     print(a.df)
-    a.df.iloc[10, a.df.columns.get_loc("high")] = 8.5
+    a.df.iloc[10, a.df.columns.get_loc("r")] = 8.5
     # a.make_convex()
     a.name += "!"
 

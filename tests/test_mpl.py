@@ -198,7 +198,7 @@ def plot_pow2():
     axs[1, 1].plot(b, py, label="pdf", lw=2)
     axs[2, 1].plot(b, Py, label="cdf", lw=2)
 
-    b = np.linspace(z.alpha0["low"], z.alpha0["high"], 200)
+    b = np.linspace(z.alpha0["l"], z.alpha0["r"], 200)
     pz = z.pdf(b)
     Pz = z.cdf(b)
     axs[1, 2].plot(b, pz, label="pdf", lw=2)

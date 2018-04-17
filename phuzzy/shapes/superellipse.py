@@ -46,7 +46,7 @@ class Superellipse(FuzzyNumber):
         :rtype: str
         :return: fuzzy string
         """
-        return u"Superellipse[{:.4g},{:.4g}]".format(self.alpha0.low, self.alpha0.high)
+        return u"Superellipse[{:.4g},{:.4g}]".format(self.alpha0.l, self.alpha0.r)
 
     @classmethod
     def from_str(cls, s):
@@ -77,6 +77,6 @@ class Superellipse(FuzzyNumber):
         for i in range(len(x) // 2):
             data.append([alphas[i], x[i], x[::-1][i]])
         data.append([alphas[i + 1], x[i + 1], x[::-1][i + 1]])
-        self.df = pd.DataFrame(columns=["alpha", "low", "high"], data=data, dtype=np.float)
+        self.df = pd.DataFrame(columns=["alpha", "l", "r"], data=data, dtype=np.float)
         self.convert_df(alpha_levels=alpha_levels)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)

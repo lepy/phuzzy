@@ -67,10 +67,10 @@ class FuzzyNumber(object):
             self.number_of_alpha_levels = alpha_levels
         df.sort_values(['alpha'], ascending=[True], inplace=True)
         # print("!",df)
-        xs_l = df.low.values
+        xs_l = df.l.values
         xs_l[xs_l == 0] = zero
         alphas_l = df["alpha"].values
-        xs_r = df.high.values[::-1]
+        xs_r = df.r.values[::-1]
         xs_r[xs_r == 0] = zero
         alphas_r = df["alpha"].values[::-1]
 
@@ -83,7 +83,7 @@ class FuzzyNumber(object):
         #
         # print((np.vstack((alphas_new, xs_l_new, xs_r_new[::-1]))))
         data = np.vstack((alphas_new, xs_l_new, xs_r_new)).T
-        self.df = pd.DataFrame(columns=["alpha", "low", "high"], data=data, dtype=np.float)
+        self.df = pd.DataFrame(columns=["alpha", "l", "r"], data=data, dtype=np.float)
 
     def _unify(self, other):
         """equalize number of alpha levels
@@ -107,13 +107,13 @@ class FuzzyNumber(object):
 
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.low + old1.df.low,
-                               old0.df.low + old1.df.high,
-                               old0.df.high + old1.df.low,
-                               old0.df.high + old1.df.high])
+        quotients = np.vstack([old0.df.l + old1.df.l,
+                               old0.df.l + old1.df.r,
+                               old0.df.r + old1.df.l,
+                               old0.df.r + old1.df.r])
         new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "low": np.nanmin(quotients, axis=0),
-                                         "high": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __sub__(self, other):
@@ -125,13 +125,13 @@ class FuzzyNumber(object):
 
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.low - old1.df.low,
-                               old0.df.low - old1.df.high,
-                               old0.df.high - old1.df.low,
-                               old0.df.high - old1.df.high])
+        quotients = np.vstack([old0.df.l - old1.df.l,
+                               old0.df.l - old1.df.r,
+                               old0.df.r - old1.df.l,
+                               old0.df.r - old1.df.r])
         new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "low": np.nanmin(quotients, axis=0),
-                                         "high": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __mul__(self, other):
@@ -144,13 +144,13 @@ class FuzzyNumber(object):
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.low * old1.df.low,
-                               old0.df.low * old1.df.high,
-                               old0.df.high * old1.df.low,
-                               old0.df.high * old1.df.high])
+        quotients = np.vstack([old0.df.l * old1.df.l,
+                               old0.df.l * old1.df.r,
+                               old0.df.r * old1.df.l,
+                               old0.df.r * old1.df.r])
         new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "low": np.nanmin(quotients, axis=0),
-                                         "high": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __div__(self, other):
@@ -163,13 +163,13 @@ class FuzzyNumber(object):
         # fixme: zeros, infs, nans
         new = FuzzyNumber()
         old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.low / old1.df.low,
-                               old0.df.low / old1.df.high,
-                               old0.df.high / old1.df.low,
-                               old0.df.high / old1.df.high])
+        quotients = np.vstack([old0.df.l / old1.df.l,
+                               old0.df.l / old1.df.r,
+                               old0.df.r / old1.df.l,
+                               old0.df.r / old1.df.r])
         new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "low": np.nanmin(quotients, axis=0),
-                                         "high": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
         return new
 
     def __pow__(self, other):
@@ -184,13 +184,13 @@ class FuzzyNumber(object):
         if isinstance(other, (int, float)):
             other = Trapezoid(alpha0=[other, other], alpha1=[other, other], number_of_alpha_levels=len(self.df))
         old0, old1 = self._unify(other)
-        quotients = np.vstack([old0.df.low ** old1.df.low,
-                               old0.df.low ** old1.df.high,
-                               old0.df.high ** old1.df.low,
-                               old0.df.high ** old1.df.high])
+        quotients = np.vstack([old0.df.l ** old1.df.l,
+                               old0.df.l ** old1.df.r,
+                               old0.df.r ** old1.df.l,
+                               old0.df.r ** old1.df.r])
         new.df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "low": np.nanmin(quotients, axis=0),
-                                         "high": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
         new.make_convex()
         return new
 
@@ -200,11 +200,11 @@ class FuzzyNumber(object):
         :return: None
         """
         for i in self.df.index:
-            self.df.loc[i, "low"] = self.df.loc[i:, "low"].min()
-            self.df.loc[i, "high"] = self.df.loc[i:, "high"].max()
-            # self.df.loc[i, "low"] = np.nanmin(self.df.loc[i:, "low"])
-            # self.df.loc[i, "high"] = np.nanmax(self.df.loc[i:, "high"])
-            # print(i, self.df.loc[i:, "low"].min(), self.df.loc[i:, "high"].max())
+            self.df.loc[i, "l"] = self.df.loc[i:, "l"].min()
+            self.df.loc[i, "r"] = self.df.loc[i:, "r"].max()
+            # self.df.loc[i, "l"] = np.nanmin(self.df.loc[i:, "l"])
+            # self.df.loc[i, "r"] = np.nanmax(self.df.loc[i:, "r"])
+            # print(i, self.df.loc[i:, "l"].min(), self.df.loc[i:, "r"].max())
 
     @property
     def alpha0(self):
@@ -225,7 +225,7 @@ class FuzzyNumber(object):
     #     :return: area
     #     """
     #     raise NotImplementedError
-    #     # A = ((self.alpha0.high - self.alpha0.low) - (self.df.high.values - self.df.low.values)).sum()
+    #     # A = ((self.alpha0.r - self.alpha0.l) - (self.df.r.values - self.df.l.values)).sum()
     #     # return A
 
     def import_csv(self, fh):
@@ -292,7 +292,7 @@ class FuzzyNumber(object):
         """
 
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
-        x_ = np.hstack((self.df.low, self.df.high[::-1]))
+        x_ = np.hstack((self.df.l, self.df.r[::-1]))
         I = np.trapz(y_, x_)
         y = np.interp(x, x_, y_ / I, left=0., right=0.)
         return y
@@ -307,9 +307,9 @@ class FuzzyNumber(object):
 
         n = kwargs.get("n", 1000)
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
-        x_ = np.hstack((self.df.low, self.df.high[::-1]))
+        x_ = np.hstack((self.df.l, self.df.r[::-1]))
 
-        x__ = np.linspace(self.alpha0.low, self.alpha0.high, n)
+        x__ = np.linspace(self.alpha0.l, self.alpha0.r, n)
         y__ = np.interp(x__, x_, y_)
 
         I = cumtrapz(y__, x__, initial=0)
@@ -320,9 +320,9 @@ class FuzzyNumber(object):
     def get_01(self):
         """get alpha=0 and alpha=1 values
 
-        :return: [[a0_low, a0_high], [a1_low, a1_high]]
+        :return: [[a0_l, a0_r], [a1_l, a1_r]]
         """
-        return self.df.iloc[[0, -1]][["low", "high"]].values.tolist()
+        return self.df.iloc[[0, -1]][["l", "r"]].values.tolist()
 
 
 class Triangle(FuzzyNumber):
@@ -347,7 +347,7 @@ class Triangle(FuzzyNumber):
         self._a = alpha0[0]
         self._b = alpha0[1]
         self._c = alpha1[0]
-        self.df = pd.DataFrame(columns=["alpha", "low", "high"],
+        self.df = pd.DataFrame(columns=["alpha", "l", "r"],
                                data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[0]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
@@ -415,7 +415,7 @@ class Triangle(FuzzyNumber):
 
     def to_str(self):
         if len(self.df) > 0:
-            return "tri[{:.3g}, {:.3g}, {:.3g}]".format(self.df.iloc[0].low, self.df.iloc[0].high, self.df.iloc[-1].low)
+            return "tri[{:.3g}, {:.3g}, {:.3g}]".format(self.df.iloc[0].l, self.df.iloc[0].r, self.df.iloc[-1].l)
         else:
             return "tri[nan, nan, nan]"
 
@@ -445,7 +445,7 @@ class Trapezoid(FuzzyNumber):
         self._c = alpha1[1]
         self._d = alpha0[1]
         # todo: check a <= c <= d <= b
-        self.df = pd.DataFrame(columns=["alpha", "low", "high"],
+        self.df = pd.DataFrame(columns=["alpha", "l", "r"],
                                data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[1]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
@@ -491,8 +491,8 @@ class Trapezoid(FuzzyNumber):
 
     def to_str(self):
         if len(self.df) > 0:
-            return "trap[{:.3g}, {:.3g}, {:.3g}, {:.3g}]".format(self.df.iloc[0].low, self.df.iloc[0].high,
-                                                                 self.df.iloc[-1].low, self.df.iloc[-1].high)
+            return "trap[{:.3g}, {:.3g}, {:.3g}, {:.3g}]".format(self.df.iloc[0].l, self.df.iloc[0].r,
+                                                                 self.df.iloc[-1].l, self.df.iloc[-1].r)
         else:
             return "trap[nan, nan, nan, nan]"
 
@@ -517,7 +517,7 @@ class Uniform(FuzzyNumber):
         # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         self._a = alpha0[0]
         self._b = alpha0[1]
-        self.df = pd.DataFrame(columns=["alpha", "low", "high"],
+        self.df = pd.DataFrame(columns=["alpha", "l", "r"],
                                data=[[0., alpha0[0], alpha0[1]], [1., alpha0[0], alpha0[1]]], dtype=np.float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
@@ -549,7 +549,7 @@ class Uniform(FuzzyNumber):
         return np.select(condlist, choicelist)
 
     def to_str(self):
-        return "Uniform[{:.4g},{:.4g}]".format(self.alpha0.low, self.alpha0.high)
+        return "Uniform[{:.4g},{:.4g}]".format(self.alpha0.l, self.alpha0.r)
 
     @classmethod
     def from_str(cls, s):

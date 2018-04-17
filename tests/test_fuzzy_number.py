@@ -1,10 +1,13 @@
 import phuzzy
-
+import numpy as np
 
 def test_fuzzy():
     n = phuzzy.FuzzyNumber()
     print(n)
     print(n.__class__.__name__)
+    assert hasattr(n, "name")
+    assert hasattr(n, "df")
+    assert hasattr(n, "number_of_alpha_levels")
 
 
 def test_triangle():
@@ -15,6 +18,8 @@ def test_triangle():
     assert len(t.df) == 15
     print([t])
     print(t.get_01())
+    print(t.df.columns)
+    assert all([x==y for x, y in zip(sorted(t.df.columns), sorted(["alpha", "l", "r"]))])
 
 
 def test_trapezoid():
