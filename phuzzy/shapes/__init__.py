@@ -21,7 +21,7 @@ class FuzzyNumber(object):
         """
         self.name = kwargs.get("name", "x")
         self._df = pd.DataFrame(columns=["alpha", "low", "high"])
-        self._number_of_alpha_levels = kwargs.get("number_of_alpha_levels", 10)
+        self._number_of_alpha_levels = kwargs.get("number_of_alpha_levels", 11)
         self.df = kwargs.get("df")
 
     def _get_number_of_alpha_levels(self):
