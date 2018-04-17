@@ -49,6 +49,8 @@ setup_params = dict(
 
     packages=setuptools.find_packages(exclude=["tests"]),
     zip_safe=False,
+    package_data={'': ['LICENSE', "usage.rst", "AUTHORS.rst", "HISTORY.rst", "CONTRIBUTING.rst", "README.md",
+                       'tox.ini']},
 
     setup_requires=[
         'pytest-runner',
