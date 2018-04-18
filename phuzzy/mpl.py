@@ -25,7 +25,7 @@ def mix_mpl(obj):
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False):
+    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None):
         """plots fuzzy number with mpl"""
         logging.debug("plots fuzzy number with mpl")
         df = self.df
@@ -76,6 +76,15 @@ class MPL_Mixin():
         dx = abs(self.alpha0["r"] - self.alpha0["l"])
         ax.set_xlim(self.alpha0["l"] - 0.2 * dx, self.alpha0["r"] + 0.2 * dx)
         ax.set_ylim(0, 1.1)
+
+        if ppf is None:
+            ppf = [.5]
+        ppfs = self.ppf(ppf)
+        print("ppf", ppf)
+        for x in ppfs:
+            # ax.axvline(x, lw=.5, c="k", alpha=.3)
+            ax.plot([x, x], [0, 1], lw=.5, c="k", alpha=.3, dashes=[10,2,1,2])
+
         if xlim is not None:
             ax.set_xlim(xlim)
         try:

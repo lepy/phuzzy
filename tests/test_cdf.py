@@ -10,6 +10,13 @@ def test_trapz():
     P = p.cdf(x)
     print(P)
 
+def test_uniform():
+    p = phuzzy.Uniform(alpha0=[1, 2], number_of_alpha_levels=200)
+    pp = [0, .1, 0.5 , .9, 1]
+    ppf = p.ppf(pp)
+    print(ppf)
+
+
 def plot_traz_cdf():
 
     import matplotlib.pyplot as plt
@@ -128,7 +135,7 @@ def plot_truncnorm_cdf():
     Pf = f.cdf(x)
 
     mix_mpl(f)
-    f.plot(show=False)
+    f.plot(show=False, ppf=[0, 0.01, .5, .99, 1])
     axs[0].plot(x, pf, label="pdf num", lw=3, c="r",alpha=.5)
     axs[1].plot(x, Pf, label="cdf num", lw=3, c="r",alpha=.5)
     axs[0].legend(loc="best")
@@ -138,6 +145,6 @@ def plot_truncnorm_cdf():
 
 if __name__ == '__main__':
     plot_tria_cdf()
-    # plot_uniform_cdf()
-    # plot_fuzzynumber_cdf()
-    # plot_truncnorm_cdf()
+    plot_uniform_cdf()
+    plot_fuzzynumber_cdf()
+    plot_truncnorm_cdf()
