@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+is_py2 = sys.version_info.major == 2
 
 import pytest
 import phuzzy
 import numpy as np
 from io import StringIO
-
 
 def test_fuzzy():
     n = phuzzy.FuzzyNumber()
@@ -129,6 +130,8 @@ def test_import_export():
     e = y.export_csv()
     print(e)
 
+    if is_py2:
+        e = e.decode()
     fh = StringIO(e)
     fh.seek(0)
 
