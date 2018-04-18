@@ -133,6 +133,7 @@ class FuzzyNumber(object):
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}+{}".format(self.name, other)
         else:
             old0, old1 = self._unify(other)
             quotients = np.vstack([old0.df.l + old1.df.l,
@@ -147,6 +148,7 @@ class FuzzyNumber(object):
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}+{}".format(self.name, other.name)
         return new
 
     def __sub__(self, other):
@@ -163,6 +165,7 @@ class FuzzyNumber(object):
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}-{}".format(self.name, other)
         else:
             old0, old1 = self._unify(other)
             quotients = np.vstack([old0.df.l - old1.df.l,
@@ -176,6 +179,7 @@ class FuzzyNumber(object):
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}-{}".format(self.name, other.name)
         return new
 
     def __mul__(self, other):
@@ -193,6 +197,7 @@ class FuzzyNumber(object):
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}*{}".format(self.name, other)
         else:
             old0, old1 = self._unify(other)
             quotients = np.vstack([old0.df.l * old1.df.l,
@@ -207,6 +212,7 @@ class FuzzyNumber(object):
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}*{}".format(self.name, other.name)
         return new
 
     def __truediv__(self, other):
@@ -224,6 +230,7 @@ class FuzzyNumber(object):
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}/{}".format(self.name, other)
         else:
             old0, old1 = self._unify(other)
             quotients = np.vstack([old0.df.l / old1.df.l,
@@ -238,6 +245,7 @@ class FuzzyNumber(object):
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}/{}".format(self.name, other.name)
         return new
 
     __div__ = __truediv__
@@ -258,6 +266,7 @@ class FuzzyNumber(object):
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}^{}".format(self.name, other)
         else:
             old0, old1 = self._unify(other)
             quotients = np.vstack([old0.df.l ** old1.df.l,
@@ -271,6 +280,7 @@ class FuzzyNumber(object):
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
             new.df = df
+            new.name = "{}^{}".format(self.name, other.name)
         new.make_convex()
         return new
 
@@ -351,10 +361,10 @@ class FuzzyNumber(object):
         return p
 
     def __str__(self):
-        return "({0.__class__.__name__}({0.name}))".format(self)
+        return "{0.__class__.__name__}({0.name}:{0.get_01})".format(self)
 
     def __repr__(self):
-        return "(%s)" % self.name
+        return "{0.__class__.__name__}({0.name}:{0.get_01})".format(self)
 
     def to_str(self):
         """serialize fuzzy number to string
@@ -404,12 +414,16 @@ class FuzzyNumber(object):
         y = np.interp(x, x__, I, left=0., right=1.)
         return y
 
+    @property
     def get_01(self):
         """get alpha=0 and alpha=1 values
 
         :return: [[a0_l, a0_r], [a1_l, a1_r]]
         """
-        return self.df.iloc[[0, -1]][["l", "r"]].values.tolist()
+        if self.df is not None and len(self.df)>1:
+            return self.df.iloc[[0, -1]][["l", "r"]].values.tolist()
+        else:
+            return []
 
 
 class Triangle(FuzzyNumber):

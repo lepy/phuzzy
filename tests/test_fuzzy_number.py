@@ -52,7 +52,7 @@ def test_triangle():
     print(t.df)
     assert len(t.df) == 15
     print([t])
-    print(t.get_01())
+    print(t.get_01)
     print(t.df.columns)
     assert all([x == y for x, y in zip(sorted(t.df.columns), sorted(["alpha", "l", "r"]))])
     s = t.to_str()
@@ -71,7 +71,7 @@ def test_trapezoid():
     print(p.df)
     print(len(p.df))
     assert len(p.df) == 5
-    print(p.get_01())
+    print(p.get_01)
     p.discretize(alpha0=[1, 4], alpha1=[2, 3], alpha_levels=5)
     s = p.to_str()
     print(s)
@@ -87,7 +87,7 @@ def test_uniform():
     print(p.alpha0)
     print(p.df)
     print(p.to_str())
-    print(p.get_01())
+    print(p.get_01)
 
     s = p.to_str()
     print(s)
