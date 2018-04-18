@@ -414,6 +414,26 @@ class FuzzyNumber(object):
         y = np.interp(x, x__, I, left=0., right=1.)
         return y
 
+    def ppf(self, x, **kwargs):
+        """Percent point function (inverse of cdf-percentiles).
+
+        :param x: x values
+        :param n: number of integration points
+        :return: y
+        """
+
+        n = kwargs.get("n", 1000)
+        y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
+        x_ = np.hstack((self.df.l, self.df.r[::-1]))
+
+        x__ = np.linspace(self.alpha0.l, self.alpha0.r, n)
+        y__ = np.interp(x__, x_, y_)
+
+        I = cumtrapz(y__, x__, initial=0)
+        I /= I[-1]
+        y = np.interp(x, I, x__, left=0., right=1.)
+        return y
+
     @property
     def get_01(self):
         """get alpha=0 and alpha=1 values
