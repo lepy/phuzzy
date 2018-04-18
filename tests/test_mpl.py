@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
-os.environ["DISPLAY"] = "localhost:0.0"
-os.environ["MPLBACKEND"] = "AGG"
-
 import matplotlib
-matplotlib.use('Agg')
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using non-interactive Agg backend')
+    matplotlib.use('Agg')
+# import matplotlib.pyplot as plt
 
 import phuzzy
 import phuzzy.mpl as phm

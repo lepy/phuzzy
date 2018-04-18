@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import logging
-
 logger = logging.getLogger("phuzzy")
+
+import sys
+is_py2 = sys.version_info.major == 2
 
 import numpy as np
 import pandas as pd
 import copy
-import collections
 from scipy.integrate import cumtrapz
 
 
