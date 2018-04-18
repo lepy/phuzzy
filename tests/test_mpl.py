@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
+import os
+os.environ["DISPLAY"] = "localhost:0.0"
+os.environ["MPLBACKEND"] = "AGG"
+
 import matplotlib
 matplotlib.use('Agg')
 
 import phuzzy
 import phuzzy.mpl as phm
 from phuzzy.mpl import mix_mpl
-import numpy as np
-
 
 def test_dyn_mix():
     p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
