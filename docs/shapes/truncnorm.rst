@@ -13,3 +13,9 @@ TruncNorm
     :alt: TruncNorm fuzzy number
 
     TruncNorm fuzzy number
+
+.. figure:: operations_TruncNorm.png
+    :scale: 90 %
+    :alt: TruncNorm fuzzy number operations
+
+    TruncNorm fuzzy number operations

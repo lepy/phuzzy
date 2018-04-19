@@ -12,8 +12,8 @@ class TruncNorm(FuzzyNumber):
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")
-        self.clip = kwargs.get("alpha0") or [0, np.inf]
-        self.ppf_lim = kwargs.get("ppf") or [.001, .999]
+        self.clip = kwargs.get("alpha0", [0, np.inf])
+        self.ppf_lim = kwargs.get("ppf", [.001, .999])
         self._loc = kwargs.get("mean") or np.array(alpha0).mean()
         self._scale = kwargs.get("std") or (alpha0[1] - alpha0[0]) / 6.
         # print("!", (alpha0[1]-alpha0[0])/6)

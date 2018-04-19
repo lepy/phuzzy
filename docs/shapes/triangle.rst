@@ -15,3 +15,9 @@ Triangle
     :alt: Triangle fuzzy number
 
     Triangle fuzzy number
+
+.. figure:: operations_Triangle.png
+    :scale: 90 %
+    :alt: Triangle fuzzy number operations
+
+    Triangle fuzzy number operations

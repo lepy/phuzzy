@@ -21,11 +21,11 @@ def plot_xy(x, y, show=False, ftype=True):
     if show==True:
         plt.show()
 
-# x = phm.Triangle(alpha0=[-1, 2], alpha1=[1], name="x")
-# plot_xy(x,-x, show=False)
-#
-# x = phm.Trapezoid(alpha0=[-3, 5], alpha1=[0,1], name="x")
-# plot_xy(x,-x, show=True)
+x = phm.Triangle(alpha0=[-1, 2], alpha1=[1], name="x")
+plot_xy(x,-x, show=False)
+
+x = phm.Trapezoid(alpha0=[-3, 5], alpha1=[0,1], name="x")
+plot_xy(x,-x, show=False)
 
 x = phm.Trapezoid(alpha0=[-3, 5], alpha1=[1,2], name="x")
 plot_xy(x,abs(x), show=False)
