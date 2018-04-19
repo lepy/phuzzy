@@ -128,8 +128,9 @@ class FuzzyNumber(object):
         :param other: phuzzy.FuzzyNumber
         :return: fuzzy number
         """
-        cls = self._get_cls(self, other)
+
         if isinstance(other, (int, float)):
+            cls = self.__class__
             df = self.df.copy()
             df.update(df[["l", "r"]] + other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
@@ -164,8 +165,8 @@ class FuzzyNumber(object):
         :return: fuzzy number
         """
 
-        cls = self._get_cls(self, other)
         if isinstance(other, (int, float)):
+            cls = self.__class__
             df = self.df.copy()
             df.update(df[["l", "r"]] - other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
@@ -174,6 +175,7 @@ class FuzzyNumber(object):
             new.df = df
             new.name = "{}-{}".format(self.name, other)
         else:
+            cls = self._get_cls(self, other)
             old0, old1 = self._unify(other)
             quotients = np.vstack([old0.df.l - old1.df.l,
                                    old0.df.l - old1.df.r,
@@ -421,7 +423,7 @@ class FuzzyNumber(object):
         """
 
         if isinstance(other, (int, float)):
-            return False #(self.min() >= other) and (self.max() <= other)
+            return False  # (self.min() >= other) and (self.max() <= other)
         else:
             return np.allclose(self.df.values, other.df.values)
 

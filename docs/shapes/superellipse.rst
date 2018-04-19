@@ -19,3 +19,9 @@ Superellipse
     :alt: Superellipse fuzzy number (variation m, n)
 
     Superellipse fuzzy number (variation m, n)
+
+.. figure:: operations_Superellipse.png
+    :scale: 90 %
+    :alt: Superellipse fuzzy number operations
+
+    Superellipse fuzzy number operations

@@ -13,3 +13,9 @@ Trapezoid
     :alt: Trapezoid fuzzy number
 
     Trapezoid fuzzy number
+
+.. figure:: operations_Trapezoid.png
+    :scale: 90 %
+    :alt: Trapezoid fuzzy number operations
+
+    Trapezoid fuzzy number operations

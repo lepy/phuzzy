@@ -14,3 +14,10 @@ Uniform
     :alt: uniform fuzzy number
 
     Uniform fuzzy number
+
+.. figure:: operations_Uniform.png
+    :scale: 90 %
+    :alt: uniform fuzzy number operations
+
+    Uniform fuzzy number operations
+
