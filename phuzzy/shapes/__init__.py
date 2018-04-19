@@ -262,7 +262,7 @@ class FuzzyNumber(object):
         return new
 
     __div__ = __truediv__
-    __floordiv__ = __truediv__
+    # __floordiv__ = __truediv__
 
     def __rdiv__(self, other):
         return self.__div__(other)
@@ -300,6 +300,54 @@ class FuzzyNumber(object):
                       number_of_alpha_levels=len(df))
             new.df = df
             new.name = "{}^{}".format(self.name, other.name)
+        new.make_convex()
+        return new
+
+    def __neg__(self):
+        """apply unary neg operator to a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+        cls = self.__class__
+        quotients = np.vstack([-self.df.l, -self.df.r])
+        df = pd.DataFrame.from_dict({"alpha": self.df.alpha,
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
+        new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                  alpha1=df.iloc[-1][["l", "r"]].values,
+                  number_of_alpha_levels=len(df))
+        new.df = df
+        new.name = "-{}".format(self.name)
+        new.make_convex()
+        return new
+
+    def __abs__(self):
+        """apply abs operator to a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+        dfl0 = self.df.l.copy()
+        dfl0[dfl0<=0] = 0
+        dfr0 = self.df.r.copy()
+        dfr0[dfr0<=0] = 0
+
+        if ((self.df[["l", "r"]].values <= 0).all()) or ((self.df[["l", "r"]].values >= 0).all()):
+            cls = self.__class__
+            quotients = np.vstack([abs(self.df.l), abs(self.df.r)])
+        else:
+            cls = FuzzyNumber
+            quotients = np.vstack([dfl0, dfr0, abs(self.df.l), abs(self.df.r)])
+
+        df = pd.DataFrame.from_dict({"alpha": self.df.alpha,
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
+        new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                  alpha1=df.iloc[-1][["l", "r"]].values,
+                  number_of_alpha_levels=len(df))
+        new.df = df
+        new.name = "|{}|".format(self.name)
         new.make_convex()
         return new
 
