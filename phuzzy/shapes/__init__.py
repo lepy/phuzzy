@@ -351,6 +351,30 @@ class FuzzyNumber(object):
         new.make_convex()
         return new
 
+    def min(self):
+        """minimum
+
+        :rtype: float
+        :return: min value of df
+        """
+        return self.df.values.min()
+
+    def max(self):
+        """maximal
+
+        :rtype: float
+        :return: max value of df
+        """
+        return self.df.values.max()
+
+    def mean(self):
+        """mean value
+
+        :rtype: float
+        :return: mean value
+        """
+        return self.ppf(.5)
+
     def make_convex(self):
         """make fuzzy number convex
 
