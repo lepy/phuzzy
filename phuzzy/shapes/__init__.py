@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 logger = logging.getLogger("phuzzy")
 
 import sys
+
 is_py2 = sys.version_info.major == 2
 
 import numpy as np
@@ -131,8 +133,8 @@ class FuzzyNumber(object):
             df = self.df.copy()
             df.update(df[["l", "r"]] + other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                                 alpha1=df.iloc[-1][["l", "r"]].values,
-                                 number_of_alpha_levels=len(df))
+                      alpha1=df.iloc[-1][["l", "r"]].values,
+                      number_of_alpha_levels=len(df))
             new.df = df
             new.name = "{}+{}".format(self.name, other)
         else:
@@ -167,8 +169,8 @@ class FuzzyNumber(object):
             df = self.df.copy()
             df.update(df[["l", "r"]] - other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                                 alpha1=df.iloc[-1][["l", "r"]].values,
-                                 number_of_alpha_levels=len(df))
+                      alpha1=df.iloc[-1][["l", "r"]].values,
+                      number_of_alpha_levels=len(df))
             new.df = df
             new.name = "{}-{}".format(self.name, other)
         else:
@@ -178,8 +180,8 @@ class FuzzyNumber(object):
                                    old0.df.r - old1.df.l,
                                    old0.df.r - old1.df.r])
             df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                             "l": np.nanmin(quotients, axis=0),
-                                             "r": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
@@ -203,8 +205,8 @@ class FuzzyNumber(object):
             df = self.df.copy()
             df.update(df[["l", "r"]] * other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                                 alpha1=df.iloc[-1][["l", "r"]].values,
-                                 number_of_alpha_levels=len(df))
+                      alpha1=df.iloc[-1][["l", "r"]].values,
+                      number_of_alpha_levels=len(df))
             new.df = df
             new.name = "{}*{}".format(self.name, other)
         else:
@@ -214,8 +216,8 @@ class FuzzyNumber(object):
                                    old0.df.r * old1.df.l,
                                    old0.df.r * old1.df.r])
             df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                             "l": np.nanmin(quotients, axis=0),
-                                             "r": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
             cls = self._get_cls(self, other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                       alpha1=df.iloc[-1][["l", "r"]].values,
@@ -240,8 +242,8 @@ class FuzzyNumber(object):
             df = self.df.copy()
             df.update(df[["l", "r"]] / other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                                 alpha1=df.iloc[-1][["l", "r"]].values,
-                                 number_of_alpha_levels=len(df))
+                      alpha1=df.iloc[-1][["l", "r"]].values,
+                      number_of_alpha_levels=len(df))
             new.df = df
             new.name = "{}/{}".format(self.name, other)
         else:
@@ -251,8 +253,8 @@ class FuzzyNumber(object):
                                    old0.df.r / old1.df.l,
                                    old0.df.r / old1.df.r])
             df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                             "l": np.nanmin(quotients, axis=0),
-                                             "r": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
             cls = self._get_cls(self, other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                       alpha1=df.iloc[-1][["l", "r"]].values,
@@ -262,6 +264,7 @@ class FuzzyNumber(object):
         return new
 
     __div__ = __truediv__
+
     # __floordiv__ = __truediv__
 
     def __rdiv__(self, other):
@@ -275,15 +278,15 @@ class FuzzyNumber(object):
         """
 
         # fixme: zeros, infs, nans
-        cls = FuzzyNumber # self._get_cls(self, other)
+        cls = FuzzyNumber  # self._get_cls(self, other)
         if isinstance(other, (int, float)):
             if isinstance(self, Uniform):
                 cls = Uniform
             df = self.df.copy()
             df.update(df[["l", "r"]] ** other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                                 alpha1=df.iloc[-1][["l", "r"]].values,
-                                 number_of_alpha_levels=len(df))
+                      alpha1=df.iloc[-1][["l", "r"]].values,
+                      number_of_alpha_levels=len(df))
             new.df = df
             new.name = "{}^{}".format(self.name, other)
         else:
@@ -293,8 +296,44 @@ class FuzzyNumber(object):
                                    old0.df.r ** old1.df.l,
                                    old0.df.r ** old1.df.r])
             df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                             "l": np.nanmin(quotients, axis=0),
-                                             "r": np.nanmax(quotients, axis=0)})
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
+            new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                      alpha1=df.iloc[-1][["l", "r"]].values,
+                      number_of_alpha_levels=len(df))
+            new.df = df
+            new.name = "{}^{}".format(self.name, other.name)
+        new.make_convex()
+        return new
+
+    def __rpow__(self, other):
+        """apply exponent of a fuzzy number
+
+        :param other: phuzzy.FuzzyNumber
+        :return: fuzzy number
+        """
+
+        # fixme: zeros, infs, nans
+        cls = FuzzyNumber  # self._get_cls(self, other)
+        if isinstance(other, (int, float)):
+            if isinstance(self, Uniform):
+                cls = Uniform
+            df = self.df.copy()
+            df.update(other ** df[["l", "r"]])
+            new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                      alpha1=df.iloc[-1][["l", "r"]].values,
+                      number_of_alpha_levels=len(df))
+            new.df = df
+            new.name = "{}^{}".format(self.name, other)
+        else:
+            old0, old1 = self._unify(other)
+            quotients = np.vstack([old0.df.l ** old1.df.l,
+                                   old0.df.l ** old1.df.r,
+                                   old0.df.r ** old1.df.l,
+                                   old0.df.r ** old1.df.r])
+            df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                         "l": np.nanmin(quotients, axis=0),
+                                         "r": np.nanmax(quotients, axis=0)})
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
@@ -312,8 +351,8 @@ class FuzzyNumber(object):
         cls = self.__class__
         quotients = np.vstack([-self.df.l, -self.df.r])
         df = pd.DataFrame.from_dict({"alpha": self.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
+                                     "l": np.nanmin(quotients, axis=0),
+                                     "r": np.nanmax(quotients, axis=0)})
         new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                   alpha1=df.iloc[-1][["l", "r"]].values,
                   number_of_alpha_levels=len(df))
@@ -329,9 +368,9 @@ class FuzzyNumber(object):
         :return: fuzzy number
         """
         dfl0 = self.df.l.copy()
-        dfl0[dfl0<=0] = 0
+        dfl0[dfl0 <= 0] = 0
         dfr0 = self.df.r.copy()
-        dfr0[dfr0<=0] = 0
+        dfr0[dfr0 <= 0] = 0
 
         if ((self.df[["l", "r"]].values <= 0).all()) or ((self.df[["l", "r"]].values >= 0).all()):
             cls = self.__class__
@@ -341,8 +380,8 @@ class FuzzyNumber(object):
             quotients = np.vstack([dfl0, dfr0, abs(self.df.l), abs(self.df.r)])
 
         df = pd.DataFrame.from_dict({"alpha": self.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
+                                     "l": np.nanmin(quotients, axis=0),
+                                     "r": np.nanmax(quotients, axis=0)})
         new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                   alpha1=df.iloc[-1][["l", "r"]].values,
                   number_of_alpha_levels=len(df))
@@ -351,13 +390,93 @@ class FuzzyNumber(object):
         new.make_convex()
         return new
 
+    def __lt__(self, other):
+        """operation <
+
+        :return: True or False
+        """
+
+        if isinstance(other, (int, float)):
+            return self.max() < other
+        else:
+            return self.max() < other.min()
+
+    # def __le__(self, other):
+    #     """operation <=
+    #
+    #     :rtype: bool
+    #     :return: True or False
+    #     """
+    #
+    #     if isinstance(other, (int, float)):
+    #         return self.max() <= other
+    #     else:
+    #         return self.max() <= other.max()
+
+    def __eq__(self, other):
+        """operation ==
+
+        :rtype: bool
+        :return: True or False
+        """
+
+        if isinstance(other, (int, float)):
+            return False #(self.min() >= other) and (self.max() <= other)
+        else:
+            return np.allclose(self.df.values, other.df.values)
+
+    def __ne__(self, other):
+        """operation !=
+
+        :rtype: bool
+        :return: True or False
+        """
+
+        return not self.__eq__(other)
+
+    # def __ge__(self, other):
+    #     """operation >=
+    #
+    #     :rtype: bool
+    #     :return: True or False
+    #     """
+    #
+    #     if isinstance(other, (int, float)):
+    #         return self.min() <= other
+    #     else:
+    #         return self.min() <= other.max()
+
+    def __gt__(self, other):
+        """operation >
+
+        :rtype: bool
+        :return: True or False
+        """
+
+        if isinstance(other, (int, float)):
+            return self.min() > other
+        else:
+            return self.min() > other.max()
+
+    def __contains__(self, other):
+        """operator in
+
+        :rtype: bool
+        :return: True or False
+        """
+
+        if isinstance(other, (int, float)):
+            return (self.min() <= other) and (self.max() >= other)
+        else:
+            return (self.min() <= other.min()) and (self.max() >= other.max())
+
     def min(self):
         """minimum
 
         :rtype: float
         :return: min value of df
         """
-        return self.df.values.min()
+        return self.df[["l", "r"]].values.min()
 
     def max(self):
         """maximal
@@ -365,7 +484,7 @@ class FuzzyNumber(object):
         :rtype: float
         :return: max value of df
         """
-        return self.df.values.max()
+        return self.df[["l", "r"]].values.max()
 
     def mean(self):
         """mean value
@@ -531,7 +650,7 @@ class FuzzyNumber(object):
 
         :return: [[a0_l, a0_r], [a1_l, a1_r]]
         """
-        if self.df is not None and len(self.df)>1:
+        if self.df is not None and len(self.df) > 1:
             return self.df.iloc[[0, -1]][["l", "r"]].values.tolist()
         else:
             return []
