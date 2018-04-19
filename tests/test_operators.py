@@ -240,6 +240,43 @@ def test_neg():
                        [[0.0, -4.0, -1e-10], [0.5, -3.5, -1.00000000005], [1.0, -3.0, -2.0]]
                        )
 
+def test_abs():
+    x = phuzzy.Trapezoid(alpha0=[-3, 5], alpha1=[1,2], name="x", number_of_alpha_levels=3)
+    y = abs(x)
+    print(y.df.values.tolist())
+    assert np.allclose(y.df.values.tolist(),
+                       [[0.0, 0.0, 5.0], [0.5, 0.0, 3.5], [1.0, 1.0, 2.0]]
+                       )
+
+    x = phuzzy.Trapezoid(alpha0=[1, 5], alpha1=[2,3], name="x", number_of_alpha_levels=3)
+    y = abs(x)
+    print(y.df.values.tolist())
+    assert np.allclose(y.df.values.tolist(),
+                       [[0.0, 1.0, 5.0], [0.5, 1.5, 4.0], [1.0, 2.0, 3.0]]
+                       )
+
+    x = phuzzy.Trapezoid(alpha0=[-5, -1], alpha1=[-3,-2], name="x", number_of_alpha_levels=3)
+    y = abs(x)
+    print(y.df.values.tolist())
+    assert np.allclose(y.df.values.tolist(),
+                       [[0.0, 1.0, 5.0], [0.5, 1.5, 4.0], [1.0, 2.0, 3.0]]
+                       )
+
+def test_min():
+    x = phuzzy.Trapezoid(alpha0=[-3, 5], alpha1=[1,2], name="x", number_of_alpha_levels=3)
+    print(x.min())
+    assert np.isclose(x.min(), -3)
+
+def test_max():
+    x = phuzzy.Trapezoid(alpha0=[-3, 5], alpha1=[1,2], name="x", number_of_alpha_levels=3)
+    print(x.max())
+    assert np.isclose(x.max(), 5)
+
+def test_mean():
+    x = phuzzy.Trapezoid(alpha0=[-2, 4], alpha1=[-1,3], name="x", number_of_alpha_levels=3)
+    print(x.mean())
+    assert np.isclose(x.mean(), 1)
+
 
 if __name__ == '__main__':
     test_add()
