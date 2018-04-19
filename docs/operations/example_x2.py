@@ -17,7 +17,7 @@ print(y.df)
 # A.plot(show=True)
 
 
-def plot_xy(x, y, show=False, ftype=True):
+def plot_op_x(x, show=False, ftype=True):
     H = 100.  # mm
     B = 300.  # mm
     for i in [x,y]:
@@ -35,9 +35,5 @@ def plot_xy(x, y, show=False, ftype=True):
     if show==True:
         plt.show()
 
-plot_xy(x,x+2, show=False)
-plot_xy(x,x-2, show=False)
-plot_xy(x,x*2, show=False)
-plot_xy(x,x/2, show=False)
-plot_xy(x,x**2, show=True)
+plot_op_x(x, show=True)
 

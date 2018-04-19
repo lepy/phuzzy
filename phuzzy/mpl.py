@@ -80,7 +80,6 @@ class MPL_Mixin():
         if ppf is None:
             ppf = [.5]
         ppfs = self.ppf(ppf)
-        print("ppf", ppf)
         for x in ppfs:
             # ax.axvline(x, lw=.5, c="k", alpha=.3)
             ax.plot([x, x], [0, 1], lw=.5, c="k", alpha=.3, dashes=[10,2,1,2])

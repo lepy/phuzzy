@@ -152,6 +152,9 @@ class FuzzyNumber(object):
             new.name = "{}+{}".format(self.name, other.name)
         return new
 
+    def __radd__(self, other):
+        return self.__add__(other)
+
     def __sub__(self, other):
         """substract a fuzzy number
 
@@ -183,6 +186,9 @@ class FuzzyNumber(object):
             new.df = df
             new.name = "{}-{}".format(self.name, other.name)
         return new
+
+    def __rsub__(self, other):
+        return self.__sub__(other)
 
     def __mul__(self, other):
         """multiply with a fuzzy number
@@ -217,6 +223,9 @@ class FuzzyNumber(object):
             new.df = df
             new.name = "{}*{}".format(self.name, other.name)
         return new
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
     def __truediv__(self, other):
         """divide by a fuzzy number
@@ -255,6 +264,9 @@ class FuzzyNumber(object):
     __div__ = __truediv__
     __floordiv__ = __truediv__
 
+    def __rdiv__(self, other):
+        return self.__div__(other)
+
     def __pow__(self, other):
         """apply power of a fuzzy number
 
@@ -265,6 +277,8 @@ class FuzzyNumber(object):
         # fixme: zeros, infs, nans
         cls = FuzzyNumber # self._get_cls(self, other)
         if isinstance(other, (int, float)):
+            if isinstance(self, Uniform):
+                cls = Uniform
             df = self.df.copy()
             df.update(df[["l", "r"]] ** other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
