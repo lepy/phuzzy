@@ -227,5 +227,19 @@ def test_power():
                        )
 
 
+def test_neg():
+
+    p = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=3, name="p")
+    print(p)
+    print(p.df.values.tolist())
+    assert len(p.df) == 3
+
+    b = -p
+    print(b.df.values.tolist())
+    assert np.allclose(b.df.values.tolist(),
+                       [[0.0, -4.0, -1e-10], [0.5, -3.5, -1.00000000005], [1.0, -3.0, -2.0]]
+                       )
+
+
 if __name__ == '__main__':
     test_add()
