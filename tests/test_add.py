@@ -2,6 +2,12 @@ import phuzzy
 from phuzzy.mpl import mix_mpl
 
 
+def test_add():
+    u = phuzzy.Uniform(alpha0=[1,2])
+    w = 1 + u
+    print(w)
+    assert w
+
 def atest_add():
     t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=15)
     print(t)

@@ -60,43 +60,62 @@ def test_add():
     # p.plot()
     # a.plot(show=True)
 
-    b = t + 3.
+    b = t + 4.
     print(b)
     print(b.df)
     print(b.df.values.tolist())
     assert np.allclose(b.df.values.tolist(),
-                       [[3.0, 4.0, 6.0], [3.5, 4.6075291624853785, 5.392470837514622], [4.0, 5.0, 5.0]]
+                       [[0.0, 5.0, 7.0], [0.5, 5.6075291624853785, 6.392470837514622], [1.0, 6.0, 6.0]]
+                       )
+
+    b = 4 - t
+    print(b)
+    print(b.df)
+    print(b.df.values.tolist())
+    assert np.allclose(b.df.values.tolist(),
+                       [[0.0, -3.0, -1.0], [0.5, -2.3924708375146215, -1.607529162485378], [1.0, -2.0, -2.0]]
                        )
 
 
 def test_sub():
-    t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=2, name="t")
+    t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=3, name="t")
     print(t)
-    assert len(t.df) == 2
+    assert len(t.df) == 3
 
-    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=2, name="p")
+    p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=3, name="p")
     print(p)
-    assert len(p.df) == 2
+    assert len(p.df) == 3
 
     a = t - p
     a.name = "t-p"
 
     print(a.df)
     print(a.df.values.tolist())
-    assert np.allclose(a.df.values.tolist(), [[0.0, -3.0, 2.0], [1.0, -1.0, 0.0]])
+    assert np.allclose(a.df.values.tolist(),
+                       [[0.0, -3.0, 2.0], [0.5, -1.8924708375146215, 0.892470837514622], [1.0, -1.0, 0.0]]
+                       )
 
-    b = t - 3.
+    b = t - 4.
     print(b)
     print(b.df)
     print(b.df.values.tolist())
     assert np.allclose(b.df.values.tolist(),
-                       [[-3.0, -2.0, 0.0], [-2.0, -1.0, -1.0]]
+                       [[0.0, -3.0, -1.0], [0.5, -2.3924708375146215, -1.607529162485378], [1.0, -2.0, -2.0]]
+                       )
+
+    b = 4. - t
+    print(b)
+    print(b.df)
+    print(b.df.values.tolist())
+    assert np.allclose(b.df.values.tolist(),
+                       [[0.0, -3.0, -1.0], [0.5, -2.3924708375146215, -1.607529162485378], [1.0, -2.0, -2.0]]
                        )
 
 
 def test_mul():
     t = phuzzy.TruncNorm(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=3, name="t")
     print(t)
+    print(t.df.values.tolist())
     assert len(t.df) == 3
 
     p = phuzzy.Trapezoid(alpha0=[1, 4], alpha1=[2, 3], number_of_alpha_levels=3, name="p")
@@ -109,32 +128,62 @@ def test_mul():
     print(a)
     print(a.df.values.tolist())
     assert np.allclose(a.df.values.tolist(),
-                       [[0.0, 1.0, 12.0], [0.5, 2.4112937437280677, 8.373647931301177], [1.0, 4.0, 6.0]])
+                       [[0.0, 1.0, 12.0], [0.5, 2.4112937437280677, 8.373647931301177], [1.0, 4.0, 6.0]]
+                       )
 
-    b = t * 3.
+    b = t * 1.
     print(b)
     print(b.df)
     print(b.df.values.tolist())
     assert np.allclose(b.df.values.tolist(),
-                       [[0.0, 3.0, 9.0], [1.5, 4.822587487456135, 7.1774125125438655], [3.0, 6.0, 6.0]]
+                       [[0.0, 1.0, 3.0], [0.5, 1.6075291624853785, 2.392470837514622], [1.0, 2.0, 2.0]]
+                       )
+
+    b = t * 2.
+    print(b)
+    print(b.df)
+    print(b.df.values.tolist())
+    assert np.allclose(b.df.values.tolist(),
+                       [[0.0, 2.0, 6.0], [0.5, 3.215058324970757, 4.784941675029244], [1.0, 4.0, 4.0]]
+                       )
+
+    b = 2. * t
+    print(b)
+    print(b.df)
+    print(b.df.values.tolist())
+    assert np.allclose(b.df.values.tolist(),
+                       [[0.0, 2.0, 6.0], [0.5, 3.215058324970757, 4.784941675029244], [1.0, 4.0, 4.0]]
                        )
 
 
 def test_div():
-    t = phuzzy.TruncNorm(alpha0=[2, 3], alpha1=[], number_of_alpha_levels=2, name="t")
+    t = phuzzy.TruncNorm(alpha0=[2, 3], alpha1=[], number_of_alpha_levels=3, name="t")
+    print(t.df.values.tolist())
     print(t)
-    assert len(t.df) == 2
 
-    p = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=2, name="p")
+    assert len(t.df) == 3
+
+    p = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=3, name="p")
     print(p)
-    assert len(p.df) == 2
+    assert len(p.df) == 3
 
     # a = t / p
     a = p / t
     a.name = "t/p"
     print(a.df.values.tolist())
     assert np.allclose(a.df.values.tolist(),
-                       [[0.0, 3.3333333333333335e-11, 2.0], [1.0, 0.8, 1.2]]
+                       [[0.0, 3.3333333333333335e-11, 2.0], [0.5, 0.37088749487272066, 1.519252456825272], [1.0, 0.8, 1.2]]
+                       )
+
+    print(a)
+    print(a.df)
+    print("_" * 80)
+    b = t / 1.
+    print(b)
+    print(b.df)
+    print(b.df.values.tolist())
+    assert np.allclose(b.df.values.tolist(),
+                       [[0.0, 2.0, 3.0], [0.5, 2.3037645812426892, 2.6962354187573108], [1.0, 2.5, 2.5]]
                        )
 
     print(a)
@@ -145,7 +194,7 @@ def test_div():
     print(b.df)
     print(b.df.values.tolist())
     assert np.allclose(b.df.values.tolist(),
-                       [[0.0, 1.0, 1.5], [0.5, 1.25, 1.25]]
+                       [[0.0, 1.0, 1.5], [0.5, 1.1518822906213446, 1.3481177093786554], [1.0, 1.25, 1.25]]
                        )
 
 
