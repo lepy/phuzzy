@@ -128,7 +128,8 @@ class FuzzyNumber(object):
         """
         cls = self._get_cls(self, other)
         if isinstance(other, (int, float)):
-            df = self.df + other
+            df = self.df.copy()
+            df.update(df[["l", "r"]] + other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
@@ -160,7 +161,8 @@ class FuzzyNumber(object):
 
         cls = self._get_cls(self, other)
         if isinstance(other, (int, float)):
-            df = self.df - other
+            df = self.df.copy()
+            df.update(df[["l", "r"]] - other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
@@ -192,7 +194,8 @@ class FuzzyNumber(object):
         # fixme: zeros, infs, nans
         cls = self._get_cls(self, other)
         if isinstance(other, (int, float)):
-            df = self.df * other
+            df = self.df.copy()
+            df.update(df[["l", "r"]] * other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
@@ -225,7 +228,8 @@ class FuzzyNumber(object):
         # fixme: zeros, infs, nans
         cls = self._get_cls(self, other)
         if isinstance(other, (int, float)):
-            df = self.df / other
+            df = self.df.copy()
+            df.update(df[["l", "r"]] / other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
@@ -261,7 +265,8 @@ class FuzzyNumber(object):
         # fixme: zeros, infs, nans
         cls = FuzzyNumber # self._get_cls(self, other)
         if isinstance(other, (int, float)):
-            df = self.df ** other
+            df = self.df.copy()
+            df.update(df[["l", "r"]] ** other)
             new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                                  alpha1=df.iloc[-1][["l", "r"]].values,
                                  number_of_alpha_levels=len(df))
