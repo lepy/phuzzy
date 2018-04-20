@@ -60,21 +60,21 @@ class MPL_Mixin():
             ax.set_xlabel('%s' % self.name)
             ax.set_ylabel(r'$\alpha$')
             ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
-            ax.annotate('%.2f' % a0["l"], xy=(a0["l"], a0["alpha"]), xycoords='data',
+            ax.annotate('%.3g' % a0["l"], xy=(a0["l"], a0["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-            ax.annotate('%.2f' % a0["r"], xy=(a0["r"], a0["alpha"]), xycoords='data',
+            ax.annotate('%.3g' % a0["r"], xy=(a0["r"], a0["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
             a1 = self.alpha1
-            ax.annotate('%.2f' % a1["l"], xy=(a1["l"], a1["alpha"]), xycoords='data',
+            ax.annotate('%.3g' % a1["l"], xy=(a1["l"], a1["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-            ax.annotate('%.2f' % a1["r"], xy=(a1["r"], a1["alpha"]), xycoords='data',
+            ax.annotate('%.3g' % a1["r"], xy=(a1["r"], a1["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
         dx = abs(self.alpha0["r"] - self.alpha0["l"])
-        ax.set_xlim(self.alpha0["l"] - 0.2 * dx, self.alpha0["r"] + 0.2 * dx)
+        ax.set_xlim(self.alpha0["l"] - 0.3 * dx, self.alpha0["r"] + 0.3 * dx)
         ax.set_ylim(0, 1.1)
 
         if ppf is None:
