@@ -2,7 +2,7 @@ Welcome to phuzzy's documentation!
 ==================================
 
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 6
     :caption: Contents:
 
     readme

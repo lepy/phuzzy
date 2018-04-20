@@ -6,9 +6,6 @@ phuzzy.shapes package
     :undoc-members:
     :show-inheritance:
 
-Submodules
-----------
-
 .. toctree::
 
    phuzzy.shapes.superellipse

@@ -34,7 +34,19 @@ import phuzzy
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
-              'sphinx.ext.imgmath']
+              'sphinx.ext.imgmath',
+              # 'sphinx.ext.graphviz',
+              'sphinx.ext.inheritance_diagram',
+              'sphinx.ext.doctest',
+              'sphinxcontrib.napoleon',
+              ]
+
+autodoc_default_flags = ['members',
+                         'undoc-members',
+                         'show-inheritance',
+                         #'private-members',
+                         'special-members'
+                         ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
