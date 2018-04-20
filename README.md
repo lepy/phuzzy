@@ -123,7 +123,7 @@ To use phuzzy in a project:
 
 ![](docs/operations/x:y.png)
 
-## Power
+## Exponentiation
 
     x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     y = phuzzy.TruncNorm(alpha0=[1, 3], number_of_alpha_levels=15, name="y")

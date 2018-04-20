@@ -253,8 +253,8 @@ Division
     z = 3 / x
     z = x / 3
 
-Exponentiate
-^^^^^^^^^^^^
+Exponentiation
+^^^^^^^^^^^^^^
 
 .. math::
 

@@ -158,8 +158,8 @@ Division
     z.name = "x/y"
 
 
-Power
-^^^^^
+Exponentiation
+^^^^^^^^^^^^^^
 
 .. code-block:: python
 
