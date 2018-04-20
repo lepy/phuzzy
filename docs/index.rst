@@ -11,6 +11,7 @@ Welcome to phuzzy's documentation!
     modules
     shapes/shapes
     examples/examples
+    phuzzy_api/phuzzy
     contributing
     authors
     history
