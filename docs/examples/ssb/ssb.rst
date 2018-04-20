@@ -5,7 +5,7 @@ Simply supported beam with central load
 ---------------------------------------
 
 What is the maximum deflection of a simple supported beam with central load, if there is an uncertainty of only 1% for all input parameter?
-The input parameter are load P, beam length L, beam width W, beam height H and youngth modulus E.
+The input parameter are load P, beam length L, beam width W, beam height H and young's modulus E.
 
 .. math::
 

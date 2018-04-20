@@ -96,7 +96,7 @@ P.title = r"load $P$"
 L.title = r"length $L$"
 W.title = r"width $W$"
 H.title = r"height $H$"
-E.title = r"youngs modulus $E$"
+E.title = r"young's modulus $E$"
 A.title = r"cross section area $A$"
 
 for i, y in enumerate(ys):
