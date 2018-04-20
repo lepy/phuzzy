@@ -10,6 +10,7 @@ Welcome to phuzzy's documentation!
     usage
     modules
     shapes/shapes
+    examples/examples
     contributing
     authors
     history

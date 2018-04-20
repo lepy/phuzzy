@@ -614,7 +614,7 @@ class FuzzyNumber(object):
         :return: y
         """
 
-        n = kwargs.get("n", 1000)
+        n = kwargs.get("n", 1e6)
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.l, self.df.r[::-1]))
 
@@ -634,7 +634,7 @@ class FuzzyNumber(object):
         :return: y
         """
 
-        n = kwargs.get("n", 1000)
+        n = kwargs.get("n", 1e6)
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.l, self.df.r[::-1]))
 

@@ -1,3 +1,16 @@
 .wy-nav-content {
     max-width: none;
 }
+
+pre {
+    line-height:1.;
+}
+
+.rst-content pre.literal-block, .rst-content div[class^='highlight-python'] {
+    background: #efffe4
+    border: 1px solid #888888;
+}
+
+.rst-content .linenodiv pre {
+    border-right: solid 1px #888888;
+    }
