@@ -66,7 +66,7 @@ B_ = 300. # mm
 fig, axs = plt.subplots(1, 2, dpi=90, facecolor='w', edgecolor='k', figsize=(B_ / 25.4, H_ / 25.4))
 
 axs[0].axvline(I0, lw=2, alpha=.4, c="r", label="$I_0$")
-axs[1].axvline(w0, lw=2, alpha=.4, c="r", label="$P_0$")
+axs[1].axvline(w0, lw=2, alpha=.4, c="r", label="$w_0 = {:.4g}\,mm$".format(w0))
 I.plot(ax=axs[0])
 w.plot(ax=axs[1])
 
@@ -74,7 +74,7 @@ axs[0].set_title("area moment of inertia $I$")
 axs[1].set_title("deflection $w$")
 
 axs[0].set_xlabel(r"area moment of inertia $I=\frac{WH^3}{12}$")
-axs[1].set_xlabel(r"deflection $w=\frac{PL^3}{48EI}$")
+axs[1].set_xlabel(r"deflection $w=\frac{PL^3}{48EI}$" + "$ = {:.4g}\,mm\,[{:.4g},{:.4g}]$".format(w_mean, w.min(), w.max()))
 
 axs[0].legend()
 axs[1].legend()
