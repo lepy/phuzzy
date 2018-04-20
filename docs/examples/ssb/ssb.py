@@ -60,10 +60,10 @@ import matplotlib.pyplot as plt
 mix_mpl(I)
 mix_mpl(w)
 
-H = 100. # mm
-B = 300. # mm
+H_ = 100. # mm
+B_ = 300. # mm
 
-fig, axs = plt.subplots(1, 2, dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
+fig, axs = plt.subplots(1, 2, dpi=90, facecolor='w', edgecolor='k', figsize=(B_ / 25.4, H_ / 25.4))
 
 axs[0].axvline(I0, lw=2, alpha=.4, c="r", label="$I_0$")
 axs[1].axvline(w0, lw=2, alpha=.4, c="r", label="$P_0$")
@@ -80,4 +80,33 @@ axs[0].legend()
 axs[1].legend()
 fig.tight_layout(pad=1.18, h_pad=1.1)
 fig.savefig("ssb.png")
+
+H_ = 250.  # mm
+B_ = 300.  # mm
+
+fig, axs = plt.subplots(3, 2, dpi=90, facecolor='w', edgecolor='k', figsize=(B_ / 25.4, H_ / 25.4))
+
+A = W * H
+
+ys = [P, L,
+      W, H,
+      E, A]
+
+P.title = r"load $P$"
+L.title = r"length $L$"
+W.title = r"width $W$"
+H.title = r"height $H$"
+E.title = r"youngs modulus $E$"
+A.title = r"cross section area $A$"
+
+for i, y in enumerate(ys):
+    mix_mpl(y)
+    ax = axs.ravel()[i]
+    y.plot(ax=ax)
+    if hasattr(y, "title"):
+        ax.set_title(y.title)
+
+fig.tight_layout()
+fig.savefig("ssb_parameter.png")
+
 plt.show()

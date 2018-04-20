@@ -21,9 +21,22 @@ Simply supported beam with central load
     :language: python
     :lines: 2-56
 
+Parameter
+^^^^^^^^^
+
+.. figure:: ssb_parameter.png
+    :scale: 90 %
+    :alt: ssb parameter
+
+    used Parameter
+
+Results
+^^^^^^^
+
 .. figure:: ssb.png
     :scale: 90 %
     :alt: three point bending test results
 
-    Three point bending test results area moment of inertia ``I``, deflections ``w``
+    results area moment of inertia ``I`` and deflections ``w``
 
+* :download:`Source code ssb.py<ssb.py>`
