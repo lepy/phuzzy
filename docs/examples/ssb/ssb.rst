@@ -34,6 +34,7 @@ The input parameter are load P, beam length L, beam width W, beam height H and y
 
     A &= WH
 
+    I &= WH^3
 
 Code
 ^^^^
