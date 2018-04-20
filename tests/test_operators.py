@@ -287,6 +287,12 @@ def test_abs():
     assert np.allclose(y.df.values.tolist(),
                        [[0.0, 1.0, 5.0], [0.5, 1.5, 4.0], [1.0, 2.0, 3.0]]
                        )
+    y = x.abs()
+    print(y.df.values.tolist())
+    assert np.allclose(y.df.values.tolist(),
+                       [[0.0, 1.0, 5.0], [0.5, 1.5, 4.0], [1.0, 2.0, 3.0]]
+                       )
+
 
 
 def test_lt():

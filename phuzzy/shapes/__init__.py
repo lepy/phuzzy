@@ -472,6 +472,13 @@ class FuzzyNumber(object):
         else:
             return (self.min() <= other.min()) and (self.max() >= other.max())
 
+    def abs(self):
+        """calculate absolute value
+
+        :return: FuzzyNumber
+        """
+        return self.__abs__()
+
     def min(self):
         """minimum
 

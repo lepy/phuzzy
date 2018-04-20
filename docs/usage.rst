@@ -310,3 +310,4 @@ Absolute value
 
     x = phuzzy.Trapezoid(alpha0=[-1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
     z = abs(x)
+    z = x.abs()
