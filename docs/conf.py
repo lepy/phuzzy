@@ -38,7 +38,7 @@ extensions = ['sphinx.ext.autodoc',
               # 'sphinx.ext.graphviz',
               'sphinx.ext.inheritance_diagram',
               'sphinx.ext.doctest',
-              'sphinxcontrib.napoleon',
+              # 'sphinxcontrib.napoleon',
               ]
 
 autodoc_default_flags = ['members',
