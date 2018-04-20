@@ -24,12 +24,6 @@ Installation
 .. image:: https://api.codacy.com/project/badge/Grade/4814372e95c543a69c69004c853b17be
     :target: https://www.codacy.com/app/lepy/phuzzy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lepy/phuzzy&amp;utm_campaign=Badge_Grade
 
-.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
-    :target: https://saythanks.io/to/lepy
-
-.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1219617.svg
-   :target: https://doi.org/10.5281/zenodo.1219617
-
 Stable release
 --------------
 
