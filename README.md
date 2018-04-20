@@ -131,3 +131,19 @@ To use phuzzy in a project:
     z.name = "x^y"
 
 ![](docs/operations/x_pow_y.png)
+
+# cite
+
+## plain
+
+    Ingolf Lepenies (2018): phuzzy - a python package for fuzzy data.
+    Zenodo. http://doi.org/10.5281/zenodo.1219616
+
+## bibtex
+
+    @article{phuzzy,
+    title={phuzzy - a python package for fuzzy data},
+    DOI={10.5281/zenodo.1219616},
+    publisher={Zenodo},
+    author={Ingolf Lepenies},
+    year={2018}}
