@@ -27,7 +27,7 @@ phuzzy
    :target: https://saythanks.io/to/lepy
 
 .. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.1222111.svg
-   :target: https://doi.org/10.5281/zenodo.1222111
+   :target: https://doi.org/10.5281/zenodo.1219616
 
 Fuzzy calculation in Python.
 
