@@ -140,6 +140,18 @@ Addition
 
     Addition of fuzzy numbers
 
+.. math::
+
+    z = 3 + x
+
+.. code-block:: python
+    :linenos:
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    z = 3 + x
+    z = x + 3
+
+
 Substraction
 ^^^^^^^^^^^^
 
@@ -160,6 +172,19 @@ Substraction
     :alt: add
 
     Substraction of fuzzy numbers
+
+.. math::
+
+    y = 3 - x
+
+    z = x - 3
+
+.. code-block:: python
+    :linenos:
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    y = 3 - x
+    z = x - 3
 
 Multiplication
 ^^^^^^^^^^^^^^
@@ -182,6 +207,18 @@ Multiplication
 
     Multiplication of fuzzy numbers
 
+.. math::
+
+    z = 3x
+
+.. code-block:: python
+    :linenos:
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    z = 3 * x
+    z = x * 3
+
+
 Division
 ^^^^^^^^
 
@@ -203,8 +240,21 @@ Division
 
     Division of fuzzy numbers
 
-Power
-^^^^^
+.. math::
+
+    y = 3 / x
+
+    z = x / 3
+
+.. code-block:: python
+    :linenos:
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    z = 3 / x
+    z = x / 3
+
+Exponentiate
+^^^^^^^^^^^^
 
 .. math::
 
@@ -223,3 +273,40 @@ Power
     :alt: add
 
     Power operation with fuzzy numbers
+
+.. math::
+
+    z = x^3
+
+.. code-block:: python
+    :linenos:
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    z = x**3
+
+
+Negation
+^^^^^^^^
+
+.. math::
+
+    z = -x
+
+.. code-block:: python
+    :linenos:
+
+    x = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    z = -x
+
+Absolute value
+^^^^^^^^^^^^^^
+
+.. math::
+
+    z = |x|
+
+.. code-block:: python
+    :linenos:
+
+    x = phuzzy.Trapezoid(alpha0=[-1, 4], alpha1=[2, 3], number_of_alpha_levels=5)
+    z = abs(x)
