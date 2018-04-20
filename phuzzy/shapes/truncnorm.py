@@ -1,14 +1,50 @@
 # -*- coding: utf-8 -*-
 
+"""Normal distibuted membership function
+
+.. code-block:: python
+
+    TruncNorm(alpha0=[1, 3], alpha1=None, number_of_alpha_levels=15)
+
+.. figure:: TruncNorm.png
+    :scale: 90 %
+    :alt: TruncNorm fuzzy number
+
+    TruncNorm fuzzy number
+
+.. code-block:: python
+
+    TruncGenNorm(alpha0=[1, 4], alpha1=None, number_of_alpha_levels=15, beta=5)
+
+.. figure:: TruncGenNorm.png
+    :scale: 90 %
+    :alt: TruncGenNorm fuzzy number
+
+    TruncGenNorm fuzzy number
+
+
+"""
+
 from phuzzy.shapes import FuzzyNumber
 import numpy as np
 import pandas as pd
 from scipy.stats import truncnorm, gennorm
 
 class TruncNorm(FuzzyNumber):
-    """Normal distibuted membership function"""
+    """Normal distibuted membership function
+
+    """
 
     def __init__(self, **kwargs):  # , mean=0., std=1., clip=None, ppf=None):
+        """create a TruncNorm object
+
+        :param kwargs:
+
+        .. code-block:: python
+
+            TruncNorm(alpha0=[1, 3], alpha1=None, number_of_alpha_levels=17)
+
+        """
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")
@@ -94,6 +130,15 @@ class TruncGenNorm(FuzzyNumber):
     """Truncated generalized normal distibuted membership function"""
 
     def __init__(self, **kwargs):  # , mean=0., std=1., beta=2, clip=None, ppf=None):
+        """create a TruncNorm object
+
+        :param kwargs:
+
+        .. code-block:: python
+
+            TruncGenNorm(alpha0=[1, 3], alpha1=None, number_of_alpha_levels=17, beta=3)
+
+        """
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")

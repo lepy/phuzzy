@@ -1,5 +1,20 @@
 # -*- coding: utf-8 -*-
 
+"""superelliptic fuzzy number
+
+.. code-block:: python
+
+    Superellipse(alpha0=[-1, 2], alpha1=None, m=1, n=.5, number_of_alpha_levels=15)
+
+.. figure:: Superellipse.png
+    :scale: 90 %
+    :alt: Superellipse fuzzy number
+
+    Superellipse fuzzy number
+
+"""
+
+
 from phuzzy.shapes import FuzzyNumber
 import numpy as np
 import pandas as pd
@@ -7,14 +22,18 @@ import pandas as pd
 class Superellipse(FuzzyNumber):
     """superelliptic fuzzy number
 
-    ..code_block: python
-        :linenos:
-
-        Superellipse(alpha0=alpha0, alpha1=None, m=2, n=None, number_of_alpha_levels=17)
-
     """
 
     def __init__(self, **kwargs):
+        """superelliptic fuzzy number
+
+        :param kwargs:
+
+        .. code-block:: python
+
+            Superellipse(alpha0=[1, 2], alpha1=None, m=2, n=None, number_of_alpha_levels=17)
+
+        """
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         self.m = kwargs.get("m") or 2.
