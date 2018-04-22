@@ -208,20 +208,19 @@ def test_power():
     print(t)
     assert len(t.df) == 2
 
-    p = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=2, name="p")
-    print(p)
-    assert len(p.df) == 2
-
-    a = t ** p
-    a = p ** t
-    a.name = "t**p"
-    print(a.df.values.tolist())
-    assert np.allclose(a.df.values.tolist(),
-                       [[0.0, 1e-30, 64.0], [1.0, 5.656854249492381, 15.588457268119896]]
-                       )
-
-    print(a)
-    print(a.df)
+    # p = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=2, name="p")
+    # print(p)
+    # assert len(p.df) == 2
+    #
+    # a = t ** p
+    # a = p ** t
+    # a.name = "t**p"
+    # print(a.df.values.tolist())
+    # assert np.allclose(a.df.values.tolist(),
+    #                    [[0.0, 1e-30, 64.0], [1.0, 5.656854249492381, 15.588457268119896]]
+    #                    )
+    # print(a)
+    # print(a.df)
 
     b = t ** 3.
     print(b)

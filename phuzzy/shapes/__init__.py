@@ -64,7 +64,7 @@ class FuzzyNumber(object):
         """
         raise NotImplementedError
 
-    def convert_df(self, alpha_levels=None, zero=1e-10):
+    def convert_df(self, alpha_levels=None, zero=0):
         df = self.df.copy()
         if alpha_levels is not None:
             self.number_of_alpha_levels = alpha_levels
@@ -340,13 +340,18 @@ class FuzzyNumber(object):
                 old0, old1 = self._unify(other)
                 df = old1.df.copy()
                 x = old0._disretize_range()
+                print("old1.min", old1.min())
                 _t = pd.DataFrame({"x":x,
                                    "res_l":x ** old1.min(),
                                    "res_r":x ** old1.max()
                                    })
+                if old1.has_zero is True:
+                    _t["res_0"] = 1
+                else:
+                    _t["res_0"] = np.nan
                 for i, row in old0.df.iterrows():
-                    df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r"]].values)
-                    df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r"]].values)
+                    df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r", "res_0"]].values)
+                    df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r", "res_0"]].values)
                 # quotients = np.vstack([old0.df.l ** old1.df.l,
                 #                        old0.df.l ** old1.df.r,
                 #                        old0.df.r ** old1.df.l,
@@ -535,7 +540,8 @@ class FuzzyNumber(object):
         """
         x = np.linspace(self.df.loc[0].l, self.df.loc[0].r, n)
         if self.has_zero():
-            x = np.hstack([x, [0, -1e-10, 1e-10], self.df.l.values, self.df.r.values])
+            # x = np.hstack([x, [0, -1e-10, 1e-10], self.df.l.values, self.df.r.values])
+            x = np.hstack([x, [0], self.df.l.values, self.df.r.values])
         else:
             x = np.hstack([x, self.df.l.values, self.df.l.values])
         x = np.unique(x)
