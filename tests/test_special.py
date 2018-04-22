@@ -31,7 +31,23 @@ def test_poor_mens_alpha_optimization_pow_scalar():
 def test_poor_mens_alpha_optimization_pow_fuzzy():
     p = phuzzy.Trapezoid(alpha0=[-2, 2], alpha1=[-1, 1])
     e = phuzzy.Trapezoid(alpha0=[2, 2], alpha1=[2, 2])
-    z = p ** e
-    print(z.df)
-    mix_mpl(z)
-    z.plot(show=True)
+    y = p ** e
+    print(y.df)
+    # mix_mpl(y)
+    # y.plot(show=True)
+
+    assert np.isclose(y.min(), 0)
+    assert np.isclose(y.max(), 4)
+    assert np.isclose(y.df.iloc[-1][["l", "r"]].max(), 1)
+
+def test_poor_mens_alpha_optimization_neg_pow_fuzzy():
+    p = phuzzy.Trapezoid(alpha0=[-2, 2], alpha1=[-1, 1])
+    e = phuzzy.Trapezoid(alpha0=[0, 1], alpha1=[0, 0])
+    y = p ** e
+    print(y.df)
+    mix_mpl(y)
+    y.plot(show=True)
+
+    # assert np.isclose(y.min(), 0)
+    # assert np.isclose(y.max(), 4)
+    # assert np.isclose(y.df.iloc[-1][["l", "r"]].max(), 1)

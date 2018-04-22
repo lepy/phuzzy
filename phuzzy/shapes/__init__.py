@@ -328,7 +328,6 @@ class FuzzyNumber(object):
                           number_of_alpha_levels=len(df))
             else:
                 # FIXME:
-                # old0, old1 = self._unify(other)
                 # df = self.df.copy()
                 # x = self._disretize_range()
                 # _t = pd.DataFrame({"x":x, "res":x ** other})
@@ -339,13 +338,22 @@ class FuzzyNumber(object):
                 #           alpha1=df.iloc[-1][["l", "r"]].values,
                 #           number_of_alpha_levels=len(df))
                 old0, old1 = self._unify(other)
-                quotients = np.vstack([old0.df.l ** old1.df.l,
-                                       old0.df.l ** old1.df.r,
-                                       old0.df.r ** old1.df.l,
-                                       old0.df.r ** old1.df.r])
-                df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                             "l": np.nanmin(quotients, axis=0),
-                                             "r": np.nanmax(quotients, axis=0)})
+                df = old1.df.copy()
+                x = old0._disretize_range()
+                _t = pd.DataFrame({"x":x,
+                                   "res_l":x ** old1.min(),
+                                   "res_r":x ** old1.max()
+                                   })
+                for i, row in old0.df.iterrows():
+                    df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r"]].values)
+                    df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r"]].values)
+                # quotients = np.vstack([old0.df.l ** old1.df.l,
+                #                        old0.df.l ** old1.df.r,
+                #                        old0.df.r ** old1.df.l,
+                #                        old0.df.r ** old1.df.r])
+                # df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                #                              "l": np.nanmin(quotients, axis=0),
+                #                              "r": np.nanmax(quotients, axis=0)})
                 new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                           alpha1=df.iloc[-1][["l", "r"]].values,
                           number_of_alpha_levels=len(df))
