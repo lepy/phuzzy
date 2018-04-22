@@ -9,7 +9,7 @@ fuzzy number tools
 """
 __url__ = 'https://github.com/lepy/phuzzy'
 __copyright__ = "Copyright (C) 2018-"
-__version__ = "0.6.2"
+__version__ = "0.6.3"
 __status__ = "3 - Alpha"
 __credits__ = [""]
 __license__ = """MIT"""
