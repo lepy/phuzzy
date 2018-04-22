@@ -147,3 +147,10 @@ To use phuzzy in a project:
     publisher={Zenodo},
     author={Ingolf Lepenies},
     year={2018}}
+
+
+"I can live with doubt and uncertainty! 
+I think it's much more exciting to live not knowing than to have answers 
+which might be wrong."
+
+Richard Feynman

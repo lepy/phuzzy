@@ -122,6 +122,17 @@ class FuzzyNumber(object):
         else:
             return FuzzyNumber
 
+    def has_zero(self):
+        """is zero in range
+
+        :rtype: bool
+        :return: True od False
+        """
+        if self.min() <= 0 and self.max() >= 0:
+            return True
+        else:
+            return False
+
     def __add__(self, other):
         """adds a fuzzy number
 
@@ -284,27 +295,63 @@ class FuzzyNumber(object):
         if isinstance(other, (int, float)):
             if isinstance(self, Uniform):
                 cls = Uniform
-            df = self.df.copy()
-            df.update(df[["l", "r"]] ** other)
-            new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                      alpha1=df.iloc[-1][["l", "r"]].values,
-                      number_of_alpha_levels=len(df))
+            if self.has_zero() is False:
+                df = self.df.copy()
+                df.update(df[["l", "r"]] ** other)
+                new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                          alpha1=df.iloc[-1][["l", "r"]].values,
+                          number_of_alpha_levels=len(df))
+            else:
+                df = self.df.copy()
+                x = self._disretize_range()
+                _t = pd.DataFrame({"x":x, "res":x ** other})
+                for i, row in df.iterrows():
+                    df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
+                    df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
+                new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                          alpha1=df.iloc[-1][["l", "r"]].values,
+                          number_of_alpha_levels=len(df))
             new.df = df
             new.name = "{}^{}".format(self.name, other)
         else:
-            old0, old1 = self._unify(other)
-            quotients = np.vstack([old0.df.l ** old1.df.l,
-                                   old0.df.l ** old1.df.r,
-                                   old0.df.r ** old1.df.l,
-                                   old0.df.r ** old1.df.r])
-            df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                                         "l": np.nanmin(quotients, axis=0),
-                                         "r": np.nanmax(quotients, axis=0)})
-            new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                      alpha1=df.iloc[-1][["l", "r"]].values,
-                      number_of_alpha_levels=len(df))
+            if self.has_zero() is False and other.has_zero() is False:
+                old0, old1 = self._unify(other)
+                quotients = np.vstack([old0.df.l ** old1.df.l,
+                                       old0.df.l ** old1.df.r,
+                                       old0.df.r ** old1.df.l,
+                                       old0.df.r ** old1.df.r])
+                df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                             "l": np.nanmin(quotients, axis=0),
+                                             "r": np.nanmax(quotients, axis=0)})
+                new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                          alpha1=df.iloc[-1][["l", "r"]].values,
+                          number_of_alpha_levels=len(df))
+            else:
+                # FIXME:
+                # old0, old1 = self._unify(other)
+                # df = self.df.copy()
+                # x = self._disretize_range()
+                # _t = pd.DataFrame({"x":x, "res":x ** other})
+                # for i, row in df.iterrows():
+                #     df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
+                #     df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
+                # new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                #           alpha1=df.iloc[-1][["l", "r"]].values,
+                #           number_of_alpha_levels=len(df))
+                old0, old1 = self._unify(other)
+                quotients = np.vstack([old0.df.l ** old1.df.l,
+                                       old0.df.l ** old1.df.r,
+                                       old0.df.r ** old1.df.l,
+                                       old0.df.r ** old1.df.r])
+                df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
+                                             "l": np.nanmin(quotients, axis=0),
+                                             "r": np.nanmax(quotients, axis=0)})
+                new = cls(alpha0=df.iloc[0][["l", "r"]].values,
+                          alpha1=df.iloc[-1][["l", "r"]].values,
+                          number_of_alpha_levels=len(df))
             new.df = df
-            new.name = "{}^{}".format(self.name, other.name)
+            new.name = "{}^{}".format(self.name, other)
+
         new.make_convex()
         return new
 
@@ -471,6 +518,20 @@ class FuzzyNumber(object):
             return (self.min() <= other) and (self.max() >= other)
         else:
             return (self.min() <= other.min()) and (self.max() >= other.max())
+
+    def _disretize_range(self, n=1000):
+        """ discretize range
+
+        :param n:
+        :return: x values within range
+        """
+        x = np.linspace(self.df.loc[0].l, self.df.loc[0].r, n)
+        if self.has_zero():
+            x = np.hstack([x, [0, -1e-10, 1e-10], self.df.l.values, self.df.r.values])
+        else:
+            x = np.hstack([x, self.df.l.values, self.df.l.values])
+        x = np.unique(x)
+        return x
 
     def abs(self):
         """calculate absolute value
