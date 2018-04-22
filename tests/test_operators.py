@@ -156,6 +156,9 @@ def test_mul():
                        [[0.0, 2.0, 6.0], [0.5, 3.215058324970757, 4.784941675029244], [1.0, 4.0, 4.0]]
                        )
 
+    p = phuzzy.Trapezoid(alpha0=[-1, 4], alpha1=[2, 3], number_of_alpha_levels=3, name="p")
+    z = p * p
+    print(z.df)
 
 def test_div():
     t = phuzzy.TruncNorm(alpha0=[2, 3], alpha1=[], number_of_alpha_levels=3, name="t")
