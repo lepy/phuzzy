@@ -37,8 +37,8 @@ for ax in [axl, axr, axc]:
 cmap = "autumn"
 
 
-csc = axc.contourf(Xs, Ys, Zs, alpha=.2, cmap=cmap)
-csc2 = axc.contour(Xs, Ys, Zs, color="k", cmap=cmap)
+csc = axc.contourf(Xs, Ys, Zs, alpha=1, cmap=cmap)
+csc2 = axc.contour(Xs, Ys, Zs, colors="k")
 axc.clabel(csc2, fontsize=9, inline=1, alpha=1)
 
 norm= matplotlib.colors.Normalize(vmin=csc.vmin, vmax=csc.vmax)
@@ -53,33 +53,52 @@ z = f(x,y)
 z.name = "z"
 print(z.df)
 
+
+# left
+# cs = axl.contourf(Xs, Ys, Zs, alpha=.2, cmap="hot")
+norml = matplotlib.colors.Normalize(vmin=z.df.l.min(), vmax=z.df.l.max())
+sml = plt.cm.ScalarMappable(norm=norml, cmap=cmap)
+sml.set_array([])
+csl2 = axl.contour(Xs, Ys, Zs, colors="k")
+# cs2k = axl.contour(Xs, Ys, Zs, colors="k")
+axl.clabel(csl2, fontsize=9, inline=1, alpha=1)
+cbarl = fig.colorbar(sml, ticks=[z.df.l.min(), z.df.l.max()], ax=axl)
+cbarl.set_label("z.l")
+
+# right
+# cs = axr.contourf(Xs, Ys, Zs, alpha=.2, cmap="hot")
+normr = matplotlib.colors.Normalize(vmin=z.df.r.min(), vmax=z.df.r.max())
+smr = plt.cm.ScalarMappable(norm=normr, cmap=cmap)
+smr.set_array([])
+csr2 = axr.contour(Xs, Ys, Zs, colors="k")
+# cs2k = axl.contour(Xs, Ys, Zs, colors="k")
+axr.clabel(csr2, fontsize=9, inline=1, alpha=1)
+cbarr = fig.colorbar(smr, ticks=[z.df.r.min(), z.df.r.max()], ax=axr)
+cbarr.set_label("z.r")
+
+
 for i, zi in z.df.iterrows():
     xi = x.df.loc[i]
     yi = y.df.loc[i]
+    polygon = Polygon(np.vstack([[xi.l, xi.r, xi.r, xi.l, xi.l],
+                           [yi.l, yi.l, yi.r, yi.r, yi.l]]).T)
+
+    pl = PatchCollection([polygon], alpha=1, color=sml.to_rgba(zi.l))
+    axl.add_collection(pl)
+    pr = PatchCollection([polygon], alpha=1, color=sm.to_rgba(zi.r))
+    axr.add_collection(pr)
+
     axl.plot([xi.l, xi.r, xi.r, xi.l, xi.l],
             [yi.l, yi.l, yi.r, yi.r, yi.l],
-             c=sm.to_rgba(zi.l))
+             c="k", alpha=.5, lw=.5, dashes=[2,2])
 
     axr.plot([xi.l, xi.r, xi.r, xi.l, xi.l],
             [yi.l, yi.l, yi.r, yi.r, yi.l],
-             c=sm.to_rgba(zi.r))
+             c="k", alpha=.5, lw=.5, dashes=[2,2])
 
-    polygon = Polygon(np.vstack([[xi.l, xi.r, xi.r, xi.l, xi.l],
-                           [yi.l, yi.l, yi.r, yi.r, yi.l]]).T)
-    pl = PatchCollection([polygon], alpha=.1, color=sm.to_rgba(zi.l))
-    axl.add_collection(pl)
-
-    pl = PatchCollection([polygon], alpha=.1, color=sm.to_rgba(zi.r))
-    axr.add_collection(pl)
-
-# cs = axl.contourf(Xs, Ys, Zs, alpha=.2, cmap="hot")
-cs2 = axl.contour(Xs, Ys, Zs, cmap=cmap)
-# cs2k = axl.contour(Xs, Ys, Zs, colors="k")
-axl.clabel(cs2, fontsize=9, inline=1, alpha=1)
-
-# csr = axr.contourf(Xs, Ys, Zs, alpha=.2, cmap="hot")
-csr2 = axr.contour(Xs, Ys, Zs, color="k", cmap=cmap)
-axr.clabel(csr2, fontsize=9, inline=1, alpha=1)
+# # csr = axr.contourf(Xs, Ys, Zs, alpha=.2, cmap="hot")
+# csr2 = axr.contour(Xs, Ys, Zs, color="k", cmap=cmap)
+# axr.clabel(csr2, fontsize=9, inline=1, alpha=1)
 
 
 
