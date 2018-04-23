@@ -41,7 +41,9 @@ csc = axc.contourf(Xs, Ys, Zs, alpha=1, cmap=cmap)
 csc2 = axc.contour(Xs, Ys, Zs, colors="k")
 axc.clabel(csc2, fontsize=9, inline=1, alpha=1)
 
-norm= matplotlib.colors.Normalize(vmin=csc.vmin, vmax=csc.vmax)
+print(dir(csc))
+
+norm= matplotlib.colors.Normalize(vmin=csc.zmin, vmax=csc.zmax)
 sm = plt.cm.ScalarMappable(norm=norm, cmap =csc.cmap)
 sm.set_array([])
 cbar = fig.colorbar(sm, ticks=csc.levels)
