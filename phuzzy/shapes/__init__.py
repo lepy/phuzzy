@@ -642,10 +642,10 @@ class FuzzyNumber(object):
         return p
 
     def __str__(self):
-        return "{0.__class__.__name__}({0.name}:{0.get_01})".format(self)
+        return "{0.__class__.__name__}({0.name}:{0.get_01_str})".format(self)
 
     def __repr__(self):
-        return "{0.__class__.__name__}({0.name}:{0.get_01})".format(self)
+        return "{0.__class__.__name__}({0.name}:{0.get_01_str})".format(self)
 
     def to_str(self):
         """serialize fuzzy number to string
@@ -725,6 +725,19 @@ class FuzzyNumber(object):
             return self.df.iloc[[0, -1]][["l", "r"]].values.tolist()
         else:
             return []
+
+    @property
+    def get_01_str(self):
+        """get alpha=0 and alpha=1 values
+
+        :return: [[a0_l, a0_r], [a1_l, a1_r]]
+        """
+        if self.df is not None and len(self.df) > 1:
+            return np.array2string(self.df.iloc[[0, -1]][["l", "r"]].values,
+                                   separator=",",
+                                   formatter={'float_kind':lambda x: "%.3g" % x}).replace("\n","")
+        else:
+            return "[]"
 
 
 class Triangle(FuzzyNumber):
