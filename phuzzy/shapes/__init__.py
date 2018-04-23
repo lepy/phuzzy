@@ -306,8 +306,11 @@ class FuzzyNumber(object):
                 x = self._disretize_range()
                 _t = pd.DataFrame({"x":x, "res":x ** other})
                 for i, row in df.iterrows():
-                    df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
-                    df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
+                    r =  _t[(_t.x>=row.l) & (_t.x<=row.r)]
+                    l = np.nanmin(r.res.values)
+                    r = np.nanmax(r.res.values)
+                    df.loc[i, "l"] = l
+                    df.loc[i, "r"] = r
                 new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                           alpha1=df.iloc[-1][["l", "r"]].values,
                           number_of_alpha_levels=len(df))
@@ -328,19 +331,10 @@ class FuzzyNumber(object):
                           number_of_alpha_levels=len(df))
             else:
                 # FIXME:
-                # df = self.df.copy()
-                # x = self._disretize_range()
-                # _t = pd.DataFrame({"x":x, "res":x ** other})
-                # for i, row in df.iterrows():
-                #     df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
-                #     df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)].res.values)
-                # new = cls(alpha0=df.iloc[0][["l", "r"]].values,
-                #           alpha1=df.iloc[-1][["l", "r"]].values,
-                #           number_of_alpha_levels=len(df))
                 old0, old1 = self._unify(other)
                 df = old1.df.copy()
                 x = old0._disretize_range()
-                print("old1.min", old1.min())
+                # print("old1.min", old1.min())
                 _t = pd.DataFrame({"x":x,
                                    "res_l":x ** old1.min(),
                                    "res_r":x ** old1.max()
@@ -352,13 +346,6 @@ class FuzzyNumber(object):
                 for i, row in old0.df.iterrows():
                     df.loc[i, "l"] = np.nanmin(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r", "res_0"]].values)
                     df.loc[i, "r"] = np.nanmax(_t[(_t.x>=row.l) & (_t.x<=row.r)][["res_l", "res_r", "res_0"]].values)
-                # quotients = np.vstack([old0.df.l ** old1.df.l,
-                #                        old0.df.l ** old1.df.r,
-                #                        old0.df.r ** old1.df.l,
-                #                        old0.df.r ** old1.df.r])
-                # df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
-                #                              "l": np.nanmin(quotients, axis=0),
-                #                              "r": np.nanmax(quotients, axis=0)})
                 new = cls(alpha0=df.iloc[0][["l", "r"]].values,
                           alpha1=df.iloc[-1][["l", "r"]].values,
                           number_of_alpha_levels=len(df))
@@ -543,7 +530,7 @@ class FuzzyNumber(object):
             # x = np.hstack([x, [0, -1e-10, 1e-10], self.df.l.values, self.df.r.values])
             x = np.hstack([x, [0], self.df.l.values, self.df.r.values])
         else:
-            x = np.hstack([x, self.df.l.values, self.df.l.values])
+            x = np.hstack([x, self.df.l.values, self.df.r.values])
         x = np.unique(x)
         return x
 

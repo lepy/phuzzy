@@ -92,3 +92,16 @@ def test_poor_mens_alpha_optimization_pow_fuzzy2():
                        [[0.0, 1.0, 81.0], [0.25, 1.0, 59.451644752665295], [0.5, 1.0, 52.80602302513466],
                         [0.75, 1.0, 47.52599406700104], [1.0, 1.0, 39.0625]]
                        )
+
+
+def test_pow_zero():
+    # p = phuzzy.Trapezoid(alpha0=[-1, 4], alpha1=[2, 3], number_of_alpha_levels=5, name="p")
+    # y = p ** 0
+
+    x = phuzzy.Trapezoid(alpha0=[-1, 4], alpha1=[.5, .8], number_of_alpha_levels=5, name="p")
+    y = x ** 0
+    mix_mpl(y)
+    y.plot()
+    print(y.df.values.tolist())
+    assert np.isclose(y.min(), 1)
+    assert np.isclose(y.max(), 1)
