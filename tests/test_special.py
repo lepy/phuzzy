@@ -86,8 +86,8 @@ def test_poor_mens_alpha_optimization_pow_fuzzy2():
     print(a.df.values.tolist())
     a = t ** p
     print(a.df.values.tolist())
-    mix_mpl(a)
-    a.plot(show=True)
+    # mix_mpl(a)
+    # a.plot(show=True)
     assert np.allclose(a.df.values.tolist(),
                        [[0.0, 1.0, 81.0], [0.25, 1.0, 59.51536637372663], [0.5, 1.0, 52.84832630002708],
                         [0.75, 1.0, 47.58354751779905], [1.0, 1.0, 39.0625]]
