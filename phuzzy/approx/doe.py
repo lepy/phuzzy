@@ -5,6 +5,7 @@ import numpy as np
 import collections
 import scipy.spatial.ckdtree
 import phuzzy
+import phuzzy.contrib.pydoe as pydoe
 
 class DOE(object):
     """Design of Experiment"""
@@ -95,7 +96,7 @@ class DOE(object):
         if len(self.designvars) == 1:
             designvar = self.designvars.values()[0]
             doe = pd.DataFrame.from_dict({designvar.name: designvar.samples})
-            doe['alpha'] = np.nan
+            doe['alpha'] = 0.
         else:
             X = [designvar._disretize_range(n=0) for designvar in self.designvars.values()]
             Y = np.meshgrid(*X)
@@ -105,7 +106,13 @@ class DOE(object):
                 d[designvar.name] = Y[i].ravel()
 
             doe = pd.DataFrame.from_dict(d)
-            doe['alpha'] = 0
+            # doe['alpha'] = 0
+            for i, designvar in enumerate(self.designvars.values()):
+                alpha = designvar.get_alpha_from_value(doe.iloc[:, i])
+                doe["alpha_%d"%i] = alpha
+                # print("alpha", designvar, alpha)
+            alpha_cols = [x for x in doe.columns if x.startswith("alpha_")]
+            doe["alpha"] = doe[alpha_cols].min(axis=1)
 
         return doe
 
@@ -119,11 +126,6 @@ class DOE(object):
         :param n: number of sample points
         :return: doe
         """
-        try:
-            import pyDOE
-        except ImportError:
-            logging.error("Please install pyDOE (pip install pyDOE) to use Box-Behnken!")
-            raise
         dim = len(self.designvars)
         if dim < 3:
             logging.error("Box-Behnken requires at least 3 dimensions!")
@@ -132,7 +134,7 @@ class DOE(object):
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
         doe['alpha'] = 0
         doe.loc[0] = np.zeros(len(self.designvars))
-        doelhs = pd.DataFrame(pyDOE.bbdesign(dim), columns=[x.name for x in self.designvars.values()])
+        doelhs = pd.DataFrame(pydoe.bbdesign(dim), columns=[x.name for x in self.designvars.values()])
         doe = pd.concat([doe, doelhs], ignore_index=True)
         for i, designvar in enumerate(self.designvars.values()):
             doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
@@ -144,17 +146,11 @@ class DOE(object):
         :param n: number of sample points
         :return: doe
         """
-        try:
-            import pyDOE
-        except ImportError:
-            logging.error("Please install pyDOE (pip install pyDOE) to use Central composite design!")
-            raise
         dim = len(self.designvars)
-
-        dv0 = self.designvars.values()[0]
+        dv0 = list(self.designvars.values())[0]
         # doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
-        doe_cc_raw = pd.DataFrame(pyDOE.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
+        doe_cc_raw = pd.DataFrame(pydoe.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
         doe_cc_raw['alpha'] = 0
         samples = []
         for alphalevel in [0, len(dv0.df)//2, -1]: # [0, -1, len(dv0.df)//2]:
@@ -179,16 +175,11 @@ class DOE(object):
         :param n: number of sample points
         :return: doe
         """
-        try:
-            import pyDOE
-        except ImportError:
-            logging.error("Please install pyDOE (pip install pyDOE) to use LHS!")
-            raise
         dim = len(self.designvars)
         n_samples = kwargs.get("n", 10)
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
         doe.loc[0] = np.zeros(len(self.designvars))
-        doelhs = pd.DataFrame(pyDOE.lhs(dim, n_samples - 1), columns=[x.name for x in self.designvars.values()])
+        doelhs = pd.DataFrame(pydoe.lhs(dim, n_samples - 1), columns=[x.name for x in self.designvars.values()])
         doe = pd.concat([doe, doelhs], ignore_index=True)
         for i, designvar in enumerate(self.designvars.values()):
             doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
@@ -203,7 +194,7 @@ class DOE(object):
         print()
         return doe
 
-    def eval(self, function, args, n_samples=10, method="cc"):
+    def eval(self, function, args, n_samples=10, method="cc", name=None):
         """evaluate function
 
         :param function:
@@ -216,13 +207,12 @@ class DOE(object):
             eval_args.append(self.samples[arg.name])
 
         f_approx = function(*eval_args)
-        # print("!!f_approx", f_approx)
-        # print("!!f_approx!", f_approx.min(), f_approx.max())
-
         df_res = pd.DataFrame({"alpha":self.samples.alpha,
                            "res":f_approx})
 
         fuzzynumber = phuzzy.approx.FuzzyNumber.from_results(df_res)
         fuzzynumber.df_res = df_res.copy()
         fuzzynumber.samples = self.samples.copy()
+        if name is not None:
+            fuzzynumber.name = name
         return fuzzynumber
