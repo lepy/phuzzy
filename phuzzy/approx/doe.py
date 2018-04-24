@@ -95,6 +95,7 @@ class DOE(object):
         if len(self.designvars) == 1:
             designvar = self.designvars.values()[0]
             doe = pd.DataFrame.from_dict({designvar.name: designvar.samples})
+            doe['alpha'] = np.nan
         else:
             X = [designvar._disretize_range(n=0) for designvar in self.designvars.values()]
             Y = np.meshgrid(*X)
@@ -104,6 +105,8 @@ class DOE(object):
                 d[designvar.name] = Y[i].ravel()
 
             doe = pd.DataFrame.from_dict(d)
+            doe['alpha'] = 0
+
         return doe
 
     def sample_halton(self, **kwargs):
@@ -127,6 +130,7 @@ class DOE(object):
             raise Exception("Box-Behnken requires at least 3 dimensions!")
 
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
+        doe['alpha'] = 0
         doe.loc[0] = np.zeros(len(self.designvars))
         doelhs = pd.DataFrame(pyDOE.bbdesign(dim), columns=[x.name for x in self.designvars.values()])
         doe = pd.concat([doe, doelhs], ignore_index=True)
@@ -151,7 +155,7 @@ class DOE(object):
         # doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
         doe_cc_raw = pd.DataFrame(pyDOE.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
-        doe_cc_raw['alpha'] = np.nan
+        doe_cc_raw['alpha'] = 0
         samples = []
         for alphalevel in [0, len(dv0.df)//2, -1]: # [0, -1, len(dv0.df)//2]:
             doe_cc = doe_cc_raw.copy()
@@ -161,7 +165,6 @@ class DOE(object):
                 doe_cc.iloc[:, i] = (doe_cc.iloc[:, i] + 1.) / 2. * (rmax - rmin) + rmin
 
             alpha = designvar.df.iloc[alphalevel].alpha
-            print(alpha)
             doe_cc.iloc[:, dim] = alpha
 
             samples.append(doe_cc)
@@ -189,6 +192,15 @@ class DOE(object):
         doe = pd.concat([doe, doelhs], ignore_index=True)
         for i, designvar in enumerate(self.designvars.values()):
             doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
+        for i, designvar in enumerate(self.designvars.values()):
+            alpha = designvar.get_alpha_from_value(doe.iloc[:, i])
+            doe["alpha_%d"%i] = alpha
+            # print("alpha", designvar, alpha)
+        alpha_cols = [x for x in doe.columns if x.startswith("alpha_")]
+        doe["alpha"] = doe[alpha_cols].min(axis=1)
+        # doe['alpha'] = 0
+        print("doe", doe)
+        print()
         return doe
 
     def eval(self, function, args, n_samples=10, method="cc"):
@@ -204,13 +216,13 @@ class DOE(object):
             eval_args.append(self.samples[arg.name])
 
         f_approx = function(*eval_args)
-        print("!!f_approx", f_approx)
-        print("!!f_approx!", f_approx.min(), f_approx.max())
+        # print("!!f_approx", f_approx)
+        # print("!!f_approx!", f_approx.min(), f_approx.max())
 
         df_res = pd.DataFrame({"alpha":self.samples.alpha,
                            "res":f_approx})
 
-        fuzzynumber = phuzzy.approx.FuzzyNumber.from_data(df_res)
+        fuzzynumber = phuzzy.approx.FuzzyNumber.from_results(df_res)
         fuzzynumber.df_res = df_res.copy()
         fuzzynumber.samples = self.samples.copy()
         return fuzzynumber
