@@ -746,6 +746,31 @@ class FuzzyNumber(object):
         else:
             return "[]"
 
+    @classmethod
+    def from_data(cls, df_res, name=None):
+        """create FuzzyNumber from DataFrame("alpha", "res")
+
+        :param df: DataFrame with columns=["alpha", "res"]
+        :return: FuzzyNumber
+        """
+
+        self = cls()
+        if name is not None:
+            self.name = name
+        rmin = np.nan
+        rmax = np.nan
+        levels = []
+        for alpha, df in df_res.sort_values(by="alpha", ascending=False).groupby("alpha", sort=False):
+            rmax = np.nanmax(np.hstack([[rmax], np.nanmax(df.res)]))
+            rmin = np.nanmin(np.hstack([[rmin], np.nanmin(df.res)]))
+            levels.append([alpha, rmin, rmax])
+
+        df = pd.DataFrame(levels, columns=["alpha", "l", "r"])
+        df.sort_values(by="alpha", inplace=True)
+
+        self.df = df
+        return self
+
 
 class Triangle(FuzzyNumber):
     """triange fuzzy number"""
