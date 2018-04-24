@@ -12,6 +12,8 @@ class DOE(object):
     MESHGRID = "meshgrid"
     HALTON = "halton"
     LHS = "lhs"
+    BOXBEHNKEN = "bb"
+    CCDESIGN = "cc"
 
     def __init__(self, **kwargs):
         """DOE(kwargs)"""
@@ -69,12 +71,15 @@ class DOE(object):
     def sample_doe(self, **kwargs):
         """generates samples for doe
 
-        :param method: 'meshgrid', 'lhs', 'halton'
+        :param method: 'meshgrid', 'lhs', 'halton', 'bb', 'cc'
         :return: samples
         """
-        methods = {self.MESHGRID: self.sample_meshgrid,
-                   self.LHS     : self.sample_lhs,
-                   self.HALTON  : self.sample_halton}
+        methods = {self.MESHGRID  : self.sample_meshgrid,
+                   self.LHS       : self.sample_lhs,
+                   self.HALTON    : self.sample_halton,
+                   self.BOXBEHNKEN: self.sample_bbdesign,
+                   self.CCDESIGN  : self.sample_ccdesign,
+                   }
         methodname = kwargs.get("method", self.MESHGRID)
         method = methods.get(methodname)
         self.samples = method(**kwargs)
@@ -104,6 +109,60 @@ class DOE(object):
     def sample_halton(self, **kwargs):
         sample = kwargs.get("n", 10)
         pass
+
+    def sample_bbdesign(self, **kwargs):
+        """Box-Behnken Sampling
+
+        :param n: number of sample points
+        :return: doe
+        """
+        try:
+            import pyDOE
+        except ImportError:
+            logging.error("Please install pyDOE (pip install pyDOE) to use Box-Behnken!")
+            raise
+        dim = len(self.designvars)
+        if dim < 3:
+            logging.error("Box-Behnken requires at least 3 dimensions!")
+            raise Exception("Box-Behnken requires at least 3 dimensions!")
+
+        doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
+        doe.loc[0] = np.zeros(len(self.designvars))
+        doelhs = pd.DataFrame(pyDOE.bbdesign(dim), columns=[x.name for x in self.designvars.values()])
+        doe = pd.concat([doe, doelhs], ignore_index=True)
+        for i, designvar in enumerate(self.designvars.values()):
+            doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
+        return doe
+
+    def sample_ccdesign(self, **kwargs):
+        """Central composite design
+
+        :param n: number of sample points
+        :return: doe
+        """
+        try:
+            import pyDOE
+        except ImportError:
+            logging.error("Please install pyDOE (pip install pyDOE) to use Central composite design!")
+            raise
+        dim = len(self.designvars)
+
+        dv0 = self.designvars.values()[0]
+        doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
+        doe_cc_raw = pd.DataFrame(pyDOE.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
+        samples = []
+        for alpha in [0]: # [0, -1, len(dv0.df)//2]:
+            doe_cc = doe_cc_raw.copy()
+            for i, designvar in enumerate(self.designvars.values()):
+                rmin = designvar.df.iloc[alpha].l
+                rmax = designvar.df.iloc[alpha].r
+                doe_cc.iloc[:, i] = (doe_cc.iloc[:, i] + 1.) / 2. * (rmax - rmin) + rmin
+
+            samples.append(doe_cc)
+        doe = pd.concat([doe] + samples, ignore_index=True)
+        doe.drop_duplicates(inplace=True)
+        doe.reset_index(inplace=True)
+        return doe
 
     def sample_lhs(self, **kwargs):
         """Latin Hypercube Sampling
