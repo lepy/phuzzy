@@ -79,6 +79,7 @@ for i, weights in enumerate(['uniform', 'distance']):
     print("b")
     fig, axs = phuzzy.mpl.plots.plot_xyz(z, z_a, z_b)
     mix_mpl(z)
+    z.plot(ax=axs[1])
     z.plot(ax=axs[2])
 
     fig = plt.figure()
@@ -88,7 +89,7 @@ for i, weights in enumerate(['uniform', 'distance']):
 
     ax.scatter(samples.x.values, samples.y.values, samples.alpha.values, c='k', label='data', s=1)
     # plt.plot(samplesm.x.values, samplesm.y.values, samplesm.alpha.values, c='g', label='prediction', lw=0, marker="o", ms=2)
-    # ax.scatter(samplesm.x.values, samplesm.y.values, samplesm.alpha.values, c='g', label='prediction', s=1)
+    ax.scatter(samplesm.x.values, samplesm.y.values, samplesm.alpha.values, c='g', label='prediction', s=1)
     ax.axis('tight')
     ax.legend()
     # ax.title("KNeighborsRegressor (k = %i, weights = '%s')" % (n_neighbors, weights))
