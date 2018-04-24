@@ -22,3 +22,9 @@ History
 * add operators __radd__, __rsub__, __rmul__, __rdiv__, __truediv__
 * add operators __neg__, __abs__, __min__, __max__, __mean__
 * add operators __lt__, __gt__, __eq__, __contain__
+
+0.7.0 (2018-04-24)
+------------------
+
+* add plots
+* add approximated function evaluation

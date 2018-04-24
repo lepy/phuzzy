@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import collections
 import scipy.spatial.ckdtree
-
+import phuzzy
 
 class DOE(object):
     """Design of Experiment"""
@@ -148,15 +148,21 @@ class DOE(object):
         dim = len(self.designvars)
 
         dv0 = self.designvars.values()[0]
-        doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
+        # doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
+        doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
         doe_cc_raw = pd.DataFrame(pyDOE.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
+        doe_cc_raw['alpha'] = np.nan
         samples = []
-        for alpha in [0]: # [0, -1, len(dv0.df)//2]:
+        for alphalevel in [0, len(dv0.df)//2, -1]: # [0, -1, len(dv0.df)//2]:
             doe_cc = doe_cc_raw.copy()
             for i, designvar in enumerate(self.designvars.values()):
-                rmin = designvar.df.iloc[alpha].l
-                rmax = designvar.df.iloc[alpha].r
+                rmin = designvar.df.iloc[alphalevel].l
+                rmax = designvar.df.iloc[alphalevel].r
                 doe_cc.iloc[:, i] = (doe_cc.iloc[:, i] + 1.) / 2. * (rmax - rmin) + rmin
+
+            alpha = designvar.df.iloc[alphalevel].alpha
+            print(alpha)
+            doe_cc.iloc[:, dim] = alpha
 
             samples.append(doe_cc)
         doe = pd.concat([doe] + samples, ignore_index=True)
@@ -184,3 +190,27 @@ class DOE(object):
         for i, designvar in enumerate(self.designvars.values()):
             doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
         return doe
+
+    def eval(self, function, args, n_samples=10, method="cc"):
+        """evaluate function
+
+        :param function:
+        :param kwargs:
+        :return:
+        """
+        self.sample_doe(n=n_samples, method=method)
+        eval_args = []
+        for arg in args:
+            eval_args.append(self.samples[arg.name])
+
+        f_approx = function(*eval_args)
+        print("!!f_approx", f_approx)
+        print("!!f_approx!", f_approx.min(), f_approx.max())
+
+        df_res = pd.DataFrame({"alpha":self.samples.alpha,
+                           "res":f_approx})
+
+        fuzzynumber = phuzzy.approx.FuzzyNumber.from_data(df_res)
+        fuzzynumber.df_res = df_res.copy()
+        fuzzynumber.samples = self.samples.copy()
+        return fuzzynumber
