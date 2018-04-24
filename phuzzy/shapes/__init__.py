@@ -747,7 +747,7 @@ class FuzzyNumber(object):
             return "[]"
 
     @classmethod
-    def from_data(cls, df_res, name=None):
+    def from_results(cls, df_res, name=None):
         """create FuzzyNumber from DataFrame("alpha", "res")
 
         :param df: DataFrame with columns=["alpha", "res"]
@@ -771,6 +771,25 @@ class FuzzyNumber(object):
         self.df = df
         return self
 
+    def get_shape(self):
+        """get shape dataframe
+
+        :return: pandas.DataFrame(columns=["alpha", "x"])
+        """
+        x = np.hstack([self.df["l"].values, self.df["r"].values[::-1]])
+        alpha = np.hstack([self.df["alpha"].values, self.df["alpha"].values[::-1]])
+        df = pd.DataFrame({"x":x, "alpha":alpha})
+        df.drop_duplicates(inplace=True)
+        return df
+
+    def get_alpha_from_value(self, x):
+        """get alpha values from given x values
+
+        :param x: x values
+        :return: alpha values
+        """
+        shape = self.get_shape()
+        return np.interp(x, shape.x, shape.alpha)
 
 class Triangle(FuzzyNumber):
     """triange fuzzy number"""
