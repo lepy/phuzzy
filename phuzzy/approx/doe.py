@@ -92,6 +92,7 @@ class DOE(object):
         :param kwargs:
         :return: doe
         """
+        n = kwargs.get("n", 0)
 
         if len(self.designvars) == 1:
             designvar = self.designvars.values()[0]
