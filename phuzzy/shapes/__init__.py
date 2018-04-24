@@ -747,7 +747,7 @@ class FuzzyNumber(object):
             return "[]"
 
     @classmethod
-    def from_results(cls, df_res, name=None):
+    def from_results(cls, df_res, name=None, number_of_alpha_levels=11):
         """create FuzzyNumber from DataFrame("alpha", "res")
 
         :param df: DataFrame with columns=["alpha", "res"]
@@ -757,18 +757,15 @@ class FuzzyNumber(object):
         self = cls()
         if name is not None:
             self.name = name
-        rmin = np.nan
-        rmax = np.nan
-        levels = []
-        for alpha, df in df_res.sort_values(by="alpha", ascending=False).groupby("alpha", sort=False):
-            rmax = np.nanmax(np.hstack([[rmax], np.nanmax(df.res)]))
-            rmin = np.nanmin(np.hstack([[rmin], np.nanmin(df.res)]))
-            levels.append([alpha, rmin, rmax])
 
-        df = pd.DataFrame(levels, columns=["alpha", "l", "r"])
-        df.sort_values(by="alpha", inplace=True)
+        df = df_res.sort_values(by="alpha", ascending=False)
+        df["r"] = df.res.cummax()
+        df["l"] = df.res.cummin()
 
-        self.df = df
+        df.sort_values(by=["alpha", "l", "r"], inplace=True, ascending=True)
+        self.df = df[["alpha", "l", "r"]]
+        print(self.df[(self.df.alpha>0.4) & (self.df.alpha<0.6)])
+        # self.convert_df(alpha_levels=number_of_alpha_levels)
         return self
 
     def get_shape(self):
