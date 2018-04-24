@@ -27,6 +27,13 @@ class FuzzyNumber(object):
         self._number_of_alpha_levels = kwargs.get("number_of_alpha_levels", 11)
         self.df = kwargs.get("df")
 
+    def copy(self):
+        """return a copy
+
+        :return: copy of fuzzy number
+        """
+        return copy.deepcopy(self)
+
     def _get_number_of_alpha_levels(self):
         """number of alpha levels
 
