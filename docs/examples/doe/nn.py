@@ -40,7 +40,7 @@ samples["res"] = y
 print(doe)
 print(doe.samples)
 
-z_a = doe.eval(f, [samples.x, samples.y], method="cc", n_samples=20, name="z_a")
+z_a = doe.eval(f, ["x", "y"], name="z_a")
 # # print(z_a)
 # mix_mpl(z_a)
 # z_a.plot()

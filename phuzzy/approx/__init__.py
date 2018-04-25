@@ -16,8 +16,9 @@ class FuzzyNumber(phuzzy.FuzzyNumber):
         :param kwargs:
         """
         phuzzy.FuzzyNumber.__init__(self, **kwargs)
-        self.samples = None
-        self.df_res = None
+        self.samples = None # sampled input data sets [alpha, x, y, ...]
+        self.df_res = None # dataframe [alpha, res]
+        self.model = None # regression model (e.g. SVM -> prediction = model.predict(T))
 
 if __name__ == '__main__':
     f = FuzzyNumber()
