@@ -238,7 +238,7 @@ def _pdist(x):
     if len(x.shape) != 2:
         raise Exception('Input array must be 2d-dimensional')
 
-    m, n = x.shape
+    m = x.shape[0]
     if m < 2:
         return []
 

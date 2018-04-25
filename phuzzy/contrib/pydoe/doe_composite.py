@@ -13,7 +13,7 @@ Much thanks goes to these individuals. It has been converted to Python by
 Abraham Lee.
 """
 
-import numpy as np
+# import numpy as np
 from phuzzy.contrib.pydoe.doe_factorial import ff2n
 from phuzzy.contrib.pydoe.doe_star import star
 from phuzzy.contrib.pydoe.doe_union import union
