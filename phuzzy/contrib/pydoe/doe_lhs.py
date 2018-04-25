@@ -189,7 +189,7 @@ def _lhscorrelate(n, samples, iterations):
     mincorr = np.inf
 
     # Minimize the components correlation coefficients
-    for i in range(iterations):
+    for _ in range(iterations):
         # Generate a random LHS
         Hcandidate = _lhsclassic(n, samples)
         R = np.corrcoef(Hcandidate)
