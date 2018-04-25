@@ -89,7 +89,7 @@ def pbdesign(n):
                                                     ))))
 
     # Kronecker product construction
-    for i in range(e):
+    for _ in range(e):
         H = np.vstack((np.hstack((H, H)), np.hstack((H, -H))))
 
     # Reduce the size of the matrix as needed
