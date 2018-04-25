@@ -31,11 +31,11 @@ This package is provided under two licenses:
 __author__ = 'Abraham Lee'
 __version__ = '0.3.8'
 
-from pyDOE.doe_box_behnken import *
-from pyDOE.doe_composite import *
-from pyDOE.doe_factorial import *
-from pyDOE.doe_lhs import *
-from pyDOE.doe_fold import *
-from pyDOE.doe_plackett_burman import *
-from pyDOE.var_regression_matrix import *
+from phuzzy.contrib.pydoe.doe_box_behnken import *
+from phuzzy.contrib.pydoe.doe_composite import *
+from phuzzy.contrib.pydoe.doe_factorial import *
+from phuzzy.contrib.pydoe.doe_lhs import *
+from phuzzy.contrib.pydoe.doe_fold import *
+from phuzzy.contrib.pydoe.doe_plackett_burman import *
+# from phuzzy.contrib.pydoe.var_regression_matrix import *
 
