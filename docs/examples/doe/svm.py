@@ -75,6 +75,8 @@ print("SVR prediction for %d inputs in %.3f s"
 
 samplesm["res"] = y_svr
 
+print("z_a.df_res",z_a.df_res)
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 # print("samplesm.alpha.values")
@@ -87,7 +89,10 @@ ax.axis('tight')
 ax.legend()
 # ax.title("KNeighborsRegressor (k = %i, weights = '%s')" % (n_neighbors, weights))
 
-z_b = phuzzy.FuzzyNumber.from_results(samplesm[["res", "alpha"]], name="z_b")
+
+df_res = pd.concat([z_a.df_res, samplesm[["res", "alpha"]]])
+
+z_b = phuzzy.FuzzyNumber.from_results(df_res, name="z_b")
 z_b.convert_df(alpha_levels=11)
 # mix_mpl(z_b)
 # z_b.plot()
@@ -95,5 +100,6 @@ fig, axs = phuzzy.mpl.plots.plot_xyz(z, z_a, z_b)
 mix_mpl(z)
 z.plot(ax=axs[1], labels=False, title=False)
 z.plot(ax=axs[2], labels=False, title=False)
+axs[2].scatter(z_a.df_res.res, z_a.df_res.alpha)
 
 plt.show()
