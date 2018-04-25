@@ -768,12 +768,12 @@ class FuzzyNumber(object):
         groups = df.groupby(np.digitize(df.alpha, bins))
         bins_results = []
         for i, dfb in groups:
-            print(i, len(dfb), dfb.alpha.min(), dfb.alpha.max())
+            # print(i, len(dfb), dfb.alpha.min(), dfb.alpha.max())
             bins_results.append([dfb.alpha.min(), dfb.l.min(), dfb.r.max()])
 
         self.df = pd.DataFrame(bins_results, columns=["alpha", "l", "r"])
         # self.convert_df(alpha_levels=number_of_alpha_levels)
-        print(self.df)
+        # print(self.df)
         return self
 
     def get_shape(self):
