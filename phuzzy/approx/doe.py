@@ -72,12 +72,12 @@ class DOE(object):
     def sample_doe(self, **kwargs):
         """generates samples for doe
 
-        :param method: 'meshgrid', 'lhs', 'halton', 'bb', 'cc'
+        :param method: 'meshgrid', 'lhs', 'bb', 'cc'
         :return: samples
         """
         methods = {self.MESHGRID  : self.sample_meshgrid,
                    self.LHS       : self.sample_lhs,
-                   self.HALTON    : self.sample_halton,
+                   # self.HALTON    : self.sample_halton,
                    self.BOXBEHNKEN: self.sample_bbdesign,
                    self.CCDESIGN  : self.sample_ccdesign,
                    }
@@ -117,9 +117,9 @@ class DOE(object):
 
         return doe
 
-    def sample_halton(self, **kwargs):
-        sample = kwargs.get("n", 10)
-        pass
+    # def sample_halton(self, **kwargs):
+    #     sample = kwargs.get("n", 10)
+    #     pass
 
     def sample_bbdesign(self, **kwargs):
         """Box-Behnken Sampling
@@ -148,7 +148,7 @@ class DOE(object):
         :return: doe
         """
         dim = len(self.designvars)
-        dv0 = list(self.designvars.values())[0]
+        # dv0 = list(self.designvars.values())[0]
         # doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
         doe_cc_raw = pd.DataFrame(pydoe.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
