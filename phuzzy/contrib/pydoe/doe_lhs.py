@@ -169,7 +169,7 @@ def _lhsmaximin(n, samples, iterations, lhstype):
     maxdist = 0
 
     # Maximize the minimum distance between points
-    for i in range(iterations):
+    for _ in range(iterations):
         if lhstype == 'maximin':
             Hcandidate = _lhsclassic(n, samples)
         else:
