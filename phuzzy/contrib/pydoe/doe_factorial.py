@@ -207,7 +207,7 @@ def fracfact(gen):
 
     # If R1 is either None or not, the result is not changed, since it is a
     # multiplication of 1.
-    R1 = _grep(U, '+')
+    # R1 = _grep(U, '+')
     R2 = _grep(U, '-')
 
     # Fill in design with two level factorial design

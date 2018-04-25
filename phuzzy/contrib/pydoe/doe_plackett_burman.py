@@ -60,13 +60,15 @@ def pbdesign(n):
                [ 1.,  1.,  1.,  1.,  1.]])
 
     """
-    assert n > 0, 'Number of factors must be a positive integer'
+    if not n > 0:
+        raise Exception('Number of factors must be a positive integer')
     keep = int(n)
     n = 4 * (int(n / 4) + 1)  # calculate the correct number of rows (multiple of 4)
     f, e = np.frexp([n, n / 12., n / 20.])
     k = [idx for idx, val in enumerate(np.logical_and(f == 0.5, e > 0)) if val]
 
-    assert isinstance(n, int) and k != [], 'Invalid inputs. n must be a multiple of 4.'
+    if not (isinstance(n, int) and k != []):
+        raise Exception('Invalid inputs. n must be a multiple of 4.')
 
     k = k[0]
     e = e[k] - 1

@@ -114,11 +114,14 @@ def ccdesign(n, center=(4, 4), alpha='orthogonal', face='circumscribed'):
 
     """
     # Check inputs
-    assert isinstance(n, int) and n > 1, '"n" must be an integer greater than 1.'
-    assert alpha.lower() in ('orthogonal', 'o', 'rotatable',
-                             'r'), 'Invalid value for "alpha": {:}'.format(alpha)
-    assert face.lower() in ('circumscribed', 'ccc', 'inscribed', 'cci',
-                            'faced', 'ccf'), 'Invalid value for "face": {:}'.format(face)
+    if not isinstance(n, int) and n > 1:
+        raise Exception('"n" must be an integer greater than 1.')
+    if not alpha.lower() in ('orthogonal', 'o', 'rotatable',
+                             'r'):
+        raise Exception('Invalid value for "alpha": {:}'.format(alpha))
+    if not face.lower() in ('circumscribed', 'ccc', 'inscribed', 'cci',
+                            'faced', 'ccf'):
+        raise Exception('Invalid value for "face": {:}'.format(face))
 
     try:
         nc = len(center)
