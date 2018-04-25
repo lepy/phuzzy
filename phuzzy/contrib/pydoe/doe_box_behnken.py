@@ -61,7 +61,8 @@ def bbdesign(n, center=None):
                [ 0.,  0.,  0.]])
 
     """
-    assert n >= 3, 'Number of variables must be at least 3'
+    if not n >= 3:
+        raise Exception('Number of variables must be at least 3')
 
     # First, compute a factorial DOE with 2 parameters
     H_fact = ff2n(2)
