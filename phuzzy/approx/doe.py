@@ -154,7 +154,8 @@ class DOE(object):
         doe_cc_raw = pd.DataFrame(pydoe.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
         doe_cc_raw['alpha'] = 0
         samples = []
-        for alphalevel in [0, len(dv0.df)//2, -1]: # [0, -1, len(dv0.df)//2]:
+        # for alphalevel in [0, len(dv0.df)//2, -1]: # [0, -1, len(dv0.df)//2]:
+        for alphalevel in [0, len(dv0.df)//3, 2*len(dv0.df)//3, -1]: # [0, -1, len(dv0.df)//2]:
             doe_cc = doe_cc_raw.copy()
             for i, designvar in enumerate(self.designvars.values()):
                 rmin = designvar.df.iloc[alphalevel].l

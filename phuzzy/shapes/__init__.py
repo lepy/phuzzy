@@ -763,10 +763,17 @@ class FuzzyNumber(object):
         df["l"] = df.res.cummin()
 
         df.sort_values(by=["alpha", "l", "r"], inplace=True, ascending=True)
-        self.df = df[["alpha", "l", "r"]]
-        print(self.df[(self.df.alpha>0.4) & (self.df.alpha<0.6)])
         # FIXME: reduce rows with equal alpha levels
-        self.convert_df(alpha_levels=number_of_alpha_levels)
+        bins = np.linspace(0.,1., number_of_alpha_levels+1)
+        groups = df.groupby(np.digitize(df.alpha, bins))
+        bins_results = []
+        for i, dfb in groups:
+            print(i, len(dfb), dfb.alpha.min(), dfb.alpha.max())
+            bins_results.append([dfb.alpha.min(), dfb.l.min(), dfb.r.max()])
+
+        self.df = pd.DataFrame(bins_results, columns=["alpha", "l", "r"])
+        # self.convert_df(alpha_levels=number_of_alpha_levels)
+        print(self.df)
         return self
 
     def get_shape(self):
