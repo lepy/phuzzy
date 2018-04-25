@@ -10,7 +10,7 @@ import phuzzy.contrib.pydoe as pydoe
 
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV
-
+from sklearn.neighbors import KNeighborsRegressor
 class Expression(object):
     """Approximate an expression of fuzzy numbers
 
@@ -140,7 +140,8 @@ class Expression(object):
         if model is None:
             model = "svr"
 
-        models = {"svr":self._get_svr}
+        models = {"svr":self._get_svr,
+                  "knn":self._get_knn}
         get_model = models.get(model, "svr")
         get_model(X, y)
 
@@ -153,6 +154,14 @@ class Expression(object):
         logging.debug("train_size %s" % train_size)
         svr.fit(X[:train_size], y[:train_size])
         self.model = svr
+
+    def _get_knn(self, X, y):
+
+        n_neighbors = 5
+        weights = "distance"
+
+        knn = KNeighborsRegressor(n_neighbors, weights=weights).fit(X, y)
+        self.model = knn
 
     def get_fuzzynumber_from_results(self, name=None):
         """
@@ -313,8 +322,8 @@ class DOE(object):
         doe_cc_raw = pd.DataFrame(pydoe.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
         doe_cc_raw['alpha'] = 0
         samples = []
-        for alphalevel in [0, len(dv0.df)-1]:  # [0, -1, len(dv0.df)//2]:
-        # for alphalevel in [0, len(dv0.df)//2, len(dv0.df)-1]: # [0, -1, len(dv0.df)//2]:
+        # for alphalevel in [0, len(dv0.df)-1]:  # [0, -1, len(dv0.df)//2]:
+        for alphalevel in [0, len(dv0.df)//2, len(dv0.df)-1]: # [0, -1, len(dv0.df)//2]:
             # for alphalevel in [0, len(dv0.df)//3, 2*len(dv0.df)//3, -1]: # [0, -1, len(dv0.df)//2]:
             doe_cc = doe_cc_raw.copy()
             for i, designvar in enumerate(self.designvars.values()):

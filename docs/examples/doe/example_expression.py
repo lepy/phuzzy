@@ -29,8 +29,6 @@ expr = phuzzy.approx.doe.Expression(designvars=[x, y],
 expr.generate_training_doe(name="train", n=10, method="lhs")
 expr.eval()
 z_a = expr.get_fuzzynumber_from_results()
-print(z.df)
-mix_mpl(z)
 
 expr.fit_model()
 print(expr.model)
