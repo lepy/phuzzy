@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import phuzzy
 from phuzzy.mpl import mix_mpl
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon

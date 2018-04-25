@@ -21,6 +21,7 @@ from phuzzy.contrib.pydoe.doe_repeat_center import repeat_center
 
 __all__ = ['ccdesign']
 
+
 def ccdesign(n, center=(4, 4), alpha='orthogonal', face='circumscribed'):
     """
     Central composite design
@@ -113,18 +114,18 @@ def ccdesign(n, center=(4, 4), alpha='orthogonal', face='circumscribed'):
 
     """
     # Check inputs
-    assert isinstance(n, int) and n>1, '"n" must be an integer greater than 1.'
+    assert isinstance(n, int) and n > 1, '"n" must be an integer greater than 1.'
     assert alpha.lower() in ('orthogonal', 'o', 'rotatable',
-        'r'), 'Invalid value for "alpha": {:}'.format(alpha)
+                             'r'), 'Invalid value for "alpha": {:}'.format(alpha)
     assert face.lower() in ('circumscribed', 'ccc', 'inscribed', 'cci',
-        'faced', 'ccf'), 'Invalid value for "face": {:}'.format(face)
+                            'faced', 'ccf'), 'Invalid value for "face": {:}'.format(face)
 
     try:
         nc = len(center)
     except:
         raise TypeError('Invalid value for "center": {:}. Expected a 1-by-2 array.'.format(center))
     else:
-        if nc!=2:
+        if nc != 2:
             raise ValueError('Invalid number of values for "center" (expected 2, but got {:})'.format(nc))
 
     # Orthogonal Design
@@ -138,7 +139,7 @@ def ccdesign(n, center=(4, 4), alpha='orthogonal', face='circumscribed'):
     # Inscribed CCD
     if face.lower() in ('inscribed', 'cci'):
         H1 = ff2n(n)
-        H1 = H1/a  # Scale down the factorial points
+        H1 = H1 / a  # Scale down the factorial points
         H2, a = star(n)
 
     # Faced CCD
