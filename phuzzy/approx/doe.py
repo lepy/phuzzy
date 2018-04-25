@@ -3,7 +3,6 @@ import logging
 import pandas as pd
 import numpy as np
 import collections
-import scipy.spatial.ckdtree
 import phuzzy
 import phuzzy.contrib.pydoe as pydoe
 
@@ -92,7 +91,6 @@ class DOE(object):
         :param kwargs:
         :return: doe
         """
-        n = kwargs.get("n", 0)
 
         if len(self.designvars) == 1:
             designvar = self.designvars.values()[0]
