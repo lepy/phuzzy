@@ -85,15 +85,15 @@ class FuzzyAnalysis(object):
         res = []
         s_sum = 0
         for i in range(len(self.designvars)):
-            vars = []
+            fvars = []
             for j, x in enumerate(self.designvars):
                 if i == j:
-                    vars.append(x)
+                    fvars.append(x)
                 else:
                     y = phuzzy.Uniform(alpha0=[x.min(), x.max()])
-                    vars.append(y)
+                    fvars.append(y)
 
-            z = self.function(vars)
+            z = self.function(fvars)
             z.name = self.designvars[i].name
             dflr = z.df[["l", "r"]]
             E = 1. - (dflr.max(axis=1) - dflr.min(axis=1)) / (dflr.iloc[0].max() - dflr.iloc[0].min())

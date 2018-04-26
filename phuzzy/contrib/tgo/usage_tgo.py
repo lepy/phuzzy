@@ -64,5 +64,5 @@ if __name__ == "__main__":
     ax.set_xlim(bounds[0])
     ax.set_xlim(bounds[1])
     fig.tight_layout()
-    fig.savefig("/tmp/tgo_himmelblau.png")
+    # fig.savefig("/tmp/tgo_himmelblau.png")
     plt.show()

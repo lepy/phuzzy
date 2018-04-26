@@ -3,18 +3,23 @@
 """ execfile('tgo.py')
 """
 from __future__ import division, print_function, absolute_import
-import numpy
-import scipy.spatial
-import scipy.optimize
-#from . import __file__
+
+import base64
+# from . import __file__
 # import pkgutil
 from io import BytesIO
-import base64
+
+import numpy
+import scipy.optimize
+import scipy.spatial
+
 from .data import data
+
 try:
     from multiprocessing_on_dill import Pool
 except ImportError:
     from multiprocessing import Pool
+
 
 def tgo(func, bounds, args=(), g_cons=None, g_args=(), n=100,
         k_t=None, callback=None, minimizer_kwargs=None, options=None,
@@ -414,7 +419,7 @@ class TGO(object):
                 minimizer_kwargs['callback'] = self.callback
 
             if self.minimizer_kwargs['method'] == 'SLSQP' or \
-                            self.minimizer_kwargs['method'] == 'COBYLA':
+                self.minimizer_kwargs['method'] == 'COBYLA':
                 if 'constraints' not in minimizer_kwargs:
                     minimizer_kwargs['constraints'] = self.min_cons
         else:
@@ -440,7 +445,7 @@ class TGO(object):
 
         # Remove unknown solver options to avoid OptimizeWarning:
         if self.minimizer_kwargs['method'] == 'SLSQP' or \
-                        self.minimizer_kwargs['method'] == 'COBYLA':
+            self.minimizer_kwargs['method'] == 'COBYLA':
             try:
                 del self.minimizer_kwargs['options']['maxfev']
             except KeyError:
@@ -465,7 +470,6 @@ class TGO(object):
         http://web.maths.unsw.edu.au/~fkuo/sobol/
         """
         import gzip
-        import os
         # path = os.path.join(os.path.dirname(__file__), 'new-joe-kuo-6.21201.gz')
         # gzipfile = gzip.open(path)
         # datastr = pkgutil.get_data('tgo', 'new-joe-kuo-6.21201.gz')
@@ -508,7 +512,7 @@ class TGO(object):
                     for i in range(1, s + 1): V[i] = m[i] << (32 - i)
                     for i in range(s + 1, L + 1):
                         V[i] = V[i - s] ^ (
-                        V[i - s] >> numpy.array(s, dtype=unsigned))
+                            V[i - s] >> numpy.array(s, dtype=unsigned))
                         for k in range(1, s):
                             V[i] ^= numpy.array(
                                 (((a >> (s - 1 - k)) & 1) * V[i - k]),
@@ -548,8 +552,8 @@ class TGO(object):
         for g in self.g_func:
             self.C = self.C[g(self.C.T, *self.g_args) >= 0.0]
             if self.C.size == 0:
-                 self.res.message = 'No sampling point found within the ' \
-                                    'feasible set.'
+                self.res.message = 'No sampling point found within the ' \
+                                   'feasible set.'
 
         self.fn = numpy.shape(self.C)[0]
         return
@@ -566,7 +570,7 @@ class TGO(object):
         # Obj. function returns to be used as reference table.:
         self.F = numpy.zeros(numpy.shape(self.C)[0])
         for i in range(numpy.shape(self.C)[0]):
-            self.F[i] = self.func(self.C[i,:], *self.args)
+            self.F[i] = self.func(self.C[i, :], *self.args)
         # TODO: see scipy.spatial.KDTree for F lookup?
 
         # Create float value and bool topograph:
@@ -602,7 +606,7 @@ class TGO(object):
             i += 1
 
         ep = i * k_i / (k_1 - k_i)
-        k_c = numpy.floor((-(ep - 1) + numpy.sqrt((ep - 1.0)**2 + 80.0 * ep))
+        k_c = numpy.floor((-(ep - 1) + numpy.sqrt((ep - 1.0) ** 2 + 80.0 * ep))
                           / 2.0)
 
         k_opt = int(k_c + 1)
@@ -668,7 +672,6 @@ class TGO(object):
             p = Pool()
             lres_list = p.map(self.process_pool, Min_ind)
 
-
         for i, ind in zip(range(len(Min_ind)), Min_ind):
             if not self.multiproc:
                 if self.callback is not None:
@@ -729,7 +732,7 @@ class TGO(object):
         return x_global_min
 
 
-    
 if __name__ == '__main__':
     import doctest
+
     doctest.testmod()
