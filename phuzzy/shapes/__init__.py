@@ -767,7 +767,7 @@ class FuzzyNumber(object):
         bins = np.linspace(0.,1., number_of_alpha_levels+1)
         groups = df.groupby(np.digitize(df.alpha, bins))
         bins_results = []
-        for i, dfb in groups:
+        for _, dfb in groups:
             # print(i, len(dfb), dfb.alpha.min(), dfb.alpha.max())
             bins_results.append([dfb.alpha.min(), dfb.l.min(), dfb.r.max()])
 
