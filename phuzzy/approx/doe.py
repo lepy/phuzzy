@@ -4,13 +4,14 @@ import logging
 
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import GridSearchCV
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.svm import SVR
 
 import phuzzy
 import phuzzy.contrib.pydoe as pydoe
 
-from sklearn.svm import SVR
-from sklearn.model_selection import GridSearchCV
-from sklearn.neighbors import KNeighborsRegressor
+
 class Expression(object):
     """Approximate an expression of fuzzy numbers
 
@@ -30,7 +31,7 @@ class Expression(object):
             self.add_designvars(kwargs.get("designvars"))
 
     def __str__(self):
-        return "(DOE:'{o.name}', dv={d}".format(o=self,
+        return "(Expression:'{o.name}', dv={d}".format(o=self,
                                                 d=self._designvars.keys(),
                                                 )
 
@@ -62,7 +63,7 @@ class Expression(object):
         """predict function results"""
         X = self.doe_prediction.samples[list(self.designvars.keys())]
         y = self.model.predict(X)
-        self.results_prediction = pd.DataFrame({"res":y, "alpha":self.doe_prediction.samples.alpha})
+        self.results_prediction = pd.DataFrame({"res": y, "alpha": self.doe_prediction.samples.alpha})
         print(1, self.results_training.head())
         print(2, self.results_prediction.head())
         df_res = pd.concat([self.results_training, self.results_prediction[["res", "alpha"]]])
@@ -72,7 +73,6 @@ class Expression(object):
         z = phuzzy.FuzzyNumber.from_results(df_res, name=name)
         z.convert_df(alpha_levels=11)
         return z
-
 
     @property
     def designvars(self):
@@ -140,17 +140,17 @@ class Expression(object):
         if model is None:
             model = "svr"
 
-        models = {"svr":self._get_svr,
-                  "knn":self._get_knn}
+        models = {"svr": self._get_svr,
+                  "knn": self._get_knn}
         get_model = models.get(model, "svr")
         get_model(X, y)
 
     def _get_svr(self, X, y):
         svr = GridSearchCV(SVR(kernel='rbf', gamma=.1), cv=5,
-                               param_grid={"C": [1e0, 1e1, 1e2, 1e3, ],
-                                           "gamma": np.logspace(-2, 2, num=5)})
+                           param_grid={"C": [1e0, 1e1, 1e2, 1e3, ],
+                                       "gamma": np.logspace(-2, 2, num=5)})
 
-        train_size = int(len(X)*.75)
+        train_size = int(len(X) * .75)
         logging.debug("train_size %s" % train_size)
         svr.fit(X[:train_size], y[:train_size])
         self.model = svr
@@ -175,6 +175,7 @@ class Expression(object):
         if name is not None:
             fuzzynumber.name = name
         return fuzzynumber
+
 
 class DOE(object):
     """Design of Experiment"""
@@ -323,7 +324,7 @@ class DOE(object):
         doe_cc_raw['alpha'] = 0
         samples = []
         # for alphalevel in [0, len(dv0.df)-1]:  # [0, -1, len(dv0.df)//2]:
-        for alphalevel in [0, len(dv0.df)//2, len(dv0.df)-1]: # [0, -1, len(dv0.df)//2]:
+        for alphalevel in [0, len(dv0.df) // 2, len(dv0.df) - 1]:  # [0, -1, len(dv0.df)//2]:
             # for alphalevel in [0, len(dv0.df)//3, 2*len(dv0.df)//3, -1]: # [0, -1, len(dv0.df)//2]:
             doe_cc = doe_cc_raw.copy()
             for i, designvar in enumerate(self.designvars.values()):
@@ -364,5 +365,3 @@ class DOE(object):
         print("doe", doe)
         print()
         return doe
-
-

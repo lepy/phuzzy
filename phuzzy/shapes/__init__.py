@@ -526,7 +526,7 @@ class FuzzyNumber(object):
         else:
             return (self.min() <= other.min()) and (self.max() >= other.max())
 
-    def _disretize_range(self, n=1000):
+    def _disretize_range(self, n=0):
         """ discretize range
 
         :param n:
