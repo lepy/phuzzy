@@ -10,6 +10,7 @@ Welcome to phuzzy's documentation!
     usage
     modules
     shapes/shapes
+    plots/plots
     examples/examples
     phuzzy_api/phuzzy
     contributing

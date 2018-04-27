@@ -107,7 +107,7 @@ def plot_xy_3d(x, y, height=200, width=200):
     ax3d = plot_3d(x, y, ax=ax3d)
     axs[0,1] = ax3d
 
-    return fig, (axs)
+    return fig, axs
 
 
 def plot_3d(x, y, ax=None, show=False, height=200, width=200):
@@ -121,6 +121,8 @@ def plot_3d(x, y, ax=None, show=False, height=200, width=200):
         fig = plt.figure(dpi=90, facecolor='w', edgecolor='k',
                          figsize=(width / 25.4, height / 25.4))
         ax = fig.add_subplot(111, projection='3d')
+    else:
+        fig = None
 
     for i, xi in x.df.iterrows():
         yi = y.df.loc[i]
@@ -151,4 +153,4 @@ def plot_3d(x, y, ax=None, show=False, height=200, width=200):
     if show is True:
         plt.show()
 
-    return ax
+    return fig, ax
