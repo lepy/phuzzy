@@ -478,8 +478,12 @@ class FuzzyNumber(object):
 
         if isinstance(other, (int, float)):
             return False  # (self.min() >= other) and (self.max() <= other)
-        else:
+        elif other.__class__ is self.__class__:
             return np.allclose(self.df.values, other.df.values)
+        else:
+            return NotImplemented
+
+    __hash__ = None # https://www.youtube.com/watch?v=T-TwcmT6Rcw 26:00
 
     def __ne__(self, other):
         """operation !=
