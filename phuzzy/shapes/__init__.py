@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import copy
 from scipy.integrate import cumtrapz
-
+import scipy.stats
 
 class FuzzyNumber(object):
     """convex fuzzy number"""
@@ -725,6 +725,17 @@ class FuzzyNumber(object):
         I /= I[-1]
         y = np.interp(x, I, x__, left=0., right=1.)
         return y
+
+    def rvs(self, size, seed=None):
+        """Sample points according membership function
+
+        :param size: number of sample points
+        :return: sample points
+        """
+        if seed is not None and isinstance(seed, int):
+            np.random.seed(seed=seed)
+        r = scipy.stats.uniform.rvs(size=size)
+        return self.ppf(r)
 
     @property
     def get_01(self):

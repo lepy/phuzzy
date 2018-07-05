@@ -5,6 +5,7 @@ from phuzzy.mpl import mix_mpl
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 import mpl_toolkits.mplot3d.art3d as art3d
+import pandas as pd
 
 def plot_xy(x, y, height=100, width=200):
     """plot two fuzzy numbers
@@ -152,5 +153,55 @@ def plot_3d(x, y, ax=None, show=False, height=200, width=200):
 
     if show is True:
         plt.show()
+
+    return fig, ax
+
+def plot_hist(x, ax=None, bins=None, normed=1, **kwargs):
+
+    if bins is None:
+        bins = 'auto'
+    bins, edges = np.histogram(x, bins=bins)
+    left,right = edges[:-1],edges[1:]
+    X = np.array([left,right]).T.flatten()
+    Y = np.array([bins,bins]).T.flatten()
+    if normed is True:
+        Y = Y/float(Y.max())
+
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(10,5))
+    else:
+        fig = plt.gcf()
+
+    if kwargs.get("filled") is True:
+        ax.fill_between(X, 0, Y, label=kwargs.get("label"), color=kwargs.get("color", "r"), alpha=kwargs.get("alpha", .3))
+    else:
+        ax.plot(X,Y, label=kwargs.get("label"), color=kwargs.get("color", "r"), alpha=kwargs.get("alpha", .8))
+
+    return fig, ax
+
+def plot_cdf(x, method="rossow", ax=None, bins=None, color=None, **kwargs):
+
+    df=pd.DataFrame({"x":x})
+    df = df[df.x>0]
+    # df = df.drop_duplicates()
+    df.sort_values(by="x", ascending=True, inplace=True)
+    n = len(df)
+    df["weibull"] = (np.linspace(1, n, n)) / (n + 1)
+    df["nn"] = (np.linspace(1, n, n)) / (n + 1)
+    df["blom"] = (np.linspace(1, n, n) - .375) / (n + .25)
+    df["rossow"] = (3 * np.linspace(1, n, n) -1) / (3 * n + 1)
+    df["n"] = np.linspace(1, n, n)
+    df["cdf"] = np.cumsum(np.ones_like(df.x))
+    df["cdf"] /= df.cdf.max()
+
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(10,5))
+    else:
+        fig = plt.gcf()
+
+    if kwargs.get("filled") is True:
+        ax.fill_between(df.x, 0, df.rossow, label=kwargs.get("label"), color=color, alpha=kwargs.get("alpha"))
+    else:
+        ax.plot(df.x, df[method], label=kwargs.get("label"), color=color, alpha=kwargs.get("alpha"))
 
     return fig, ax
