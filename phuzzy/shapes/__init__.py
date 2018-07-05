@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import copy
 from scipy.integrate import cumtrapz
-
+import scipy.stats
 
 class FuzzyNumber(object):
     """convex fuzzy number"""
@@ -478,8 +478,12 @@ class FuzzyNumber(object):
 
         if isinstance(other, (int, float)):
             return False  # (self.min() >= other) and (self.max() <= other)
-        else:
+        elif other.__class__ is self.__class__:
             return np.allclose(self.df.values, other.df.values)
+        else:
+            return NotImplemented
+
+    __hash__ = None # https://www.youtube.com/watch?v=T-TwcmT6Rcw 26:00
 
     def __ne__(self, other):
         """operation !=
@@ -721,6 +725,21 @@ class FuzzyNumber(object):
         I /= I[-1]
         y = np.interp(x, I, x__, left=0., right=1.)
         return y
+
+    def rvs(self, size, seed=None):
+        """Sample points according membership function
+
+        :param size: number of sample points
+        :return: sample points
+        """
+        if seed is not None and isinstance(seed, int) and np.sign(seed)==1:
+            np.random.seed(seed=seed)
+        if seed is not None and isinstance(seed, int) and np.sign(seed)==-1:
+            r = np.linspace(0,1,size)
+        else:
+            r = scipy.stats.uniform.rvs(size=size)
+
+        return self.ppf(r)
 
     @property
     def get_01(self):
