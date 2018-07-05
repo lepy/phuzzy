@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import phuzzy as ph
+import phuzzy.mpl.plots
 from phuzzy.mpl import mix_mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,6 +9,7 @@ import numpy as np
 import matplotlib.colors
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
+import mpl_toolkits.mplot3d.art3d as art3d
 
 def f(x1, x2):
     return (x1-1)**2+(x2+.4)**2 + .1
@@ -27,10 +29,15 @@ fig, axs = plt.subplots(3,3, dpi=90, facecolor='w', edgecolor='k', figsize=(Bf /
 axy = axs[1,2]
 axx = axs[0,0]
 axx2 = axs[0,1]
+axx3 = axs[0,2]
 axl = axs[1,0]
 axr = axs[1,1]
 axc = axs[2,0]
+axm = axs[2,1]
 axz = axs[2,2]
+ax3d = fig.add_subplot(111, projection='3d')
+axm3d = fig.add_subplot(111, projection='3d')
+
 axl.set_title("z.l")
 axr.set_title("z.r")
 for ax in [axl, axr, axc]:
@@ -55,7 +62,7 @@ sm.set_array([])
 cbar = fig.colorbar(sm, ticks=csc.levels, ax=axc)
 cbar.set_label("z")
 x = ph.Trapezoid(alpha0=[-1,2], alpha1=[-.5, .5])
-y = ph.TruncNorm(alpha0=[-1,0.5])
+y = ph.TruncNorm(alpha0=[-1,0.5], name="y")
 
 z = f(x,y)
 z.name = "z"
@@ -100,6 +107,10 @@ for i, zi in z.df.iterrows():
             [yi.l, yi.l, yi.r, yi.r, yi.l],
              c="k", alpha=.5, lw=.5, dashes=[2,2])
 
+    axc.plot([xi.l, xi.r, xi.r, xi.l, xi.l],
+            [yi.l, yi.l, yi.r, yi.r, yi.l],
+             c="k", alpha=.5, lw=.5, dashes=[2,2])
+
     axr.plot([xi.l, xi.r, xi.r, xi.l, xi.l],
             [yi.l, yi.l, yi.r, yi.r, yi.l],
              c="k", alpha=.5, lw=.5, dashes=[2,2])
@@ -125,9 +136,39 @@ z.plot(ax=axz, show=False)
 axz.set_title(z)
 axc.set_title("f(x,y)")
 
+print(dir(axx3.axes))
+print(axx3.axes.get_position())
+print(axx3.axes.get_geometry())
+phuzzy.mpl.plots.plot_3d(x,y, ax=ax3d)
 
 # axl.set_xlim(-1,1)
 fig.tight_layout()
+ax3d.axes.set_position(axx3.axes.get_position())
+axm3d.axes.set_position(axm.axes.get_position())
+# figm2, axm2 = phuzzy.mpl.plots.plot_3d(x,y, ax=axm3d)
+axm3d.contour(Xs, Ys, (Zs/(Zs.max()-Zs.min())-Zs.min())*.01, colors="k")
+
+for i, zi in z.df.iterrows():
+    xi = x.df.loc[i]
+    yi = y.df.loc[i]
+    polygon = Polygon(np.vstack([[xi.l, xi.r, xi.r, xi.l, xi.l],
+                           [yi.l, yi.l, yi.r, yi.r, yi.l]]).T,
+                      alpha=.2)
+    axm3d.add_patch(polygon)
+    art3d.pathpatch_2d_to_3d(polygon, z=yi.alpha)
+
+    axm3d.plot([xi.l, xi.r, xi.r, xi.l, xi.l],
+            [yi.l, yi.l, yi.r, yi.r, yi.l],
+            [yi.alpha, yi.alpha, yi.alpha, yi.alpha, yi.alpha],
+             c="k", alpha=.5, lw=1.5)
+
+axm3d.plot(x.df.l, y.df.l, y.df.alpha, c="k", alpha=.5, lw=1.5)
+axm3d.plot(x.df.l, y.df.r, y.df.alpha, c="k", alpha=.5, lw=1.5)
+axm3d.plot(x.df.r, y.df.l, y.df.alpha, c="k", alpha=.5, lw=1.5)
+axm3d.plot(x.df.r, y.df.r, y.df.alpha, c="k", alpha=.5, lw=1.5)
+
+axx3.axis('off')
+axm.axis('off')
 
 from matplotlib.transforms import Bbox
 bboxx = axl.get_position()
