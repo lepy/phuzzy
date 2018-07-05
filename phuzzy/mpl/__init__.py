@@ -172,6 +172,11 @@ class MPL_Mixin():
         return True
 
 
+class FuzzyNumber(phuzzy.FuzzyNumber, MPL_Mixin):
+    """Uniform fuzzy number with matplotlib mixin"""
+    def __init__(self, **kwargs):
+        phuzzy.FuzzyNumber.__init__(self, **kwargs)
+
 class Uniform(phuzzy.Uniform, MPL_Mixin):
     """Uniform fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):

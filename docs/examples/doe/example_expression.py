@@ -39,6 +39,7 @@ z_b = expr.predict(name="z_b")
 print(z_b)
 mix_mpl(z_b)
 fig, axs = phuzzy.mpl.plots.plot_xy(z, z_b)
+mix_mpl(z)
 z.plot(axs[1], labels=False)
 samples = expr.results_training
 axs[1].scatter(samples.res, samples.alpha)
