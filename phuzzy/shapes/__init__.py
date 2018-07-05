@@ -732,9 +732,13 @@ class FuzzyNumber(object):
         :param size: number of sample points
         :return: sample points
         """
-        if seed is not None and isinstance(seed, int):
+        if seed is not None and isinstance(seed, int) and np.sign(seed)==1:
             np.random.seed(seed=seed)
-        r = scipy.stats.uniform.rvs(size=size)
+        if seed is not None and isinstance(seed, int) and np.sign(seed)==-1:
+            r = np.linspace(0,1,size)
+        else:
+            r = scipy.stats.uniform.rvs(size=size)
+
         return self.ppf(r)
 
     @property
