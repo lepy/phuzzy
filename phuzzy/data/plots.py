@@ -4,9 +4,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def p_estimates(df, show=False):
+def p_estimates(df, ax=None, show=False):
 
-    fig, ax = plt.subplots(1, 1, figsize=(10,5))
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(10,5))
+    else:
+        fig = plt.gcf()
+
     for col in [c for c in df.columns if c.startswith("p_")]:
         ax.plot(df.x, df[col])
 
@@ -49,3 +53,23 @@ def bootstrapping(data, df_boot, show=False):
         plt.show()
 
     return fig, axs
+
+def plot_hist(x, ax=None, bins=None, normed=False, color=None, **kwargs):
+    if bins is None:
+        bins = 'auto'
+    bins, edges = np.histogram(x, bins=bins, normed=normed)
+    left,right = edges[:-1],edges[1:]
+    X = np.array([left,right]).T.flatten()
+    Y = np.array([bins,bins]).T.flatten()
+
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(10,5))
+    else:
+        fig = plt.gcf()
+
+    if kwargs.get("filled") is True:
+        ax.fill_between(X, 0, Y, label=kwargs.get("label"), color="r", alpha=kwargs.get("alpha"))
+    else:
+        ax.plot(X,Y, label=kwargs.get("label"), color="r", alpha=kwargs.get("alpha"))
+
+    return ax
