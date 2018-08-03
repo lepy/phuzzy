@@ -15,7 +15,7 @@ def test_bootstrapping():
     df_boot = data.bootstrap(n=1000)
     print(df_boot.head())
 
-    phuzzy.data.plots.bootstrapping(data, df_boot, show=True)
+    # phuzzy.data.plots.bootstrapping(data, df_boot, show=True)
 
 
 def test_shuffling():
@@ -27,7 +27,7 @@ def test_shuffling():
     df_boot = data.shuffling(n=1000, train_fraction=.7)
     print(df_boot.head())
 
-    phuzzy.data.plots.bootstrapping(data, df_boot, show=True)
+    # phuzzy.data.plots.bootstrapping(data, df_boot, show=True)
 
 
 def test_estimate_probability():
@@ -37,7 +37,7 @@ def test_estimate_probability():
     data = phuzzy.data.Data(raw_data)
     df = data.estimate_probability()
     print(df)
-    phuzzy.data.plots.p_estimates(df, show=True)
+    # phuzzy.data.plots.p_estimates(df, show=True)
 
 
 def test_histogram():
@@ -63,4 +63,4 @@ def test_histogram():
     ax.set_ylabel("frequency")
     axcdf.set_xlabel("x")
     axcdf.set_ylabel("p")
-    plt.show()
+    # plt.show()

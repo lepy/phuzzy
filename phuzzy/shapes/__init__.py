@@ -43,7 +43,8 @@ class FuzzyNumber(object):
         return self._number_of_alpha_levels
 
     def _set_number_of_alpha_levels(self, value):
-        self._number_of_alpha_levels = int(value)
+        self.convert_df(alpha_levels=int(value))
+        # self._number_of_alpha_levels = int(value)
 
     number_of_alpha_levels = property(fget=_get_number_of_alpha_levels, fset=_set_number_of_alpha_levels,
                                       doc="number of alpha levels")
@@ -74,7 +75,7 @@ class FuzzyNumber(object):
     def convert_df(self, alpha_levels=None, zero=0):
         df = self.df.copy()
         if alpha_levels is not None:
-            self.number_of_alpha_levels = alpha_levels
+            self._number_of_alpha_levels = int(alpha_levels)
         df.sort_values(['alpha'], ascending=[True], inplace=True)
         # print("!",df)
         xs_l = df.l.values
