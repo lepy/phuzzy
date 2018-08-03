@@ -7,6 +7,17 @@ import phuzzy
 import numpy as np
 from io import StringIO
 
+def test_number_of_alpha_levels():
+    t = phuzzy.Triangle(alpha0=[1, 3], alpha1=[2], number_of_alpha_levels=4)
+    print(t.number_of_alpha_levels)
+    print(t.df)
+    assert t.number_of_alpha_levels==4
+    t.number_of_alpha_levels = 5
+    # t.convert_df(alpha_levels=5)
+    print(t.number_of_alpha_levels)
+    print(t.df)
+
+
 def test_fuzzy():
     n = phuzzy.FuzzyNumber()
     print(n)
