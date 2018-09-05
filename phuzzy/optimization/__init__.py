@@ -7,15 +7,11 @@ import datetime
 import os
 import subprocess
 
-
 import phuzzy
 from phuzzy.mpl import MPL_Mixin
 from phuzzy.shapes import FuzzyNumber
 
 import matplotlib.pyplot as plt
-import matplotlib
-from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
 
 from scipy.optimize import minimize
 import numpy as np
