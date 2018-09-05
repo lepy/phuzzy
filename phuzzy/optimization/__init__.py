@@ -468,7 +468,6 @@ class Alpha_Level_Optimization(Constraints, ObjFunction, FuzzyNumber, MPL_Mixin)
                 B = B + b
             self.deter_objective = (1/(3*A))*B
 
-
         if self.deter_objective < self.zmin_values[-1]:
             index_i = np.where(self.zmin_values < self.deter_objective)[0][-1]
             index_ii = np.where(self.zmin_values > self.deter_objective)[0][0]
