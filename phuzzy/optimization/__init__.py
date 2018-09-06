@@ -3,7 +3,6 @@
 from shgo._shgo import SHGO
 
 import datetime
-
 import os
 import subprocess
 
@@ -22,9 +21,6 @@ import xarray as xr
 class ObjFunction(object):
     def __init__(self):
         self.x_glob = []
-        self.local = 1
-
-        self.ob_func_link = 'C:\\Users\\boos\\Desktop\\Topo_exe_deg\\Topo.exe'
 
     def min_function_value(self, x):
         if isinstance(self.x_glob, np.ndarray):
@@ -39,28 +35,7 @@ class ObjFunction(object):
         return -1 * (self.objective_function(x))
 
     def objective_function(self, x):
-        if self.local == 1:
-            return -1*((x[0] - 1) ** 2 + (x[1] + .1) ** 2 + .1 - (x[2] + 2) ** 2 - (x[3] - 0.1) ** 2 - (x[4] * x[5]) ** 2)
-        else:
-            # external Routine
-            np.savetxt('C:\\Users\\boos\\Desktop\\Topo_exe_deg\\load.txt', x, fmt='%1.5e')
-            subprocess.call(self.ob_func_link, shell=0)
-
-            f1 = open("C:\\Users\\boos\\Desktop\\Topo_exe_deg\\compliance.txt", 'r')
-            c = f1.readlines()
-            c = np.loadtxt(c, delimiter=',', skiprows=0)
-            f1.close()
-            os.remove("C:\\Users\\boos\\Desktop\\Topo_exe_deg\\compliance.txt")
-
-            # f2 = open("C:\\Users\\boos\\Desktop\\Topo_exe_deg\\x_phys.txt", 'r')
-            # x_phys = f2.readlines()
-            # x_phys = np.loadtxt(x_phys, delimiter=',', skiprows=0)
-            # x_phys = x_phys[:,(0,5)]
-            # f2.close()
-            # os.remove("C:\\Users\\boos\\Desktop\\Topo_exe_deg\\x_phys.txt")
-            # self.cc.append(c)
-            # self.xphys.append(x_phys)
-            return c
+        return -1*((x[0] - 1) ** 2 + (x[1] + .1) ** 2 + .1 - (x[2] + 2) ** 2 - (x[3] - 0.1) ** 2 - (x[4] * x[5]) ** 2)
 
 
 class Constraints(object):
@@ -506,27 +481,9 @@ class Alpha_Level_Optimization(Constraints, ObjFunction, FuzzyNumber, MPL_Mixin)
         pass
 
 
-# FUZZY ALPHA LEVEL OPT ROUTINE
-var_1 = phuzzy.Trapezoid(alpha0=[0, 4], alpha1=[2, 3], number_of_alpha_levels=5)
-var_2 = phuzzy.Trapezoid(alpha0=[2, 4], alpha1=[3, 3], number_of_alpha_levels=5)
-var_3 = phuzzy.Triangle(alpha0=[-3, 1], alpha1=[1, 1], number_of_alpha_levels=5)
-var_4 = phuzzy.Triangle(alpha0=[0, 5], alpha1=[3, 3], number_of_alpha_levels=8)
-var_5 = phuzzy.Triangle(alpha0=[-10, 1], alpha1=[-4, -4], number_of_alpha_levels=5)
-var_6 = phuzzy.Trapezoid(alpha0=[-10, 10], alpha1=[-2, 2], number_of_alpha_levels=5)
-
-kwargs = {"var_1": var_1, "var_2": var_2, "var_3": var_3, "var_4": var_4, "var_5": var_5,  "var_6": var_6}
-
-a = datetime.datetime.now()
-z = Alpha_Level_Optimization(**kwargs)
-z.calculation()
-b = datetime.datetime.now()
-print(b-a)
-
-z.defuzzification()
-z.plot(defuzzy=[z.deter_objective, z.y_interpol])
-plt.show()
-
-r = 1
+if __name__ == "__main__":
+    # execute only if run as a script
+    main()
 
 
 
