@@ -173,7 +173,7 @@ def plot_hist(x, ax=None, bins=None, normed=1, **kwargs):
         fig = plt.gcf()
 
     if kwargs.get("filled") is True:
-        ax.fill_between(X, 0, Y, label=kwargs.get("label"), color=kwargs.get("color", "r"), alpha=kwargs.get("alpha", .3))
+        ax.fill_between(X, 0, Y, label=kwargs.get("label"), color=kwargs.get("color", "b"), alpha=kwargs.get("alpha", .3))
     else:
         ax.plot(X,Y, label=kwargs.get("label"), color=kwargs.get("color", "r"), alpha=kwargs.get("alpha", .8))
 

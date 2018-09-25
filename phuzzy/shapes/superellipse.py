@@ -14,10 +14,11 @@
 
 """
 
-
-from phuzzy.shapes import FuzzyNumber
 import numpy as np
 import pandas as pd
+
+from phuzzy.shapes import FuzzyNumber
+
 
 class Superellipse(FuzzyNumber):
     """superelliptic fuzzy number
@@ -55,7 +56,7 @@ class Superellipse(FuzzyNumber):
         r = (b - a) / 2.
         m = (a + b) / 2.
         choicelist = [0.,
-                      (1. - (abs(x-m)/r)**self.m) ** (1./self.n),
+                      (1. - (abs(x - m) / r) ** self.m) ** (1. / self.n),
                       0.]
         return np.select(condlist, choicelist)
 
