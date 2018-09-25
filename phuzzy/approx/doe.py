@@ -362,6 +362,18 @@ class DOE(object):
         alpha_cols = [x for x in doe.columns if x.startswith("alpha_")]
         doe["alpha"] = doe[alpha_cols].min(axis=1)
         # doe['alpha'] = 0
-        print("doe", doe)
-        print()
+        print("sample doe", doe.shape)
         return doe
+
+    def gen_lhs_samples(self, **kwargs):
+        """Latin Hypercube Sampling
+
+        :param n: number of sample points
+        :return: doe
+        """
+        dim = len(self.designvars)
+        n_samples = kwargs.get("n", 10)
+        doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
+        doe.loc[0] = np.zeros(len(self.designvars))
+        doelhs = pd.DataFrame(pydoe.lhs(dim, n_samples), columns=[x.name for x in self.designvars.values()])
+        return doelhs
