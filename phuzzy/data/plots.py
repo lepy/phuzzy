@@ -55,6 +55,7 @@ def bootstrapping(data, df_boot, show=False):
     return fig, axs
 
 def plot_hist(x, ax=None, bins=None, normed=False, color=None, **kwargs):
+    x = x[~np.isnan(x)]
     if bins is None:
         bins = 'auto'
     bins, edges = np.histogram(x, bins=bins, normed=normed)

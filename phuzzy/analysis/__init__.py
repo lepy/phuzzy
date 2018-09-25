@@ -108,5 +108,6 @@ class FuzzyAnalysis(object):
             z.sk = z.s / s_sum
             self.designvars[i].sk = z.sk
             print("%s.sk=%.2g" % (z.name, z.sk))
-            sensibilities.append(z.sk)
-        return sensibilities
+            sensibilities.append([z, z.name, z.sk])
+        return pd.DataFrame(sensibilities, columns=["x", "name", "sk"])
+

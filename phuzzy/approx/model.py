@@ -21,14 +21,14 @@ class Expression(object):
         """DOE(kwargs)"""
 
         self.name = kwargs.get("name", "DOE N.N.")
-        self.function = kwargs.get("function")
         self._designvars = collections.OrderedDict()
         self.doe_training = None
         self.doe_prediction = None
-        self.model = None
+        self.model = kwargs.get("model")
 
         if "designvars" in kwargs:
             self.add_designvars(kwargs.get("designvars"))
+        self.doe = DOE(designsvars=self._designvars.values, name="doe_prediction")
 
     def __str__(self):
         return "(Expression:'{o.name}', dv={d}".format(o=self,
@@ -195,6 +195,7 @@ class DOE(object):
         if "designvars" in kwargs:
             self.add_designvars(kwargs.get("designvars"))
 
+
     def __str__(self):
         return "(DOE:'{o.name}', dv={l}, {n} samples)".format(o=self,
                                                               l=self._designvars.keys(),
@@ -279,10 +280,10 @@ class DOE(object):
             # doe['alpha'] = 0
             for i, designvar in enumerate(self.designvars.values()):
                 alpha = designvar.get_alpha_from_value(doe.iloc[:, i])
-                doe["alpha_%d" % i] = alpha
+                doe["_alpha_%d" % i] = alpha
                 # print("alpha", designvar, alpha)
-            alpha_cols = [x for x in doe.columns if x.startswith("alpha_")]
-            doe["alpha"] = doe[alpha_cols].min(axis=1)
+            alpha_cols = [x for x in doe.columns if x.startswith("_alpha_")]
+            doe["_alpha"] = doe[alpha_cols].min(axis=1)
 
         return doe
 
@@ -302,10 +303,13 @@ class DOE(object):
             raise Exception("Box-Behnken requires at least 3 dimensions!")
 
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
-        doe['alpha'] = 0
-        doe.loc[0] = np.zeros(len(self.designvars))
+        print(doe.columns, dim)
+
+        doe.loc[0] = np.zeros(dim)
+        print(pydoe.bbdesign(3))
         doelhs = pd.DataFrame(pydoe.bbdesign(dim), columns=[x.name for x in self.designvars.values()])
         doe = pd.concat([doe, doelhs], ignore_index=True)
+        doe['_alpha'] = 0
         for i, designvar in enumerate(self.designvars.values()):
             doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
         return doe
@@ -321,7 +325,7 @@ class DOE(object):
         # doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
         doe_cc_raw = pd.DataFrame(pydoe.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
-        doe_cc_raw['alpha'] = 0
+        doe_cc_raw['_alpha'] = 0
         samples = []
         # for alphalevel in [0, len(dv0.df)-1]:  # [0, -1, len(dv0.df)//2]:
         for alphalevel in [0, len(dv0.df) // 2, len(dv0.df) - 1]:  # [0, -1, len(dv0.df)//2]:
@@ -357,13 +361,57 @@ class DOE(object):
             doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
         for i, designvar in enumerate(self.designvars.values()):
             alpha = designvar.get_alpha_from_value(doe.iloc[:, i])
-            doe["alpha_%d" % i] = alpha
+            doe["_alpha_%d" % i] = alpha
             # print("alpha", designvar, alpha)
-        alpha_cols = [x for x in doe.columns if x.startswith("alpha_")]
-        doe["alpha"] = doe[alpha_cols].min(axis=1)
+        alpha_cols = [x for x in doe.columns if x.startswith("_alpha_")]
+        doe["_alpha"] = doe[alpha_cols].min(axis=1)
         # doe['alpha'] = 0
-        print("sample doe", doe.shape)
+        print("_sample doe", doe.shape)
         return doe
+
+    def sample_lhs2(self, **kwargs):
+        """Latin Hypercube Sampling
+
+        :param n: number of sample points
+        :return: doe
+        """
+        dim = len(self.designvars)
+        n_samples = kwargs.get("n", 100)
+        doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
+        doelhs = pd.DataFrame(pydoe.lhs(dim, n_samples), columns=[x.name for x in self.designvars.values()])
+        print("doelhs", doelhs.shape)
+        # doe = pd.concat([doe, doelhs], ignore_index=True)
+        indices = list(self.designvars.values())[0].df.index
+        does = []
+        # doe.loc[0] = np.zeros(len(self.designvars))
+
+        for index in indices:
+            # print(index)
+            doe = doelhs.copy()
+            for i, designvar in enumerate(self.designvars.values()):
+                designvarmin = designvar.df.loc[index, "l"]
+                designvarmax = designvar.df.loc[index, "r"]
+                doe.iloc[:, i] = doe.iloc[:, i] * (designvarmax - designvarmin) + designvarmin
+                alpha = designvar.df.loc[index, "alpha"]
+                # if i==0:
+                #     print("_"*80)
+                #     print("alpha", alpha, designvar.name, designvarmin, designvarmax)
+                #     print(doe.iloc[:, i])
+
+                doe.loc[:, "_alpha"] = alpha
+            does.append(doe.copy())
+        # print(does[0].iloc[:, 0])
+        doe = pd.concat(does, ignore_index=True)
+
+        # for i, designvar in enumerate(self.designvars.values()):
+        #     alpha = designvar.get_alpha_from_value(doe.iloc[:, i])
+        #     doe["_alpha_%d" % i] = alpha
+        #     # print("alpha", designvar, alpha)
+        # alpha_cols = [x for x in doe.columns if x.startswith("_alpha_")]
+        # doe["_alpha"] = doe[alpha_cols].min(axis=1)
+        # doe['alpha'] = 0
+        # print("_sample doe", doe.tail())
+        return doe[[x.name for x in self.designvars.values()]+["_alpha"]]
 
     def gen_lhs_samples(self, **kwargs):
         """Latin Hypercube Sampling
