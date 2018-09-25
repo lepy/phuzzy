@@ -54,14 +54,21 @@ def bootstrapping(data, df_boot, show=False):
 
     return fig, axs
 
+<<<<<<< HEAD
 def plot_hist(x, ax=None, bins=None, normed=False, color=None, **kwargs):
     x = x[~np.isnan(x)]
+=======
+def plot_hist(x, ax=None, bins=None, normed=True, **kwargs):
+
+>>>>>>> aa69c3564895524ef928f88a5162c36cd9cf871f
     if bins is None:
         bins = 'auto'
-    bins, edges = np.histogram(x, bins=bins, normed=normed)
+    bins, edges = np.histogram(x, bins=bins)
     left,right = edges[:-1],edges[1:]
     X = np.array([left,right]).T.flatten()
     Y = np.array([bins,bins]).T.flatten()
+    if normed is True:
+        Y = Y/float(Y.max())
 
     if ax is None:
         fig, ax = plt.subplots(1, 1, figsize=(10,5))
@@ -69,8 +76,9 @@ def plot_hist(x, ax=None, bins=None, normed=False, color=None, **kwargs):
         fig = plt.gcf()
 
     if kwargs.get("filled") is True:
-        ax.fill_between(X, 0, Y, label=kwargs.get("label"), color="r", alpha=kwargs.get("alpha"))
+        ax.fill_between(X, 0, Y, label=kwargs.get("label"), color=kwargs.get("color", "b"), alpha=kwargs.get("alpha", .3))
     else:
-        ax.plot(X,Y, label=kwargs.get("label"), color="r", alpha=kwargs.get("alpha"))
+        ax.plot(X,Y, label=kwargs.get("label"), color=kwargs.get("color", "r"), alpha=kwargs.get("alpha", .8))
 
-    return ax
+    return fig, ax
+
