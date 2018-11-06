@@ -76,6 +76,7 @@ class FuzzyNumber(object):
     def alpha(self, x):
         """get alpha from x"""
         df = pd.concat([self.df[["l", "alpha"]].rename(columns={"l":"x"}), self.df[["alpha", "r"]].rename(columns={"r":"x"})]).sort_values(by=["x", "alpha"])
+        df = df.drop_duplicates()
         return np.interp(x, df.x, df.alpha, left=0., right=0.)
 
     def convert_df(self, alpha_levels=None, zero=0):
