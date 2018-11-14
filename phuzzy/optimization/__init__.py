@@ -43,8 +43,6 @@ if __name__ == "__main__":
 
     z = alphaOpt.Alpha_Level_Optimization(**kwargs)
     z.calculation()
-    z.extanded_dataframe()
-    z.export()
 
     z.plot()
     plt.show()

@@ -241,9 +241,9 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
                                                   'r': self.zmax_values, 'best_indi_r': max_arr.tolist(),
                                                   'nfev_r':self.nfev_list_max, 'nit_r': self.nit_list_max})
         else:
-            self.df_extanded = pd.DataFrame(data={'alpha': np.linspace(0,
-                                                                       np.linspace(0, 1.0, self.orig_number_of_alpha_lvls)
-                                                                       [self.orig_number_of_alpha_lvls-self.start_at], self.number_of_alpha_lvls),
+            self.df_extanded = pd.DataFrame(data={'alpha':
+                                                   np.linspace(0, np.linspace(0, 1.0, self.orig_number_of_alpha_lvls)
+                                                   [self.orig_number_of_alpha_lvls-self.start_at], self.number_of_alpha_lvls),
                                                   'l': self.zmin_values, 'best_indi_l': min_arr.tolist(),
                                                   'nfev_l': self.nfev_list_min, 'nit_l': self.nit_list_min,
                                                   'r': self.zmax_values, 'best_indi_r': max_arr.tolist(),
@@ -366,64 +366,6 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         aeval.symtable['x'] = x
         return aeval.run(exprc)
 
-    @classmethod
-    def _boundary_constraints(**kwargs):
-        """
-        Calculating the Optimization Boundaries based on the Fuzzy Variables Membership Funciton
-        :param kwargs:      Input Fuzzy Variables
-        :return:            3D DataArray representing each Fuzzy Inputvariables Boundaries for each Alpha Level
-                            prepared for the Optimization Routine
-        """
-        filter_fuzzy_variables_dict = {}
-        list_of_n_alpha_levels = np.zeros(1, dtype='int')
-
-        # check if number_of_alpha_levels is the same
-        for key, value in kwargs.items():
-            if isinstance(value, phuzzy.FuzzyNumber):
-                if list_of_n_alpha_levels[0] == 0:
-                    np.put(list_of_n_alpha_levels, 0, value.number_of_alpha_levels)
-                else:
-                    list_of_n_alpha_levels = np.append(list_of_n_alpha_levels, value.number_of_alpha_levels)
-
-        # extract fuzzy variables from kwargs and safe in dict
-        for key, value in kwargs.items():
-            # if number_of_alpha_levels are different
-            if (len(set(list_of_n_alpha_levels)) == 1) == False:
-                max_value = np.max(list_of_n_alpha_levels)
-                if isinstance(value, phuzzy.FuzzyNumber):
-                    if value.number_of_alpha_levels < max_value: value.convert_df(alpha_levels=max_value)
-                    filter_fuzzy_variables_dict[key] = value._df
-            elif isinstance(value, phuzzy.FuzzyNumber):
-                # if number_of_alpha_levels are the same
-                filter_fuzzy_variables_dict[key] = value._df
-
-        # extract fuzzy values from dict and safe as DataArray
-        fuzzy_variables = {k: xr.DataArray(v, dims=['number_of_alpha_levels', 'alpha_level_bounds'])
-                           for k, v in filter_fuzzy_variables_dict.items()}
-
-        return xr.Dataset(fuzzy_variables).to_array(dim='fuzzy_variables')
-
-    @staticmethod
-    def _safe_z_values(min_max, z_value_list):
-        """
-        Post Preparation for Results of Optimization Routines for creation of Fuzzy Dataframe
-        :param min_max:             Define if Result is from a Minimization or Maximization
-        :param z_value_list:        List of all Objective Value Results (for each Alpha Level)
-        :return:
-            z_value_list            Adapted List of all Objective Value Results
-        """
-        if min_max == 'min':
-            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
-                if current_item < next_item:
-                    z_value_list[i + 1] = current_item
-        elif min_max == 'max':
-            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
-                if current_item > next_item:
-                    z_value_list[i + 1] = current_item
-        else:
-            raise ValueError('Please define -min- or -max- in min_max')
-        return np.flip(z_value_list, axis=0)
-
 
     def _cut_global_blounds(self):
         """
@@ -460,31 +402,6 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
             for row in self.x_glob:
                 x = np.insert(x, (row[0].astype(int)), row[1])
         return -1 * (self._objective_function(x))
-
-
-    def _find_result(self, shc):
-        """
-        Post Calculation for Shgo-Optimization Algorithm
-        """
-        shc.construct_complex()
-        if len(shc.LMC.xl_maps) > 0:
-            return shc
-        else:
-            lres = minimize(shc.func, shc.x_lowest,
-                            **shc.minimizer_kwargs)
-            shc.res.nlfev += lres.nfev
-            try:
-                lres.fun = lres.fun[0]
-            except (IndexError, TypeError):
-                lres.fun
-
-            shc.LMC[shc.x_lowest]
-            shc.LMC.add_res(shc.x_lowest, lres)
-            shc.sort_result()
-            # Lowest values used to report in case of failures
-            shc.f_lowest = shc.res.fun
-            shc.x_lowest = shc.res.x
-            return shc
 
 
     def _safe_best_array(self, comp_bounds, z_res):
@@ -532,7 +449,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         filepath = Path.cwd() / 'back_up' / cache_str
         if self.start_at is None:
             df_cache = pd.DataFrame(data={'alpha': np.linspace(np.linspace(0, 1.0, self.number_of_alpha_lvls)
-                                                   [self.number_of_alpha_lvls-1-iteration], 1.0, iteration+1),
+                                                               [self.number_of_alpha_lvls-1-iteration], 1.0, iteration+1),
                                           'l': self.zmin_values,
                                           'r': self.zmax_values})
         else:
@@ -545,9 +462,99 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
 
         df_cache.to_csv(filepath, sep=';', encoding='utf8', index=None, header=True)
 
+
+    @staticmethod
+    def _boundary_constraints(**kwargs):
+        """
+        Calculating the Optimization Boundaries based on the Fuzzy Variables Membership Funciton
+        :param kwargs:      Input Fuzzy Variables
+        :return:            3D DataArray representing each Fuzzy Inputvariables Boundaries for each Alpha Level
+                            prepared for the Optimization Routine
+        """
+        filter_fuzzy_variables_dict = {}
+        list_of_n_alpha_levels = np.zeros(1, dtype='int')
+
+        # check if number_of_alpha_levels is the same
+        for key, value in kwargs.items():
+            if isinstance(value, phuzzy.FuzzyNumber):
+                if list_of_n_alpha_levels[0] == 0:
+                    np.put(list_of_n_alpha_levels, 0, value.number_of_alpha_levels)
+                else:
+                    list_of_n_alpha_levels = np.append(list_of_n_alpha_levels, value.number_of_alpha_levels)
+
+
+        # extract fuzzy variables from kwargs and safe in dict
+        for key, value in kwargs.items():
+            # if number_of_alpha_levels are different
+            if (len(set(list_of_n_alpha_levels)) == 1) == False:
+                max_value = np.max(list_of_n_alpha_levels)
+                if isinstance(value, phuzzy.FuzzyNumber):
+                    if value.number_of_alpha_levels < max_value: value.convert_df(alpha_levels=max_value)
+                    filter_fuzzy_variables_dict[key] = value._df
+            elif isinstance(value, phuzzy.FuzzyNumber):
+                # if number_of_alpha_levels are the same
+                filter_fuzzy_variables_dict[key] = value._df
+
+
+        # extract fuzzy values from dict and safe as DataArray
+        fuzzy_variables = {k: xr.DataArray(v, dims=['number_of_alpha_levels', 'alpha_level_bounds'])
+                           for k, v in filter_fuzzy_variables_dict.items()}
+
+        return xr.Dataset(fuzzy_variables).to_array(dim='fuzzy_variables')
+
+
+    @staticmethod
+    def _safe_z_values(min_max, z_value_list):
+        """
+        Post Preparation for Results of Optimization Routines for creation of Fuzzy Dataframe
+        :param min_max:             Define if Result is from a Minimization or Maximization
+        :param z_value_list:        List of all Objective Value Results (for each Alpha Level)
+        :return:
+            z_value_list            Adapted List of all Objective Value Results
+        """
+        if min_max == 'min':
+            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
+                if current_item < next_item:
+                    z_value_list[i + 1] = current_item
+        elif min_max == 'max':
+            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
+                if current_item > next_item:
+                    z_value_list[i + 1] = current_item
+        else:
+            raise ValueError('Please define -min- or -max- in min_max')
+        return np.flip(z_value_list, axis=0)
+
+
+    @staticmethod
+    def _find_result(shc):
+        """
+        Post Calculation for Shgo-Optimization Algorithm
+        """
+        shc.construct_complex()
+        if len(shc.LMC.xl_maps) > 0:
+            return shc
+        else:
+            lres = minimize(shc.func, shc.x_lowest,
+                            **shc.minimizer_kwargs)
+            shc.res.nlfev += lres.nfev
+            try:
+                lres.fun = lres.fun[0]
+            except (IndexError, TypeError):
+                lres.fun
+
+            shc.LMC[shc.x_lowest]
+            shc.LMC.add_res(shc.x_lowest, lres)
+            shc.sort_result()
+            # Lowest values used to report in case of failures
+            shc.f_lowest = shc.res.fun
+            shc.x_lowest = shc.res.x
+            return shc
+
+
     @classmethod
     def from_str(cls, s):
         pass
+
 
     def to_str(self):
         pass
