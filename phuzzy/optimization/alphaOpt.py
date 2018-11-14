@@ -142,7 +142,13 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
 
                 else:  # Alpha-Level < 1
                     # if all bounds are Fuzzy-Intervalls
-                    if 'shc_fuzzy_min' in locals():
+                    if 'shc_fuzzy_min' not in locals():
+                        shc_const_min = self._call_minimizer_shgo(bounds)
+                        shc_const_max = self._call_maximizer_shgo(bounds)
+
+                        shc_fuzzy_min = self._find_result(shc_const_min)
+                        shc_fuzzy_max = self._find_result(shc_const_max)
+                    else:
                         shc_fuzzy_min.bounds = bounds
                         shc_fuzzy_min.iterate()
                         shc_fuzzy_min.find_minima()
@@ -150,14 +156,6 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
                         shc_fuzzy_max.bounds = bounds
                         shc_fuzzy_max.iterate()
                         shc_fuzzy_max.find_minima()
-                    else:
-                        shc_const_min = self._call_minimizer_shgo(bounds)
-                        shc_const_max = self._call_maximizer_shgo(bounds)
-
-                        #shc_fuzzy_min.construct_complex()
-                        #shc_fuzzy_max.construct_complex()
-                        shc_fuzzy_min = self._find_result(shc_const_min)
-                        shc_fuzzy_max = self._find_result(shc_const_max)
 
                     ## safe results in lists
                     best_indi_min = shc_fuzzy_min.res.x
@@ -192,201 +190,10 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         self.zmax_values = self._safe_z_values(min_max='max', z_value_list=zmax_value_list)
 
         self.total_nfev = sum(self.nfev_list_min) + sum(self.nfev_list_max)
-        self.simple_dataframe()
+        self.compact_output()
 
 
-    def separat_minimization(self, n=60, iters=3, optimizer='sobol', backup=False, start_at=None):
-        """
-        Main Routine calculating the Minimum and Maximum of the Objective on each Alpha Level to generate
-        the Fuzzy Objective Membershipfunction.
-        :param n:           Number of Sampling Points / Individuals for the Optimization Algorithm
-        :param iters:       Number of max. Iterations per Optimization Loop
-        :param optimizer:   Selected Optimizer Strategy: "sobol" / "simplicial"
-        :param backup:      Creates a Backup Folder saving the result of each Alpha Level Result
-        :param start_at:    Start at certain Alpha Level (Counts starts from Alpha Level 1)
-        """
-
-        # Input Variables
-        self.n = n
-        self.iters = iters
-        self.optimizer = optimizer          # simplicial / sobol
-        self.backup = backup
-        self.start_at = start_at
-
-        zmin_value_list = []
-        boundlist = []
-
-        if self.start_at is not None: self._cut_global_blounds()
-
-        for i in range(1, self.global_bounds_DataArray['number_of_alpha_levels'].size + 1):
-            boundlist.append(np.delete(self.global_bounds_DataArray.values[:, -i, :], 0, 1))
-
-        with tqdm(total=len(boundlist)) as pbar:
-            for lvl, bounds in enumerate(boundlist):
-                comp_bounds = []
-
-                for item_i, item_j in zip(bounds[:, 0], bounds[:, 1]):  comp_bounds.extend([item_i == item_j])
-
-                if lvl == 0:  # Alpha-Level = 1
-                    if self.start_at is None:
-                        if all(comp_bounds) == True: # if all bounds are constants
-                            ## calculate objective value
-                            zmin = self.objective_function(bounds[:, 0])
-
-                            ## safe values in list
-                            zmin_value_list.append(np.array(zmin))
-                            best_indi_min = np.array(bounds[:, 0])
-                            nfev_min = np.array(0)
-                            nit_min = np.array(0)
-
-                        elif all(comp_bounds) == False and any(comp_bounds) == True: # if one or more bounds are constants
-                            ## prepare bounds / pop constants
-                            bounds = self._pop_constants(comp_bounds, bounds)
-
-                            ## optimization routine
-                            shc_const_min = self._call_minimizer_shgo(bounds)
-                            shc_const_min = self._find_result(shc_const_min)
-
-                            ## safe results in lists
-                            best_indi_min = self._safe_best_array(comp_bounds, shc_const_min.res)
-                            nfev_min = shc_const_min.res.nfev
-                            nit_min = shc_const_min.res.nit
-                            zmin_value_list.append(shc_const_min.res.fun * (1))
-                            self.x_glob = []
-                    else:
-                        shc_const_min = self._call_minimizer_shgo(bounds)
-                        shc_const_min = self._find_result(shc_const_min)
-
-                        ## safe results in lists
-                        best_indi_min = self._safe_best_array(comp_bounds, shc_const_min.res)
-                        nfev_min = shc_const_min.res.nfev
-                        nit_min = shc_const_min.res.nit
-                        zmin_value_list.append(shc_const_min.res.fun * (1))
-
-                else:  # Alpha-Level < 1
-                    # if all bounds are Fuzzy-Intervalls
-                    if 'shc_fuzzy_min' in locals():
-                        shc_fuzzy_min.bounds = bounds
-                        shc_fuzzy_min.iterate()
-                        shc_fuzzy_min.find_minima()
-                    else:
-                        shc_const_min = self._call_minimizer_shgo(bounds)
-                        shc_fuzzy_min = self._find_result(shc_const_min)
-
-                    ## safe results in lists
-                    best_indi_min = shc_fuzzy_min.res.x
-                    if lvl <= 1:
-                        nfev_min = shc_const_min.res.nfev
-                    else:
-                        nfev_min = np.absolute((shc_const_min.res.nfev - np.sum(self.nfev_list_min[0:lvl-1])))
-                    nit_min = shc_const_min.res.nit
-
-                    zmin_value_list.append(shc_fuzzy_min.res.fun * (1))
-
-                self.best_indi_list_min.append(best_indi_min)
-                self.nfev_list_min.append(nfev_min)
-                self.nit_list_min.append(nit_min)
-                pbar.update()
-
-        self.zmin_values = self._safe_z_values(min_max='min', z_value_list=zmin_value_list)
-
-
-    def separat_maximization(self, n=60, iters=3, optimizer='sobol', backup=False, start_at=None):
-        """
-       Main Routine calculating the Minimum and Maximum of the Objective on each Alpha Level to generate
-       the Fuzzy Objective Membershipfunction.
-       :param n:           Number of Sampling Points / Individuals for the Optimization Algorithm
-       :param iters:       Number of max. Iterations per Optimization Loop
-       :param optimizer:   Selected Optimizer Strategy: "sobol" / "simplicial"
-       :param backup:      Creates a Backup Folder saving the result of each Alpha Level Result
-       :param start_at:    Start at certain Alpha Level (Counts starts from Alpha Level 1)
-       """
-
-        # Input Variables
-        self.n = n
-        self.iters = iters
-        self.optimizer = optimizer          # simplicial / sobol
-        self.backup = backup
-        self.start_at = start_at
-
-        zmax_value_list = []
-        boundlist = []
-
-        if self.start_at is not None: self._cut_global_blounds()
-
-        for i in range(1, self.global_bounds_DataArray['number_of_alpha_levels'].size + 1):
-            boundlist.append(np.delete(self.global_bounds_DataArray.values[:, -i, :], 0, 1))
-
-        with tqdm(total=len(boundlist)) as pbar:
-            for lvl, bounds in enumerate(boundlist):
-                comp_bounds = []
-                for item_i, item_j in zip(bounds[:, 0], bounds[:, 1]):  comp_bounds.extend([item_i == item_j])
-                if lvl == 0:  # Alpha-Level = 1
-                    if self.start_at is None:
-                        if all(comp_bounds) == True: # if all bounds are constants
-                            ## calculate objective value
-                            zmax = self.objective_function(bounds[:, 0])
-
-                            ## safe values in list
-                            zmax_value_list.append(np.array(zmax))
-                            best_indi_max = np.array(bounds[:, 0])
-                            nfev_max = np.array(0)
-                            nit_max = np.array(0)
-
-                        elif all(comp_bounds) == False and any(comp_bounds) == True: # if one or more bounds are constants
-                            ## prepare bounds / pop constants
-                            bounds = self._pop_constants(comp_bounds, bounds)
-
-                            ## optimization routine
-                            shc_const_max = self._call_maximizer_shgo(bounds)
-                            shc_const_max = self._find_result(shc_const_max)
-
-                            ## safe results in lists
-                            best_indi_max = self._safe_best_array(comp_bounds, shc_const_max.res)
-                            nfev_max = shc_const_max.res.nfev
-                            nit_max = shc_const_max.res.nit
-
-                            zmax_value_list.append(shc_const_max.res.fun * (-1))
-                            self.x_glob = []
-                    else:
-                        shc_const_max = self._call_maximizer_shgo(bounds)
-                        shc_const_max = self._find_result(shc_const_max)
-
-                        ## safe results in lists
-                        best_indi_max = self._safe_best_array(comp_bounds, shc_const_max.res)
-                        nfev_max = shc_const_max.res.nfev
-                        nit_max = shc_const_max.res.nit
-                        zmax_value_list.append(shc_const_max.res.fun * (-1))
-
-                else:  # Alpha-Level < 1
-                    # if all bounds are Fuzzy-Intervalls
-                    if 'shc_fuzzy_min' in locals():
-                        shc_fuzzy_max.bounds = bounds
-                        shc_fuzzy_max.iterate()
-                        shc_fuzzy_max.find_minima()
-                    else:
-                        shc_const_max = self._call_maximizer_shgo(bounds)
-                        shc_fuzzy_max = self._find_result(shc_const_max)
-
-                    ## safe results in lists
-                    best_indi_max = shc_fuzzy_max.res.x
-                    if lvl <= 1:
-                        nfev_max = shc_const_max.res.nfev
-                    else:
-                        nfev_max = np.absolute((shc_const_max.res.nfev - np.sum(self.nfev_list_max[0:lvl-1])))
-                    nit_max = shc_const_max.res.nit
-
-                    zmax_value_list.append(shc_fuzzy_max.res.fun * (-1))
-
-                self.best_indi_list_max.append(best_indi_max)
-                self.nfev_list_max.append(nfev_max)
-                self.nit_list_max.append(nit_max)
-                pbar.update()
-
-        self.zmax_values = self._safe_z_values(min_max='max', z_value_list=zmax_value_list)
-
-
-    def simple_dataframe(self,round=None):
+    def compact_output(self, round=None):
         """
         Returns Dataframe of Objective Memebership Function
         :param round:       Round Values of Dataframe
@@ -408,7 +215,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
             self._df = self._df.round(round)
 
 
-    def extanded_dataframe(self,round=None):
+    def extanded_output(self,round=None):
         """
         Create extanded Solution Dataframe of Objective
         :param round:   Round Values of Dataframe
@@ -559,8 +366,8 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         aeval.symtable['x'] = x
         return aeval.run(exprc)
 
-
-    def _boundary_constraints(self, **kwargs):
+    @classmethod
+    def _boundary_constraints(**kwargs):
         """
         Calculating the Optimization Boundaries based on the Fuzzy Variables Membership Funciton
         :param kwargs:      Input Fuzzy Variables
@@ -582,9 +389,9 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         for key, value in kwargs.items():
             # if number_of_alpha_levels are different
             if (len(set(list_of_n_alpha_levels)) == 1) == False:
-                max = np.max(list_of_n_alpha_levels)
+                max_value = np.max(list_of_n_alpha_levels)
                 if isinstance(value, phuzzy.FuzzyNumber):
-                    if value.number_of_alpha_levels < max: value.convert_df(alpha_levels=max)
+                    if value.number_of_alpha_levels < max_value: value.convert_df(alpha_levels=max_value)
                     filter_fuzzy_variables_dict[key] = value._df
             elif isinstance(value, phuzzy.FuzzyNumber):
                 # if number_of_alpha_levels are the same
@@ -593,14 +400,29 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         # extract fuzzy values from dict and safe as DataArray
         fuzzy_variables = {k: xr.DataArray(v, dims=['number_of_alpha_levels', 'alpha_level_bounds'])
                            for k, v in filter_fuzzy_variables_dict.items()}
-        """
-        if self.start_at is not None:
-            return xr.Dataset(fuzzy_variables).to_array(dim='fuzzy_variables')[:,0:self.start_at,:]
-        else:
-            return xr.Dataset(fuzzy_variables).to_array(dim='fuzzy_variables')
-        """
 
         return xr.Dataset(fuzzy_variables).to_array(dim='fuzzy_variables')
+
+    @staticmethod
+    def _safe_z_values(min_max, z_value_list):
+        """
+        Post Preparation for Results of Optimization Routines for creation of Fuzzy Dataframe
+        :param min_max:             Define if Result is from a Minimization or Maximization
+        :param z_value_list:        List of all Objective Value Results (for each Alpha Level)
+        :return:
+            z_value_list            Adapted List of all Objective Value Results
+        """
+        if min_max == 'min':
+            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
+                if current_item < next_item:
+                    z_value_list[i + 1] = current_item
+        elif min_max == 'max':
+            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
+                if current_item > next_item:
+                    z_value_list[i + 1] = current_item
+        else:
+            raise ValueError('Please define -min- or -max- in min_max')
+        return np.flip(z_value_list, axis=0)
 
 
     def _cut_global_blounds(self):
@@ -696,27 +518,6 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         self.x_glob = np.concatenate((np.atleast_2d(pop).T, np.atleast_2d(bounds[pop, 0]).T), axis=1)
         bounds = np.delete(bounds, pop, 0)
         return bounds
-
-    @staticmethod
-    def _safe_z_values(min_max, z_value_list):
-        """
-        Post Preparation for Results of Optimization Routines for creation of Fuzzy Dataframe
-        :param min_max:             Define if Result is from a Minimization or Maximization
-        :param z_value_list:        List of all Objective Value Results (for each Alpha Level)
-        :return:
-            z_value_list            Adapted List of all Objective Value Results
-        """
-        if min_max == 'min':
-            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
-                if current_item < next_item:
-                    z_value_list[i + 1] = current_item
-        elif min_max == 'max':
-            for (i, current_item), next_item in zip(enumerate(z_value_list), z_value_list[1:]):
-                if current_item > next_item:
-                    z_value_list[i + 1] = current_item
-        else:
-            raise ValueError('Please define -min- or -max- in min_max')
-        return np.flip(z_value_list, axis=0)
 
 
     def _call_backup(self,iteration):
