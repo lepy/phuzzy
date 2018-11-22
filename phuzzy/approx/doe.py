@@ -66,7 +66,7 @@ class Expression(object):
         self.results_prediction = pd.DataFrame({"res": y, "alpha": self.doe_prediction.samples.alpha})
         print(1, self.results_training.head())
         print(2, self.results_prediction.head())
-        df_res = pd.concat([self.results_training, self.results_prediction[["res", "alpha"]]])
+        df_res = pd.concat([self.results_training, self.results_prediction[["res", "alpha"]]], sort=False)
 
         if name is None:
             name = "z"

@@ -843,13 +843,25 @@ class FuzzyNumber(object):
         """defuzzification mean my means of ppf(0.5)"""
         return self.ppf(.5)
 
-    def defuzzification_centroid(self):
+    def defuzzification_centroid2(self):
         """defuzzification center of gravity"""
         # x = self.df[["l", "r"]].values.flatten()
         x = np.linspace(self.min(), self.max(), 100001)
         m = self.alpha(x)
         cg = np.sum(x * m) / np.sum(m)
         return cg
+
+    def defuzzification_centroid(self):
+        """defuzzification center of gravity"""
+        df = pd.concat([self.df[["l", "alpha"]].rename(columns={"l":"x"}), self.df[["alpha", "r"]].rename(columns={"r":"x"})]).sort_values(by=["x", "alpha"])
+        df = df.drop_duplicates(subset="x", keep="last")
+        d = pd.DataFrame()
+        d["alpha"] = df.alpha.rolling(2).mean()
+        d["dx"] = (df.x.rolling(2).max() - df.x.rolling(2).min())
+        d["x"] = df.x.rolling(2).mean()
+        d["A"] = d.dx * d.alpha
+        d["Ax"] = d.x * d.A
+        return d.Ax.sum()/d.A.sum()
 
     def defuzzification(self, method='centroid'):
 
