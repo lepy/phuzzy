@@ -111,3 +111,62 @@ class FuzzyAnalysis(object):
             sensibilities.append([z, z.name, z.sk])
         return pd.DataFrame(sensibilities, columns=["x", "name", "sk"])
 
+
+    def lcefalr(self):
+        """Local cost effectivness fuzzy analysis
+
+        :return:
+        """
+
+        res = []
+        s_sum = 0.
+        sl_sum = 0.
+        sr_sum = 0.
+        for i in range(len(self.designvars)):
+            fvars = []
+            for j, x in enumerate(self.designvars):
+                if i == j:
+                    fvars.append(x)
+                else:
+                    y = phuzzy.Uniform(alpha0=[x.min(), x.max()])
+                    fvars.append(y)
+
+            z = self.function(fvars)
+            print("_"*80)
+            print("z", i, z.name)
+            print(z)
+            z.name = self.designvars[i].name
+            dflr = z.df[["l", "r"]]
+            dfl = z.df.l #z.df[["l"]]
+            dfr = z.df.r #z.df[["r"]]
+            E = 1. - (dflr.max(axis=1) - dflr.min(axis=1)) / (dflr.iloc[0].max() - dflr.iloc[0].min())
+            # El = 1. - (dfl - dfl.min()) / (dflr.iloc[0].max() - dflr.iloc[0].min() + 1e-32)
+            # Er = 1. - (dfr.max() - dfr) / (dflr.iloc[0].max() - dflr.iloc[0].min() + 1e-32)
+            El = 1. - (dfl - dfl.min()) / (dfl.max() - dfl.min() + 1e-132)
+            Er = 1. - (dfr.max() - dfr) / (dfr.max() - dfr.min() + 1e-132)
+            z.E = E
+            z.s = E.sum()
+            z.El = El
+            z.sl = El.sum() / (El.sum() + Er.sum())
+            z.Er = Er
+            z.sr = Er.sum() / (El.sum() + Er.sum())
+            print("#"*80)
+            print(dfl - dfl.min())
+            print("!!!", z.name, z.s, z.sl, z.sr, El, Er, dfr)
+            s_sum += z.s
+            sl_sum += z.sl
+            sr_sum += z.sr
+
+            res.append(z)
+
+        sensibilities = []
+        for i, z in enumerate(res):
+            z.sk = z.s / s_sum
+            z.skl = z.sl / sl_sum
+            z.skr = z.sr / sr_sum
+            self.designvars[i].sk = z.sk
+            self.designvars[i].skl = z.skl
+            self.designvars[i].skr = z.skr
+            print("%s.sk=%.2g (%.2g|%.2g)" % (z.name, z.sk, z.skl, z.skr))
+            sensibilities.append([z, z.name, z.sk, z.skl, z.skr])
+        return pd.DataFrame(sensibilities, columns=["x", "name", "sk", "skl", "skr"])
