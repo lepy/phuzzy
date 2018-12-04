@@ -32,6 +32,7 @@ def plot_xy(x, y, height=100, width=200):
 
     return fig, axs
 
+
 def plot_xyz(x, y, z, height=70, width=200):
     """plot two fuzzy numbers
 
@@ -60,6 +61,7 @@ def plot_xyz(x, y, z, height=70, width=200):
     fig.tight_layout()
 
     return fig, axs
+
 
 def plot_xy_3d(x, y, height=200, width=200):
     """plot two fuzzy numbers
@@ -156,6 +158,7 @@ def plot_3d(x, y, ax=None, show=False, height=200, width=200):
 
     return fig, ax
 
+
 def plot_hist(x, ax=None, bins=None, normed=1, **kwargs):
 
     if bins is None:
@@ -178,6 +181,19 @@ def plot_hist(x, ax=None, bins=None, normed=1, **kwargs):
         ax.plot(X,Y, label=kwargs.get("label"), color=kwargs.get("color", "r"), alpha=kwargs.get("alpha", .8))
 
     return fig, ax
+
+"""
+def plot_bar(x,y,ax=None, **kwargs):
+
+    if ax is None:
+        fig, ax = plt.subplots(1, 1, figsize=(10,5))
+    else:
+        fig = plt.gcf()
+
+    ax.bar(x,y, label=kwargs.get("label"), color=kwargs.get("color", "r"))
+
+    return fig, ax
+"""
 
 def plot_cdf(x, method="rossow", ax=None, bins=None, color=None, **kwargs):
 

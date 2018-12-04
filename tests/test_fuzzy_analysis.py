@@ -91,3 +91,10 @@ def atest_f3():
     print(sensibilities)
     assert np.isclose(x.sk, .5)
     assert np.isclose(y.sk, .5)
+
+
+
+
+
+
+test_lcefa()

@@ -50,7 +50,133 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
                                                               self._df.iloc[-1].l, self._df.iloc[-1].r)
 
 
-    def calculation(self, n=60, iters=3, optimizer='sobol', backup=False, start_at=None):
+    def calculation(self, n=60, iters=3, optimizer='sobol', progressbar_disable=False, backup=False, start_at=None):
+        """
+        Main Routine calculating the Minimum and Maximum of the Objective on each Alpha Level to generate
+        the Fuzzy Objective Membershipfunction.
+        :param n:           Number of Sampling Points / Individuals for the Optimization Algorithm
+        :param iters:       Number of max. Iterations per Optimization Loop
+        :param optimizer:   Selected Optimizer Strategy: "sobol" / "simplicial"
+        :param backup:      Creates a Backup Folder saving the result of each Alpha Level Result
+        :param start_at:    Start at certain Alpha Level (Counts starts from Alpha Level 1)
+        """
+
+        # Input Variables
+        self.n = n
+        self.iters = iters
+        self.optimizer = optimizer          # simplicial / sobol
+        self.backup = backup
+        self.start_at = start_at
+
+        zmin_value_list = []
+        zmax_value_list = []
+        boundlist = []
+
+        if self.start_at is not None: self._cut_global_blounds()
+
+        for i in range(1, self.global_bounds_DataArray['number_of_alpha_levels'].size + 1):
+            boundlist.append(np.delete(self.global_bounds_DataArray.values[:, -i, :], 0, 1))
+
+        with tqdm(total=len(boundlist), desc='1st Loop', leave=True, disable=progressbar_disable) as pbar:
+            for lvl, bounds in enumerate(boundlist):
+                comp_bounds = []
+
+                for item_i, item_j in zip(bounds[:, 0], bounds[:, 1]):  comp_bounds.extend([item_i == item_j])
+
+                if 'shc_fuzzy_min' not in locals():
+
+                    if all(comp_bounds) == True: # if all bounds are constants
+                        ## calculate objective value
+                        zmin = self._objective_function(bounds[:, 0])
+
+                        ## safe values in list
+                        zmin_value_list.append(np.array(zmin))
+                        zmax_value_list.append(np.array(zmin))
+
+                        best_indi_min = np.array(bounds[:, 0])
+                        best_indi_max = np.array(bounds[:, 0])
+                        nfev_min = np.array(0)
+                        nfev_max = np.array(0)
+                        nit_min = np.array(0)
+                        nit_max = np.array(0)
+
+                    else:
+                        if all(comp_bounds) == False and any(comp_bounds) == True:
+                            bounds = self._pop_constants(comp_bounds, bounds)
+
+                        ## optimization routine
+                        shc_const_min = self._call_minimizer_shgo(bounds)
+                        shc_const_max = self._call_maximizer_shgo(bounds)
+
+                        if any(comp_bounds) == False:
+                            shc_fuzzy_min = self._find_result(shc_const_min)
+                            shc_fuzzy_max = self._find_result(shc_const_max)
+
+                        shc_const_min = self._find_result(shc_const_min)
+                        shc_const_max = self._find_result(shc_const_max)
+
+                        ## safe results in lists
+                        best_indi_min = self._safe_best_array(comp_bounds, shc_const_min.res)
+                        best_indi_max = self._safe_best_array(comp_bounds, shc_const_max.res)
+                        nfev_min = shc_const_min.res.nfev
+                        nfev_max = shc_const_max.res.nfev
+                        nit_min = shc_const_min.res.nit
+                        nit_max = shc_const_max.res.nit
+
+                        zmin_value_list.append(shc_const_min.res.fun * (1))
+                        zmax_value_list.append(shc_const_max.res.fun * (-1))
+
+                        self.x_glob = []
+
+                else:
+
+                    shc_fuzzy_min.bounds = bounds
+                    shc_fuzzy_min.iterate()
+                    shc_fuzzy_min.find_minima()
+
+                    shc_fuzzy_max.bounds = bounds
+                    shc_fuzzy_max.iterate()
+                    shc_fuzzy_max.find_minima()
+
+                    ## safe results in lists
+                    best_indi_min = shc_fuzzy_min.res.x
+                    best_indi_max = shc_fuzzy_max.res.x
+                    if lvl <= 1:
+                        nfev_min = shc_const_min.res.nfev
+                        nfev_max = shc_const_max.res.nfev
+                    else:
+                        nfev_min = np.absolute((shc_const_min.res.nfev - np.sum(self.nfev_list_min[0:lvl-1])))
+                        nfev_max = np.absolute((shc_const_max.res.nfev - np.sum(self.nfev_list_max[0:lvl-1])))
+                    nit_min = shc_const_min.res.nit
+                    nit_max = shc_const_max.res.nit
+
+                    zmin_value_list.append(shc_fuzzy_min.res.fun * (1))
+                    zmax_value_list.append(shc_fuzzy_max.res.fun * (-1))
+
+
+                self.best_indi_list_min.append(best_indi_min)
+                self.best_indi_list_max.append(best_indi_max)
+                self.nfev_list_min.append(nfev_min)
+                self.nfev_list_max.append(nfev_max)
+                self.nit_list_min.append(nit_min)
+                self.nit_list_max.append(nit_max)
+
+
+                if self.backup == True:
+                    self.zmin_values = self._safe_z_values(min_max='min', z_value_list=zmin_value_list)
+                    self.zmax_values = self._safe_z_values(min_max='max', z_value_list=zmax_value_list)
+                    self._call_backup(iteration=lvl)
+
+                pbar.update()
+
+        self.zmin_values = self._safe_z_values(min_max='min', z_value_list=zmin_value_list)
+        self.zmax_values = self._safe_z_values(min_max='max', z_value_list=zmax_value_list)
+
+        self.total_nfev = sum(self.nfev_list_min) + sum(self.nfev_list_max)
+        self.compact_output()
+
+
+    def calculation_old(self, n=60, iters=3, optimizer='sobol', backup=False, start_at=None):
         """
         Main Routine calculating the Minimum and Maximum of the Objective on each Alpha Level to generate
         the Fuzzy Objective Membershipfunction.
@@ -87,7 +213,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
                     if self.start_at is None:
                         if all(comp_bounds) == True: # if all bounds are constants
                             ## calculate objective value
-                            zmin = self.objective_function(bounds[:, 0])
+                            zmin = self._objective_function(bounds[:, 0])
 
                             ## safe values in list
                             zmin_value_list.append(np.array(zmin))
@@ -100,9 +226,11 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
                             nit_min = np.array(0)
                             nit_max = np.array(0)
 
-                        elif all(comp_bounds) == False and any(comp_bounds) == True: # if one or more bounds are constants
+                        #elif all(comp_bounds) == False and any(comp_bounds) == True: # if one or more bounds are constants
                             ## prepare bounds / pop constants
-                            bounds = self._pop_constants(comp_bounds, bounds)
+                        else: # if one or more bounds are constants or all intervals
+                            if all(comp_bounds) == False and any(comp_bounds) == True:
+                                bounds = self._pop_constants(comp_bounds, bounds)
 
                             ## optimization routine
                             shc_const_min = self._call_minimizer_shgo(bounds)
@@ -122,6 +250,8 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
                             zmin_value_list.append(shc_const_min.res.fun * (1))
                             zmax_value_list.append(shc_const_max.res.fun * (-1))
                             self.x_glob = []
+
+
                     else:
                         shc_const_min = self._call_minimizer_shgo(bounds)
                         shc_const_max = self._call_maximizer_shgo(bounds)
