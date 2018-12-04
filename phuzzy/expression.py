@@ -3,6 +3,7 @@
 import os
 import subprocess
 
+
 class ExpressionBase(object):
     """Approximate an expression of fuzzy numbers
 
@@ -20,6 +21,7 @@ class ExpressionBase(object):
         return "({})".format(self.name)
 
     __repr__ = __str__
+
 
 class Expression(ExpressionBase):
     """Approximate an expression of fuzzy numbers
@@ -62,7 +64,8 @@ class CliExpression(ExpressionBase):
 if __name__ == '__main__':
 
     def f(x):
-        return x**2
+        return x ** 2
+
 
     x2 = Expression(name="x2", function=f)
     print(x2)
@@ -70,6 +73,7 @@ if __name__ == '__main__':
 
     x2c = CliExpression(name="x2c", cmd="../tests/f2.py")
     x2c(2)
+
 
     class F2(CliExpression):
         def __init__(self, **kwargs):
@@ -88,6 +92,7 @@ if __name__ == '__main__':
                 return y
             except Exception as exp:
                 print(exp)
+
 
     f2bin = os.path.abspath("../tests/expensive_cli_expression.py")
     f2 = F2(name="f2", cmd=f2bin, workpath="/tmp")
