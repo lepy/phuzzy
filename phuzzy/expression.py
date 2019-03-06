@@ -2,7 +2,7 @@
 
 import os
 import subprocess
-
+import numexpr
 
 class ExpressionBase(object):
     """Approximate an expression of fuzzy numbers
@@ -41,6 +41,25 @@ class Expression(ExpressionBase):
             return self.function(*args, **kwargs)
 
 
+class StrExpression(ExpressionBase):
+    """Approximate an expression of fuzzy numbers
+
+    """
+
+    def __init__(self, **kwargs):
+        """Expression(kwargs)"""
+        ExpressionBase.__init__(self, **kwargs)
+        self.function = kwargs.get("function")
+
+    def __call__(self, *args, **kwargs):
+        """"""
+        print(kwargs)
+        if self.function is None:
+            raise Exception("function not defined")
+        else:
+            return numexpr.evaluate(self.function, local_dict=kwargs)
+
+
 class CliExpression(ExpressionBase):
     """Approximate an expression of fuzzy numbers
 
@@ -70,6 +89,11 @@ if __name__ == '__main__':
     x2 = Expression(name="x2", function=f)
     print(x2)
     print("x2(2)", x2(2))
+
+    x2s = StrExpression(name="x2s", function="x**2")
+    print(x2s)
+    print("x2s(2)", x2s(x=2))
+
 
     x2c = CliExpression(name="x2c", cmd="../tests/f2.py")
     x2c(2)
