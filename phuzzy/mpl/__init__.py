@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import phuzzy
 
+
 def extend_instance(obj, cls):
     """Apply mixins to a class instance after creation"""
     base_cls = obj.__class__
@@ -48,7 +49,7 @@ class MPL_Mixin():
 
         if defuzzy is not None and labels is True:
             ax.annotate('%.3g' % defuzzy[0], xy=(defuzzy[0], (defuzzy[1]+0.018)), xycoords='data',
-                        xytext=(-2, 2), textcoords='offset points',
+                        xytext=(-2, -9), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
 
 
@@ -69,17 +70,17 @@ class MPL_Mixin():
             ax.set_xlabel('%s' % self.name)
             ax.set_ylabel(r'$\alpha$')
             ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
-            ax.annotate('%.3g' % a0["l"], xy=(a0["l"], a0["alpha"]), xycoords='data',
+            ax.annotate('%.5g' % a0["l"], xy=(a0["l"], a0["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-            ax.annotate('%.3g' % a0["r"], xy=(a0["r"], a0["alpha"]), xycoords='data',
+            ax.annotate('%.5g' % a0["r"], xy=(a0["r"], a0["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
             a1 = self.alpha1
-            ax.annotate('%.3g' % a1["l"], xy=(a1["l"], a1["alpha"]), xycoords='data',
+            ax.annotate('%.5g' % a1["l"], xy=(a1["l"], a1["alpha"]), xycoords='data',
                         xytext=(-2, 2), textcoords='offset points',
                         horizontalalignment='right', verticalalignment='bottom', alpha=.4)
-            ax.annotate('%.3g' % a1["r"], xy=(a1["r"], a1["alpha"]), xycoords='data',
+            ax.annotate('%.5g' % a1["r"], xy=(a1["r"], a1["alpha"]), xycoords='data',
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
         dx = abs(self.alpha0["r"] - self.alpha0["l"])
@@ -98,7 +99,7 @@ class MPL_Mixin():
         try:
             fig.tight_layout()
             if filepath:
-                fig.savefig(filepath, dpi=90)
+                fig.savefig(filepath, dpi=360)
         except UnboundLocalError:
             pass
 
@@ -215,3 +216,8 @@ class Superellipse(phuzzy.Superellipse, MPL_Mixin):
     """Superellipse fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
         phuzzy.Superellipse.__init__(self, **kwargs)
+
+class Skewnorm(phuzzy.Skewnorm, MPL_Mixin):
+    """Superellipse fuzzy number with matplotlib mixin"""
+    def __init__(self, **kwargs):
+        phuzzy.Skewnorm.__init__(self, **kwargs)

@@ -816,6 +816,7 @@ class FuzzyNumber(object):
         shape = self.get_shape()
         return np.interp(x, shape.x, shape.alpha)
 
+
 class Triangle(FuzzyNumber):
     """triange fuzzy number"""
 
@@ -907,7 +908,7 @@ class Triangle(FuzzyNumber):
 
     def to_str(self):
         if len(self.df) > 0:
-            return "tri[{:.3g}, {:.3g}, {:.3g}]".format(self.df.iloc[0].l, self.df.iloc[0].r, self.df.iloc[-1].l)
+            return "tri[{:.5g}, {:.5g}, {:.5g}]".format(self.df.iloc[0].l, self.df.iloc[0].r, self.df.iloc[-1].l)
         else:
             return "tri[nan, nan, nan]"
 
@@ -985,7 +986,7 @@ class Trapezoid(FuzzyNumber):
 
     def to_str(self):
         if len(self.df) > 0:
-            return "trap[{:.3g}, {:.3g}, {:.3g}, {:.3g}]".format(self.df.iloc[0].l, self.df.iloc[0].r,
+            return "trap[{:.5g}, {:.5g}, {:.5g}, {:.5g}]".format(self.df.iloc[0].l, self.df.iloc[0].r,
                                                                  self.df.iloc[-1].l, self.df.iloc[-1].r)
         else:
             return "trap[nan, nan, nan, nan]"
@@ -1045,7 +1046,7 @@ class Uniform(FuzzyNumber):
         return np.select(condlist, choicelist)
 
     def to_str(self):
-        return "Uniform[{:.4g},{:.4g}]".format(self.alpha0.l, self.alpha0.r)
+        return "Uniform[{:.5g},{:.5g}]".format(self.alpha0.l, self.alpha0.r)
 
     # @classmethod
     # def from_str(cls, s):

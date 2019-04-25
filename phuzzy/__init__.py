@@ -20,6 +20,7 @@ logger = logging.getLogger("phuzzy")
 from phuzzy.shapes import FuzzyNumber, Trapezoid, Triangle, Uniform
 from phuzzy.shapes.superellipse import Superellipse
 from phuzzy.shapes.truncnorm import TruncGenNorm, TruncNorm
+from phuzzy.shapes.skewnorm import Skewnorm
 
 class Analysis(object):
     def __init__(self, **kwargs):

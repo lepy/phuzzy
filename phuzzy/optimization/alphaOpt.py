@@ -1,7 +1,6 @@
 from shgo._shgo import SHGO
 from scipy.optimize import minimize
 
-import phuzzy
 from phuzzy.mpl import MPL_Mixin
 from phuzzy.shapes import FuzzyNumber
 
@@ -15,27 +14,54 @@ import xarray as xr
 
 
 
-class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
+class Function():
+    def __init__(self, function):
+        if isinstance(function, str):
+            self.aeval = Interpreter()
+            self.exprc = self.aeval.parse(function)
+
+            def func(x):
+                self.aeval.symtable['x'] = x
+                return self.aeval.run(self.exprc)
+            self.func = func # here
+
+        elif callable(function):
+            self.func = function
+
+    def __call__(self, x):
+        return self.func(x)
+
+
+class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin, Function):
 
     def __init__(self, **kwargs):
         """
-        :param kwargs:      Inputvariables / Fuzzyvariables / Name (name) / Objective Function (obj_function) / Objective Link (obj_link)
+        :param input_fuzzy_var_list:    List of all Fuzzy Variables
+        :param var_names_list:          List of Names of all Fuzzy Variables
+        :param kwargs:                  Inputvariables / Fuzzyvariables / Name (name) / Objective Function (obj_function) / Objective Link (obj_link)
         """
 
+        # READ FUZZY INPUT VARIABLES
+        if kwargs.get('fuzzy_variables') is not None: input_fuzzy_var_list = kwargs.get('fuzzy_variables')
+        else: raise ValueError('PLEASE IMPORT FUZZY VARIABLES as -- fuzzy_variables --')
+
+        # Check for identical number_of_alpha_levels and adapt
+        fuzzy_var_list = self._alpha_level_check(input_fuzzy_var_list)
+
         # Define Bounds of Each Alpha Level
-        self.global_bounds_DataArray = self._boundary_constraints(**kwargs)
-        self.x_glob = []
+        self.global_bounds_DataArray = self._boundary_constraints(fuzzy_var_list)
+
 
         # Filter Objective Function / Link and Safe it
-        if kwargs.get('obj_function') is not None: self.objective = kwargs.get('obj_function')
-        elif kwargs.get('obj_link') is not None: self.objective = kwargs.get('obj_link')
-        else: raise ValueError('PLEASE IMPORT OBJECTIVE')
+        if kwargs.get('obj_function') is not None: self.objective = Function(kwargs.get('obj_function'))
+        else: raise ValueError('PLEASE IMPORT OBJECTIVE FUNCTION as -- obj_function --')
 
-        # Define Setup Parameters
+        # Setup Parameters
         if kwargs.get('name') is None: self.name = 'Fuzzy Objective Value'
         else: self.name = kwargs.get('name')
 
-        self.dim = self.global_bounds_DataArray['fuzzy_variables'].size
+        self.x_glob = []
+        self.dim = self.global_bounds_DataArray['fuzzy_variable'].size
         self.number_of_alpha_lvls = self.global_bounds_DataArray['number_of_alpha_levels'].size
         self.best_indi_list_min = []
         self.best_indi_list_max = []
@@ -46,11 +72,11 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
 
 
     def __repr__(self):
-        return "{}(x:[[{:.3g}, {:.3g}], [{:.3g}, {:.3g}]])".format(self.name, self._df.iloc[0].l, self._df.iloc[0].r,
-                                                              self._df.iloc[-1].l, self._df.iloc[-1].r)
+            return "{}(x:[[{:.3g}, {:.3g}], [{:.3g}, {:.3g}]])".format(self.name, self._df.iloc[0].l, self._df.iloc[0].r,
+                                                                       self._df.iloc[-1].l, self._df.iloc[-1].r)
 
 
-    def calculation(self, n=60, iters=3, optimizer='sobol', progressbar_disable=False, backup=False, start_at=None):
+    def main(self, n=50, iters=3, optimizer='sobol', progressbar_disable=False, backup=False, start_at=None):
         """
         Main Routine calculating the Minimum and Maximum of the Objective on each Alpha Level to generate
         the Fuzzy Objective Membershipfunction.
@@ -176,7 +202,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         self.compact_output()
 
 
-    def calculation_old(self, n=60, iters=3, optimizer='sobol', backup=False, start_at=None):
+    def _main_fast(self, n=250, iters=3, optimizer='sobol', backup=False, start_at=None):
         """
         Main Routine calculating the Minimum and Maximum of the Objective on each Alpha Level to generate
         the Fuzzy Objective Membershipfunction.
@@ -187,6 +213,9 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         :param start_at:    Start at certain Alpha Level (Counts starts from Alpha Level 1)
         """
 
+        ###################### STILL IN WORK ##################################################
+
+        """
         # Input Variables
         self.n = n
         self.iters = iters
@@ -197,6 +226,18 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         zmin_value_list = []
         zmax_value_list = []
         boundlist = []
+
+        for i in range(1, self.global_bounds_DataArray['number_of_alpha_levels'].size + 1):
+            boundlist.append(np.delete(self.global_bounds_DataArray.values[:, -i, :], 0, 1))
+        
+
+        bounds = boundlist[-1]
+
+        shc_base_min = self._call_minimizer_shgo(bounds)
+        shc_base_max = self._call_maximizer_shgo(bounds)
+
+        r = 1
+
 
         if self.start_at is not None: self._cut_global_blounds()
 
@@ -321,6 +362,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
 
         self.total_nfev = sum(self.nfev_list_min) + sum(self.nfev_list_max)
         self.compact_output()
+        """
 
 
     def compact_output(self, round=None):
@@ -382,7 +424,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         if round is not None: self.df_extanded = self.df_extanded.round(round)
 
 
-    def export_to_csv(self, df = 'simple' , filepath= None):
+    def export_to_csv(self, df='simple', filepath= None):
         """
         Export Dataframe as CSV
         :param df               Define Dataframe-Type which is to be exported simple / extended
@@ -407,7 +449,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
                 self.df_extanded.to_csv(filepath+self.name+datatype_str,  sep=';', encoding='utf8', index=None, header=True)
 
 
-    def defuzzification(self, method = 'mean'):
+    def defuzzification(self, method='mean'):
         """
         Defuzzyfication of Uncertain Objective
         :param method:          Select Method of Defuzzyfication - alpha_one / mean / centroid
@@ -491,11 +533,12 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         :param x:   Input Variable
         :return:    Function Value of Objective
         """
-        aeval = Interpreter()
-        exprc = aeval.parse(self.objective)
-        aeval.symtable['x'] = x
-        return aeval.run(exprc)
-
+        #aeval = Interpreter()
+        #exprc = aeval.parse(self.objective)
+        #aeval.symtable['x'] = x
+        #return aeval.run(exprc)
+        return self.objective(x)
+ 
 
     def _cut_global_blounds(self):
         """
@@ -504,7 +547,7 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
         if self.start_at is not None:
             self.orig_number_of_alpha_lvls = self.number_of_alpha_lvls
             self.global_bounds_DataArray = self.global_bounds_DataArray[:,0:self.orig_number_of_alpha_lvls-self.start_at+1,:]
-            self.dim = self.global_bounds_DataArray['fuzzy_variables'].size
+            self.dim = self.global_bounds_DataArray['fuzzy_variable'].size
             self.number_of_alpha_lvls = self.global_bounds_DataArray['number_of_alpha_levels'].size
         else:
             raise ValueError('Please select starting Alpha Level or keep variable "start_at=None"')
@@ -594,43 +637,51 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
 
 
     @staticmethod
-    def _boundary_constraints(**kwargs):
+    def _alpha_level_check(input_fuzzy_var_list):
+        """
+        Checks if all Fuzzy Input Variables have the same alpha Level Discretization.
+        If not, adapt all Variables to the highes alpha Level.
+
+        :param input_fuzzy_var_list:    List of all Fuzzy Input Variables
+        :return:                        List of all Fuzzy Input Variables
+        """
+        alpha_array = np.zeros(shape=(len(input_fuzzy_var_list)))
+
+        for i, fuzzy_var in enumerate(input_fuzzy_var_list):
+            alpha_array[i] = fuzzy_var.number_of_alpha_levels
+
+        if np.all(alpha_array == alpha_array[0]):
+            pass
+        else:
+            alvl_max = np.max(alpha_array)
+            index = np.argmax(alpha_array)
+            for i, fuzzy_var in enumerate(input_fuzzy_var_list):
+                if i != index:
+                    fuzzy_var.convert_df(alpha_levels=alvl_max)
+                    input_fuzzy_var_list[i] = fuzzy_var
+        return input_fuzzy_var_list
+
+
+    @staticmethod
+    def _boundary_constraints(input_fuzzy_var_list):
         """
         Calculating the Optimization Boundaries based on the Fuzzy Variables Membership Funciton
         :param kwargs:      Input Fuzzy Variables
         :return:            3D DataArray representing each Fuzzy Inputvariables Boundaries for each Alpha Level
                             prepared for the Optimization Routine
         """
-        filter_fuzzy_variables_dict = {}
-        list_of_n_alpha_levels = np.zeros(1, dtype='int')
 
-        # check if number_of_alpha_levels is the same
-        for key, value in kwargs.items():
-            if isinstance(value, phuzzy.FuzzyNumber):
-                if list_of_n_alpha_levels[0] == 0:
-                    np.put(list_of_n_alpha_levels, 0, value.number_of_alpha_levels)
-                else:
-                    list_of_n_alpha_levels = np.append(list_of_n_alpha_levels, value.number_of_alpha_levels)
+        df_list = []
+        var_names_list = []
+        for i, fuzzy_var in enumerate(input_fuzzy_var_list):
+            df_list.append(fuzzy_var.df)
+            var_names_list.append(fuzzy_var.name)
+        fuzzy_array = np.array([df.values for df in df_list])
+        alpha_levels = np.linspace(1,len(fuzzy_array[0,:]),len(fuzzy_array[0,:]))
+        head = ['alpha','l','r']
+        dims=['fuzzy_variable','number_of_alpha_levels','alpha_level_bounds']
 
-
-        # extract fuzzy variables from kwargs and safe in dict
-        for key, value in kwargs.items():
-            # if number_of_alpha_levels are different
-            if (len(set(list_of_n_alpha_levels)) == 1) == False:
-                max_value = np.max(list_of_n_alpha_levels)
-                if isinstance(value, phuzzy.FuzzyNumber):
-                    if value.number_of_alpha_levels < max_value: value.convert_df(alpha_levels=max_value)
-                    filter_fuzzy_variables_dict[key] = value._df
-            elif isinstance(value, phuzzy.FuzzyNumber):
-                # if number_of_alpha_levels are the same
-                filter_fuzzy_variables_dict[key] = value._df
-
-
-        # extract fuzzy values from dict and safe as DataArray
-        fuzzy_variables = {k: xr.DataArray(v, dims=['number_of_alpha_levels', 'alpha_level_bounds'])
-                           for k, v in filter_fuzzy_variables_dict.items()}
-
-        return xr.Dataset(fuzzy_variables).to_array(dim='fuzzy_variables')
+        return xr.DataArray(fuzzy_array,coords=[var_names_list, alpha_levels, head],dims=dims)
 
 
     @staticmethod
@@ -688,7 +739,6 @@ class Alpha_Level_Optimization(FuzzyNumber, MPL_Mixin):
 
     def to_str(self):
         pass
-
 
 
 
