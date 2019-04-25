@@ -25,7 +25,7 @@ def mix_mpl(obj):
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None):
+    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None, defuzzy=None):
         """plots fuzzy number with mpl"""
         logging.debug("plots fuzzy number with mpl")
         df = self.df
@@ -41,6 +41,15 @@ class MPL_Mixin():
             ax.set_xlabel('%s' % self.name)
             ax.set_ylabel(r'$\alpha$')
             ax.grid(c="gray", alpha=.5, lw=.5, dashes=[1, 3])
+
+
+        if defuzzy is not None:
+            ax.plot([defuzzy[0], defuzzy[0]], [0, defuzzy[1]], linestyle= ':',color='#3188cb', label=defuzzy[0])
+
+        if defuzzy is not None and labels is True:
+            ax.annotate('%.3g' % defuzzy[0], xy=(defuzzy[0], (defuzzy[1]+0.018)), xycoords='data',
+                        xytext=(-2, 2), textcoords='offset points',
+                        horizontalalignment='right', verticalalignment='bottom', alpha=.4)
 
 
         xs = np.hstack([df["l"].values, df["r"].values[::-1]])
