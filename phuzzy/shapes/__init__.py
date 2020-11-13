@@ -728,7 +728,7 @@ class FuzzyNumber(object):
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.l, self.df.r[::-1]))
 
-        x__ = np.linspace(self.alpha0.l, self.alpha0.r, n)
+        x__ = np.linspace(float(self.alpha0.l), float(self.alpha0.r), int(n))
         y__ = np.interp(x__, x_, y_)
 
         I = cumtrapz(y__, x__, initial=0)

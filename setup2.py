@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+# coding: utf-8
+
 import os
 import setuptools
-from distutils.core import setup
+
 
 def extract_version():
     init_py = os.path.join(os.path.dirname(__file__), "phuzzy", "__init__.py")
@@ -14,6 +15,7 @@ def extract_version():
                 return {"__version__": version}
         if version == "0.0.0":
             raise RuntimeError("Missing line starting with '__version__ =' in %s" % (init_py,))
+
 
 DOWNLOAD_URL = 'https://github.com/lepy/phuzzy'
 CLASSIFIERS = [
@@ -32,19 +34,27 @@ CLASSIFIERS = [
 with open(os.path.join('usage.rst')) as f:
     long_description = ''.join(f)
 
-setup(name="phuzzy",
-      description=("fuzzy data"),
-      version=extract_version()["__version__"],
-      author="Lepy",
-      author_email="lepy@mailbox.org",
-      url="https://github.com/lepy/phuzzy",
-      packages=setuptools.find_packages(exclude=["tests"]),
-      tests_require=[
-          'pytest',
-      ],
-      long_description=long_description,
-      classifiers=CLASSIFIERS,
+setup_params = dict(
+    name="phuzzy",
+    description=("fuzzy data"),
+    version=extract_version()["__version__"],
+    author="Lepy",
+    author_email="lepy@mailbox.org",
+    url="https://github.com/lepy/phuzzy",
+    license="MIT",
+    keywords="data, phuzzy",
+    long_description=long_description,
+    classifiers=CLASSIFIERS,
+    packages=setuptools.find_packages(exclude=["tests"]),
+    setup_requires=[
+        'pytest-runner',
+    ],
+    tests_require=[
+        'pytest',
+    ],
 
-      install_requires=['numpy', 'pandas', 'scipy'],
+    install_requires=['numpy', 'pandas', 'scipy'],
+)
 
-      )
+if __name__ == "__main__":
+    setuptools.setup(**setup_params)

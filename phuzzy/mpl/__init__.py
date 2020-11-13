@@ -34,6 +34,8 @@ class MPL_Mixin():
             H = 100.  # mm
             B = 100.  # mm
             fig, ax = plt.subplots(dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
+        else:
+            fig = ax.get_figure()
 
         if title is True:
             ax.set_title("%s" % self.__class__.__name__)
@@ -96,7 +98,7 @@ class MPL_Mixin():
         if show is True:
             plt.show()
 
-        return True
+        return fig, ax
 
     def vplot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None):
         """plots fuzzy number with mpl"""
