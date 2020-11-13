@@ -92,7 +92,7 @@ class FuzzyNumber(object):
         xs_r[xs_r == 0] = zero
         alphas_r = df["alpha"].values[::-1]
 
-        alphas_new = np.linspace(0., 1., self.number_of_alpha_levels)
+        alphas_new = np.linspace(0., 1., int(self.number_of_alpha_levels))
         xs_l_new = np.interp(alphas_new, alphas_l, xs_l)
         xs_r_new = np.interp(alphas_new, alphas_r[::-1], xs_r[::-1])
         #
@@ -546,7 +546,7 @@ class FuzzyNumber(object):
         :param n:
         :return: x values within range
         """
-        x = np.linspace(self.df.loc[0].l, self.df.loc[0].r, n)
+        x = np.linspace(self.df.loc[0].l, self.df.loc[0].r, int(n))
         if self.has_zero():
             # x = np.hstack([x, [0, -1e-10, 1e-10], self.df.l.values, self.df.r.values])
             x = np.hstack([x, [0], self.df.l.values, self.df.r.values])
@@ -708,7 +708,7 @@ class FuzzyNumber(object):
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.l, self.df.r[::-1]))
 
-        x__ = np.linspace(self.alpha0.l, self.alpha0.r, n)
+        x__ = np.linspace(self.alpha0.l, self.alpha0.r, int(n))
         y__ = np.interp(x__, x_, y_)
 
         I = cumtrapz(y__, x__, initial=0)
@@ -745,7 +745,7 @@ class FuzzyNumber(object):
         if seed is not None and isinstance(seed, int) and np.sign(seed) == 1:
             np.random.seed(seed=seed)
         if seed is not None and isinstance(seed, int) and np.sign(seed) == -1:
-            r = np.linspace(0, 1, size)
+            r = np.linspace(0, 1, int(size))
         else:
             r = scipy.stats.uniform.rvs(size=size)
 
@@ -793,7 +793,7 @@ class FuzzyNumber(object):
 
         df.sort_values(by=["alpha", "l", "r"], inplace=True, ascending=True)
         # FIXME: reduce rows with equal alpha levels
-        bins = np.linspace(0., 1., number_of_alpha_levels + 1)
+        bins = np.linspace(0., 1., int(number_of_alpha_levels + 1))
         groups = df.groupby(np.digitize(df.alpha, bins))
         bins_results = []
         for _, dfb in groups:
