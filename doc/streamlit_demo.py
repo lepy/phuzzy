@@ -27,6 +27,18 @@ p_dict= {"Triangle":triangle,
 print(add_selectbox)
 p = p_dict.get(add_selectbox, triangle)
 
+
+p00 = st.sidebar.number_input('a0.l', value=p.alpha0.l, min_value=None, max_value=None)
+p01 = st.sidebar.number_input('a0.r', value=p.alpha0.r)
+
+p10 = st.sidebar.number_input('a1.l', value=p.alpha1.l)
+p11 = st.sidebar.number_input('a1.r', value=p.alpha1.r)
+
+st.sidebar.write('Phuzzy', p)
+
+p.update(alpha0=[p00, p01], alpha1=[p10, p11])
+
+st.cache()
 def plot_phuzzy_number(p):
 
     H = 170.  #mm
@@ -39,3 +51,7 @@ def plot_phuzzy_number(p):
 plot_phuzzy_number(p)
 
 print(add_selectbox)
+
+
+
+

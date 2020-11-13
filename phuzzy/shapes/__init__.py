@@ -28,6 +28,17 @@ class FuzzyNumber(object):
         self._number_of_alpha_levels = kwargs.get("number_of_alpha_levels", 11)
         self.df = kwargs.get("df")
 
+    def update(self, alpha0=None, alpha1=None, alpha_levels=None):
+        if alpha0 is None:
+            alpha0 = self.alpha0[["l", "r"]].values
+        if alpha1 is None:
+            alpha1 = self.alpha1[["l", "r"]].values
+        if alpha_levels is None:
+            alpha_levels = self.number_of_alpha_levels
+        alpha1l = [max(alpha0[0], alpha1[0]), min(alpha0[1], alpha1[1])]
+        print("!", alpha0, alpha1, alpha1l)
+        self.discretize(alpha0=alpha0, alpha1=alpha1l, alpha_levels=self.number_of_alpha_levels)
+
     def copy(self):
         """return a copy
 
