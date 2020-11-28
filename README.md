@@ -1,4 +1,4 @@
-# phuzzy
+# phuzzy [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/lepy/phuzzy/doc/streamlit_demo.py)
 
 [![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/lepy/phuzzy/master?grs=github&t=beige)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4814372e95c543a69c69004c853b17be)](https://www.codacy.com/app/lepy/phuzzy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lepy/phuzzy&amp;utm_campaign=Badge_Grade)
