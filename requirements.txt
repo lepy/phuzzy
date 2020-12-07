@@ -3,5 +3,5 @@ scipy>0.17.0
 matplotlib>2.1.0
 pandas>=0.21.0
 scikit-learn>=0.18
-shgo
-xarray
+shgo==0.4.8
+xarray==0.16.2
