@@ -112,7 +112,7 @@ class FuzzyNumber(object):
         #
         # print((np.vstack((alphas_new, xs_l_new, xs_r_new[::-1]))))
         data = np.vstack((alphas_new, xs_l_new, xs_r_new)).T
-        self.df = pd.DataFrame(columns=["alpha", "l", "r"], data=data, dtype=np.float)
+        self.df = pd.DataFrame(columns=["alpha", "l", "r"], data=data, dtype=float)
 
     def _unify(self, other):
         """equalize number of alpha levels
@@ -907,7 +907,7 @@ class Triangle(FuzzyNumber):
         self._b = alpha0[1]
         self._c = alpha1[0]
         self.df = pd.DataFrame(columns=["alpha", "l", "r"],
-                               data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[0]]], dtype=np.float)
+                               data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[0]]], dtype=float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
 
@@ -1006,7 +1006,7 @@ class Trapezoid(FuzzyNumber):
         self._d = alpha0[1]
         # todo: check a <= c <= d <= b
         self.df = pd.DataFrame(columns=["alpha", "l", "r"],
-                               data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[1]]], dtype=np.float)
+                               data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[1]]], dtype=float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
 
@@ -1080,7 +1080,7 @@ class Uniform(FuzzyNumber):
         self._a = alpha0[0]
         self._b = alpha0[1]
         self.df = pd.DataFrame(columns=["alpha", "l", "r"],
-                               data=[[0., alpha0[0], alpha0[1]], [1., alpha0[0], alpha0[1]]], dtype=np.float)
+                               data=[[0., alpha0[0], alpha0[1]], [1., alpha0[0], alpha0[1]]], dtype=float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
         self.convert_df(alpha_levels=alpha_levels)
 
