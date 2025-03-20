@@ -31,7 +31,7 @@ def plot(obj, show=True, **kwargs):
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=True, xlim=None, labels=True, title=False, ppf=None):
+    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None):
         """plots fuzzy number with mpl
 
         :param ax:
@@ -92,6 +92,10 @@ class MPL_Mixin():
                         xytext=(2, 2), textcoords='offset points',
                         horizontalalignment='left', verticalalignment='bottom', alpha=.4)
         dx = abs(self.alpha0["r"] - self.alpha0["l"])
+        if abs(dx) < 1e-9:
+            # print("mplmixin: xlim was too small")
+            dx = 1
+
         ax.set_xlim(self.alpha0["l"] - 0.3 * dx, self.alpha0["r"] + 0.3 * dx)
         ax.set_ylim(0, 1.1)
 
@@ -189,6 +193,11 @@ class MPL_Mixin():
 
         return True
 
+    @property
+    def p(self):
+        fig, ax = self.plot(show=False)
+        return fig
+
 
 class FuzzyNumber(phuzzy.FuzzyNumber, MPL_Mixin):
     """Uniform fuzzy number with matplotlib mixin"""
@@ -204,6 +213,11 @@ class Triangle(phuzzy.Triangle, MPL_Mixin):
     """Triangle fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
         phuzzy.Triangle.__init__(self, **kwargs)
+
+class Constant(phuzzy.Constant, MPL_Mixin):
+    """Constant fuzzy number with matplotlib mixin"""
+    def __init__(self, **kwargs):
+        phuzzy.Constant.__init__(self, **kwargs)
 
 class Trapezoid(phuzzy.Trapezoid, MPL_Mixin):
     """Trapezoid fuzzy number with matplotlib mixin"""
