@@ -9,7 +9,7 @@ fuzzy number tools
 """
 __url__ = 'https://github.com/lepy/phuzzy'
 __copyright__ = "Copyright (C) 2018-"
-__version__ = "0.7.6"
+__version__ = "0.8.0"
 __status__ = "3 - Alpha"
 __credits__ = [""]
 __license__ = """MIT"""
@@ -17,7 +17,7 @@ __license__ = """MIT"""
 import logging
 logger = logging.getLogger("phuzzy")
 
-from phuzzy.shapes import FuzzyNumber, Trapezoid, Triangle, Uniform
+from phuzzy.shapes import FuzzyNumber, Trapezoid, Triangle, Uniform, Constant
 from phuzzy.shapes.superellipse import Superellipse
 from phuzzy.shapes.truncnorm import TruncGenNorm, TruncNorm
 

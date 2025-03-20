@@ -21,7 +21,10 @@ class FuzzyNumber(object):
     def __init__(self, **kwargs):
         """base fuzzy number
 
-        :param kwargs:
+        :param kwargs: name
+        :param kwargs: alpha0
+        :param kwargs: alpha1
+        :param kwargs: number_of_alpha_levels, default=11
         """
         self.name = kwargs.get("name", "x")
         self._df = pd.DataFrame(columns=["alpha", "low", "high"])
@@ -621,6 +624,16 @@ class FuzzyNumber(object):
         if self.df is not None:
             return self.df.iloc[-1]
 
+    @property
+    def interval(self):
+        return [self.min(), self.max()]
+
+    @property
+    def interval_str(self):
+        if self.min() == self.max():
+            return f"{self.min():.2f}"
+        return f"[{self.min():.2f}-{self.max():.2f}]"
+
     # @property
     # def area(self):
     #     """integral of the fuzzy number
@@ -741,7 +754,6 @@ class FuzzyNumber(object):
 
         x__ = np.linspace(float(self.alpha0.l), float(self.alpha0.r), int(n))
         y__ = np.interp(x__, x_, y_)
-
         I = cumtrapz(y__, x__, initial=0)
         I /= I[-1]
         y = np.interp(x, I, x__, left=0., right=1.)
@@ -885,12 +897,21 @@ class FuzzyNumber(object):
             return self.defuzzification_centroid()
 
 class Triangle(FuzzyNumber):
-    """triange fuzzy number"""
+    """triangle fuzzy number"""
 
     def __init__(self, **kwargs):
+        """Triangle(alpha0=[1, 4], alpha0=[2], name="x", number_of_alpha_levels=5)
+
+        :param alpha0: alpha0 = [x_min, x_max]
+        :param alpha1: alpha1 = None | [x] | [x, x]
+        :param name: name of the fuzzy number
+        :param number_of_alpha_levels: number of alpha levels, default=11
+        """
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")
+        if alpha1 is None:
+            alpha1 = [(alpha0[0]+ alpha0[1]) / 2.]
         self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
@@ -979,11 +1000,49 @@ class Triangle(FuzzyNumber):
         else:
             return "tri[nan, nan, nan]"
 
-
-class Trapezoid(FuzzyNumber):
-    """triange fuzzy number"""
+class Constant(Triangle):
+    """triangle fuzzy number"""
 
     def __init__(self, **kwargs):
+        """Triangle(alpha0=[1, 4], alpha0=[2], name="x", number_of_alpha_levels=5)
+
+        :param alpha0: alpha0 = [x_min, x_max]
+        :param alpha1: alpha1 = None | [x] | [x, x]
+        :param name: name of the fuzzy number
+        :param number_of_alpha_levels: number of alpha levels, default=11
+        """
+        alpha0 = kwargs.get("alpha0")
+        kwargs["alpha0"] = [alpha0[0] - 1e-10, alpha0[0] + 1e-10]
+
+        Triangle.__init__(self, **kwargs)
+
+    @property
+    def get_01_str(self):
+        """get alpha=0 and alpha=1 values
+
+        :return: [[a0_l, a0_r], [a1_l, a1_r]]
+        """
+        if self.df is not None and len(self.df) > 1:
+            return f"""{self.df.loc[0, "r"]:.3g}"""
+
+        #     return np.array2string(self.df.iloc[[0, -1]][["l", "r"]].values,
+        #                            separator=",",
+        #                            formatter={'float_kind': lambda x: "%.3g" % x}).replace("\n", "")
+        else:
+            return "[]"
+
+class Trapezoid(FuzzyNumber):
+    """Trapezoid fuzzy number"""
+
+    def __init__(self, **kwargs):
+        """Trapezoid(alpha0=[1, 4], alpha1=[2, 3.5], number_of_alpha_levels=5, name="trapezoid")
+
+        :param alpha0: alpha0 = [x_min, x_max]
+        :param alpha1: alpha1 = [x_min, x_max]
+        :param name: name of the fuzzy number
+        :param number_of_alpha_levels: number of alpha levels, default=11
+        """
+
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         alpha1 = kwargs.get("alpha1")
@@ -1060,9 +1119,16 @@ class Trapezoid(FuzzyNumber):
 
 
 class Uniform(FuzzyNumber):
-    """triange fuzzy number"""
+    """Uniform fuzzy number"""
 
     def __init__(self, **kwargs):
+        """Uniform(alpha0=[1, 4], number_of_alpha_levels=5, name="uniform")
+
+        :param alpha0: alpha0 = [x_min, x_max]
+        :param name: name of the fuzzy number
+        :param number_of_alpha_levels: number of alpha levels, default=11
+        """
+
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
         self.discretize(alpha0=alpha0, alpha1=None, alpha_levels=self.number_of_alpha_levels)
