@@ -18,16 +18,32 @@ def extend_instance(obj, cls):
 
 
 def mix_mpl(obj):
+    """add plot functionality"""
     base_cls = obj.__class__
     base_cls_name = obj.__class__.__name__
     obj.__class__ = type(base_cls_name, (base_cls, MPL_Mixin),{})
 
+def plot(obj, show=True, **kwargs):
+    """plot phuzzy number"""
+    mix_mpl(obj)
+    kwargs["show"] = show
+    obj.plot(**kwargs)
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None):
-        """plots fuzzy number with mpl"""
-        logging.debug("plots fuzzy number with mpl")
+    def plot(self, ax=None, filepath=None, show=True, xlim=None, labels=True, title=False, ppf=None):
+        """plots fuzzy number with mpl
+
+        :param ax:
+        :param filepath:
+        :param show:
+        :param xlim:
+        :param labels:
+        :param title:
+        :param ppf:
+        :return:
+        """
+        #logging.debug("plots fuzzy number with mpl")
         df = self.df
 
         if ax is None:
