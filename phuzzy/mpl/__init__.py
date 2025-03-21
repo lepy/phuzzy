@@ -31,7 +31,7 @@ def plot(obj, show=True, **kwargs):
 
 class MPL_Mixin():
 
-    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None):
+    def plot(self, ax=None, filepath=None, show=False, xlim=None, labels=True, title=False, ppf=None, **kwargs):
         """plots fuzzy number with mpl
 
         :param ax:
@@ -63,8 +63,12 @@ class MPL_Mixin():
 
         xs = np.hstack([df["l"].values, df["r"].values[::-1]])
         ys = np.hstack([df["alpha"].values, df["alpha"].values[::-1]])
-        ax.plot(xs, ys, lw=1, alpha=.7)
-        ax.fill_between(xs, 0, ys, alpha=.2)
+
+        color = kwargs.get("color", None)
+        label = kwargs.get("label", None)
+
+        ax.plot(xs, ys, lw=1, alpha=.7, color=color, label=label)
+        ax.fill_between(xs, 0, ys, alpha=.2, color=color)
 
         ax.fill_betweenx(df["alpha"].values, df["l"].min(), df["l"].values, color="gray", alpha=.1)
         ax.fill_betweenx(df["alpha"].values, df["r"].values, df["r"].max(), color="gray", alpha=.1)
