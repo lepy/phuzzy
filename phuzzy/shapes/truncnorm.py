@@ -28,7 +28,10 @@
 from phuzzy.shapes import FuzzyNumber
 import numpy as np
 import pandas as pd
-from scipy.stats import truncnorm, gennorm
+from scipy.stats import truncnorm, gennorm, lognorm
+from scipy.optimize import minimize
+from scipy.interpolate import interp1d
+
 
 class TruncNorm(FuzzyNumber):
     """Normal distibuted membership function
@@ -207,3 +210,101 @@ class TruncGenNorm(FuzzyNumber):
         self.convert_df(alpha_levels=alpha_levels)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
 
+
+class TruncLogNorm(FuzzyNumber):
+    """Truncated log-normal distributed membership function"""
+
+    def __init__(self, **kwargs):  # , mean=0., std=1., clip=None, ppf=None):
+        """create a TruncLogNorm object
+
+        :param kwargs:
+
+        .. code-block:: python
+
+            TruncLogNorm(alpha0=[1, 3], alpha1=None, number_of_alpha_levels=17)
+
+        """
+        FuzzyNumber.__init__(self, **kwargs)
+        alpha0 = kwargs.get("alpha0")
+        alpha1 = kwargs.get("alpha1")
+        self.clip = kwargs.get("alpha0")
+        self.ppf_lim = kwargs.get("ppf") or [.001, .999]
+        self._center = kwargs.get("mean") or np.array(alpha0).mean()
+        self._sigma = kwargs.get("std") or np.log(1 + (alpha0[1] - alpha0[0]) / (
+                2 * np.array(alpha0).mean()))  # Approximate initial sigma for log-normal skewness
+        self._distr = None
+        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
+
+    def _get_center(self):
+        return float(self._center)
+
+    def _set_center(self, value):
+        self._center = float(value)
+
+    mean = center = property(fget=_get_center, fset=_set_center)
+
+    def _get_sigma(self):
+        return float(self._sigma)
+
+    def _set_sigma(self, value):
+        self._sigma = float(value)
+
+    std = sigma = property(fget=_get_sigma, fset=_set_sigma)
+
+    @property
+    def distr(self):
+        def obj(params, args=None):
+            """args = [min, max, ppf]"""
+            sigma, log_center = params
+            center = np.exp(log_center)
+            d = lognorm(s=sigma, scale=center)
+            ppf_low, ppf_high = args[2]
+            ppfs = [ppf_low, 0.5, ppf_high]
+            targets = [args[0], self.center, args[1]]
+            r = np.sum((d.ppf(ppfs) - targets) ** 2)
+            return r
+
+        if self._distr is None:
+            res = minimize(obj, [self.sigma, np.log(self.center)], method='Nelder-Mead', tol=1e-6,
+                           args=[self.clip[0], self.clip[1], self.ppf_lim])
+            sigma, log_center = res.x
+            self._distr = lognorm(s=sigma, scale=np.exp(log_center))
+        return self._distr
+
+    def discretize(self, alpha0, alpha1, alpha_levels):
+        nn = 501
+        x = np.linspace(alpha0[0], alpha0[1], nn)
+        pdf = self.distr.pdf(x)
+        alphas = pdf / pdf.max()
+
+        # Find mode index
+        mode_idx = np.argmax(alphas)
+        x_left = x[:mode_idx + 1]
+        alphas_left = alphas[:mode_idx + 1]
+        x_right = x[mode_idx:]
+        alphas_right = alphas[mode_idx:]
+
+        # Interpolators for left and right sides
+        inv_left = interp1d(alphas_left, x_left, kind='linear', fill_value='extrapolate')
+
+        # Reverse right for increasing alphas
+        alphas_right_rev = alphas_right[::-1]
+        x_right_rev = x_right[::-1]
+        inv_right = interp1d(alphas_right_rev, x_right_rev, kind='linear', fill_value='extrapolate')
+
+        # Generate discrete alpha levels from 0 to 1
+        alpha_vals = np.linspace(0, 1, alpha_levels)
+        data = []
+        for alpha in alpha_vals:
+            if alpha == 0:
+                l = alpha0[0]
+                r = alpha0[1]
+            else:
+                l = inv_left(alpha)
+                r = inv_right(alpha)
+            data.append([alpha, l, r])
+
+        self.df = pd.DataFrame(columns=["alpha", "l", "r"], data=data, dtype=float)
+        self.df["l"] = self.df["l"].clip(lower=0)
+        self.convert_df(alpha_levels=alpha_levels)
+        self.df.sort_values(['alpha'], ascending=[True], inplace=True)

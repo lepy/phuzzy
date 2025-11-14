@@ -11,7 +11,14 @@ is_py2 = sys.version_info.major == 2
 import numpy as np
 import pandas as pd
 import copy
-from scipy.integrate import cumtrapz
+# try:
+#     from scipy.integrate import cumtrapz as cumulative_trapezoid
+# except ImportError as e:
+#     logger.debug(e)
+try:
+    from scipy.integrate import cumulative_trapezoid
+except ImportError as e:
+    logger.warn(e)
 import scipy.stats
 
 
@@ -735,7 +742,7 @@ class FuzzyNumber(object):
         x__ = np.linspace(self.alpha0.l, self.alpha0.r, int(n))
         y__ = np.interp(x__, x_, y_)
 
-        I = cumtrapz(y__, x__, initial=0)
+        I = cumulative_trapezoid(y__, x__, initial=0)
         I /= I[-1]
         y = np.interp(x, x__, I, left=0., right=1.)
         return y
@@ -754,7 +761,7 @@ class FuzzyNumber(object):
 
         x__ = np.linspace(float(self.alpha0.l), float(self.alpha0.r), int(n))
         y__ = np.interp(x__, x_, y_)
-        I = cumtrapz(y__, x__, initial=0)
+        I = cumulative_trapezoid(y__, x__, initial=0)
         I /= I[-1]
         y = np.interp(x, I, x__, left=0., right=1.)
         return y
