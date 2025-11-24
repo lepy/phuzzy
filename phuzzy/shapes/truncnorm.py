@@ -254,18 +254,20 @@ class TruncLogNorm(FuzzyNumber):
     @property
     def distr(self):
         def obj(params, args=None):
-            """args = [min, max, ppf]"""
             sigma, log_center = params
+            if sigma <= 0:  # Strafen für ungültige sigma
+                return np.inf
             center = np.exp(log_center)
             d = lognorm(s=sigma, scale=center)
             ppf_low, ppf_high = args[2]
             ppfs = [ppf_low, 0.5, ppf_high]
-            targets = [args[0], self.center, args[1]]
+            targets = [max(0, args[0]), self.center, args[1]]  # Vermeide negativen Target
             r = np.sum((d.ppf(ppfs) - targets) ** 2)
             return r
 
         if self._distr is None:
-            res = minimize(obj, [self.sigma, np.log(self.center)], method='Nelder-Mead', tol=1e-6,
+            res = minimize(obj, [self.sigma, np.log(self.center)], method='L-BFGS-B',
+                           bounds=[(0.01, None), (None, None)], tol=1e-6,
                            args=[self.clip[0], self.clip[1], self.ppf_lim])
             sigma, log_center = res.x
             self._distr = lognorm(s=sigma, scale=np.exp(log_center))

@@ -1,6 +1,5 @@
 # phuzzy
 
-[![GitPitch](https://gitpitch.com/assets/badge.svg)](https://gitpitch.com/lepy/phuzzy/master?grs=github&t=beige)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/4814372e95c543a69c69004c853b17be)](https://www.codacy.com/app/lepy/phuzzy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=lepy/phuzzy&amp;utm_campaign=Badge_Grade)
 [![Coverage Status](https://coveralls.io/repos/github/lepy/phuzzy/badge.svg?branch=master)](https://coveralls.io/github/lepy/phuzzy?branch=master)
 [![Travis](https://img.shields.io/travis/lepy/phuzzy.svg)](https://travis-ci.org/lepy/phuzzy)
@@ -13,6 +12,8 @@
 * specify uncertainty easily
 
 # Usage
+
+[DeepWiki](https://deepwiki.com/lepy/phuzzy)
 
 To use phuzzy in a project:
 
@@ -149,8 +150,8 @@ To use phuzzy in a project:
     year={2018}}
 
 
-"I can live with doubt and uncertainty! 
-I think it's much more exciting to live not knowing than to have answers 
+"I can live with doubt and uncertainty!
+I think it's much more exciting to live not knowing than to have answers
 which might be wrong."
 
 Richard Feynman
