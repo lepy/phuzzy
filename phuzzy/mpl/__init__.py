@@ -242,3 +242,8 @@ class Superellipse(phuzzy.Superellipse, MPL_Mixin):
     """Superellipse fuzzy number with matplotlib mixin"""
     def __init__(self, **kwargs):
         phuzzy.Superellipse.__init__(self, **kwargs)
+
+class TrunclogNorm(phuzzy.TruncLogNorm, MPL_Mixin):
+    """Truncates general normal fuzzy number with matplotlib mixin"""
+    def __init__(self, **kwargs):
+        phuzzy.TruncLogNorm.__init__(self, **kwargs)
