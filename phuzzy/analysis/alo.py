@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# import phuzzy.contrib.shgo
-
 import phuzzy
 from phuzzy.mpl import MPL_Mixin
 from phuzzy.shapes import FuzzyNumber
@@ -13,12 +11,12 @@ import pandas as pd
 import xarray as xr
 from asteval import Interpreter
 from scipy.optimize import minimize
-from shgo._shgo import SHGO
+from phuzzy.contrib.shgo._shgo import SHGO
 from tqdm import tqdm
 
 import phuzzy
 
-import sys
+
 class Alpha_Level_Optimization():
 
     def __init__(self, **kwargs):
@@ -29,9 +27,6 @@ class Alpha_Level_Optimization():
 
         # Define Bounds of Each Alpha Level
         self.global_bounds_DataArray = self._boundary_constraints(**kwargs)
-        print(self.global_bounds_DataArray)
-        print(self.global_bounds_DataArray.to_dataframe(name="a"))
-        sys.exit()
         self.x_glob = []
 
         # Filter Objective Function / Link and Safe it
