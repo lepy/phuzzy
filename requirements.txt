@@ -7,3 +7,4 @@ shgo>=0.4
 xarray>=0.10.0
 asteval>=0.9
 xgboost>=1.1
+numexpr>=2.6
