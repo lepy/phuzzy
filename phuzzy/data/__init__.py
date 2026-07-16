@@ -67,10 +67,10 @@ class Data():
         return df
 
 
-def get_histogram_data(values, bins=None, normed=False):
+def get_histogram_data(values, bins=None, density=False):
     if bins is None:
         bins = 'auto'
-    frequency, edges = np.histogram(values, bins=bins, normed=normed)
+    frequency, edges = np.histogram(values, bins=bins, density=density)
     left, right = edges[:-1], edges[1:]
     center = (right + left) / 2
     df = pd.DataFrame({"frequency": frequency, "left": left, "right": right, "center": center})
