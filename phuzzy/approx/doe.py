@@ -263,26 +263,19 @@ class DOE(object):
         :return: doe
         """
 
-        if len(self.designvars) == 1:
-            designvar = self.designvars.values()[0]
-            doe = pd.DataFrame.from_dict({designvar.name: designvar.samples})
-            doe['alpha'] = 0.
-        else:
-            X = [designvar._disretize_range(n=0) for designvar in self.designvars.values()]
-            Y = np.meshgrid(*X)
+        X = [designvar._disretize_range(n=0) for designvar in self.designvars.values()]
+        Y = np.meshgrid(*X)
 
-            d = {}
-            for i, designvar in enumerate(self.designvars.values()):
-                d[designvar.name] = Y[i].ravel()
+        d = {}
+        for i, designvar in enumerate(self.designvars.values()):
+            d[designvar.name] = Y[i].ravel()
 
-            doe = pd.DataFrame.from_dict(d)
-            # doe['alpha'] = 0
-            for i, designvar in enumerate(self.designvars.values()):
-                alpha = designvar.get_alpha_from_value(doe.iloc[:, i])
-                doe["alpha_%d" % i] = alpha
-                # print("alpha", designvar, alpha)
-            alpha_cols = [x for x in doe.columns if x.startswith("alpha_")]
-            doe["alpha"] = doe[alpha_cols].min(axis=1)
+        doe = pd.DataFrame.from_dict(d)
+        for i, designvar in enumerate(self.designvars.values()):
+            alpha = designvar.get_alpha_from_value(doe.iloc[:, i])
+            doe["alpha_%d" % i] = alpha
+        alpha_cols = [x for x in doe.columns if x.startswith("alpha_")]
+        doe["alpha"] = doe[alpha_cols].min(axis=1)
 
         return doe
 
@@ -302,12 +295,13 @@ class DOE(object):
             raise Exception("Box-Behnken requires at least 3 dimensions!")
 
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
-        doe['alpha'] = 0
-        doe.loc[0] = np.zeros(len(self.designvars))
+        doe.loc[0] = np.zeros(dim)
         doelhs = pd.DataFrame(pydoe.bbdesign(dim), columns=[x.name for x in self.designvars.values()])
         doe = pd.concat([doe, doelhs], ignore_index=True)
+        doe['alpha'] = 0
         for i, designvar in enumerate(self.designvars.values()):
-            doe.iloc[:, i] = doe.iloc[:, i] * (designvar.max() - designvar.min()) + designvar.min()
+            # bbdesign is coded in [-1, 1], unlike the [0, 1] of lhs
+            doe.iloc[:, i] = (doe.iloc[:, i] + 1.) / 2. * (designvar.max() - designvar.min()) + designvar.min()
         return doe
 
     def sample_ccdesign(self, **kwargs):
