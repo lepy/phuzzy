@@ -365,6 +365,35 @@ class DOE(object):
         print("sample doe", doe.shape)
         return doe
 
+    def sample_lhs2(self, **kwargs):
+        """Latin Hypercube Sampling per alpha level
+
+        Samples the unit hypercube once and maps that single pattern onto the
+        [l, r] interval of every alpha level, yielding n samples per level.
+        Expects all designvars to share one alpha grid.
+
+        :param n: number of sample points per alpha level
+        :return: doe
+        """
+        dim = len(self.designvars)
+        n_samples = kwargs.get("n", 100)
+        names = [x.name for x in self.designvars.values()]
+        doelhs = pd.DataFrame(pydoe.lhs(dim, n_samples), columns=names)
+
+        dv0 = list(self.designvars.values())[0]
+        does = []
+        for index in dv0.df.index:
+            doe = doelhs.copy()
+            for i, designvar in enumerate(self.designvars.values()):
+                designvarmin = designvar.df.loc[index, "l"]
+                designvarmax = designvar.df.loc[index, "r"]
+                doe.iloc[:, i] = doe.iloc[:, i] * (designvarmax - designvarmin) + designvarmin
+            doe["alpha"] = dv0.df.loc[index, "alpha"]
+            does.append(doe)
+
+        doe = pd.concat(does, ignore_index=True)
+        return doe[names + ["alpha"]]
+
     def gen_lhs_samples(self, **kwargs):
         """Latin Hypercube Sampling
 
