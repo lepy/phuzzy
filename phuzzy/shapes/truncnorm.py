@@ -47,20 +47,30 @@ class TruncNorm(FuzzyNumber):
 
         """
         FuzzyNumber.__init__(self, **kwargs)
-        alpha0 = kwargs.get("alpha0")
-        alpha1 = kwargs.get("alpha1")
-        self.clip = kwargs.get("alpha0", [0, np.inf])
-        self.ppf_lim = kwargs.get("ppf", [.001, .999])
-        self._loc = kwargs.get("mean") or np.array(alpha0).mean()
-        self._scale = kwargs.get("std") or (alpha0[1] - alpha0[0]) / 6.
-        # print("!", (alpha0[1]-alpha0[0])/6)
+        a, b = self._validate_alpha0(kwargs.get("alpha0"))
+        self.clip = [a, b]
+        self.ppf_lim = kwargs.get("ppf") or [.001, .999]
+        # `is None` rather than `or`: a given 0 is a valid mean and an invalid
+        # std, so both must be honoured or rejected, never silently defaulted
+        loc, scale = kwargs.get("mean"), kwargs.get("std")
+        self._loc = float(loc) if loc is not None else (a + b) / 2.
+        # the support spans +-3 sigma by convention
+        self._scale = float(scale) if scale is not None else (b - a) / 6.
+        self._check_scale(self._scale)
         self._distr = None
-        self.discretize(alpha0=self.clip, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
+        self.discretize(alpha0=self.clip, alpha1=kwargs.get("alpha1"),
+                        alpha_levels=self.number_of_alpha_levels)
 
-    # def __str__(self):
-    #     return "tnorm(%s [%.3g,%.3g])" % (self.did, self.loc, self.std)
-    #
-    # __repr__ = __str__
+    @staticmethod
+    def _check_scale(value):
+        if not value > 0.:
+            raise ValueError("TruncNorm needs std > 0, got {:g}".format(value))
+
+    def _refresh(self):
+        """drop the cached distribution and rebuild the alpha levels"""
+        self._distr = None
+        self.discretize(alpha0=self.clip, alpha1=None,
+                        alpha_levels=self.number_of_alpha_levels)
 
     def _get_loc(self):
         """mean value
@@ -71,7 +81,8 @@ class TruncNorm(FuzzyNumber):
         return self._loc
 
     def _set_loc(self, value):
-        self._loc = value
+        self._loc = float(value)
+        self._refresh()
 
     mean = loc = property(fget=_get_loc, fset=_set_loc)
 
@@ -84,7 +95,10 @@ class TruncNorm(FuzzyNumber):
         return self._scale
 
     def _set_scale(self, value):
+        value = float(value)
+        self._check_scale(value)
         self._scale = value
+        self._refresh()
 
     std = scale = property(fget=_get_scale, fset=_set_scale)
 
@@ -141,55 +155,111 @@ class TruncGenNorm(FuzzyNumber):
 
         """
         FuzzyNumber.__init__(self, **kwargs)
-        alpha0 = kwargs.get("alpha0")
-        alpha1 = kwargs.get("alpha1")
-        self.beta = kwargs.get("beta") or 2.
-        self.clip = kwargs.get("alpha0")
+        a, b = self._validate_alpha0(kwargs.get("alpha0"))
+        self.clip = [a, b]
+        # `is None` rather than `or`: a given 0 is a valid mean and an invalid
+        # beta or std, so all three must be honoured or rejected
+        beta, loc, scale = kwargs.get("beta"), kwargs.get("mean"), kwargs.get("std")
+        self._beta = float(beta) if beta is not None else 2.
+        self._check_beta(self._beta)
         self.ppf_lim = kwargs.get("ppf") or [.001, .999]
-        self._loc = kwargs.get("mean") or np.array(alpha0).mean()
-        self._scale = kwargs.get("std") or (alpha0[1] - alpha0[0]) / 6.
-        # print("!", (alpha0[1]-alpha0[0])/6)
+        self._loc = float(loc) if loc is not None else (a + b) / 2.
         self._distr = None
-        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
+        # scale defaults to the value that puts the ppf limits on the support
+        self._scale = float(scale) if scale is not None else self._scale_from_support(a, b)
+        self._check_scale(self._scale)
+        self.discretize(alpha0=self.clip, alpha1=kwargs.get("alpha1"),
+                        alpha_levels=self.number_of_alpha_levels)
 
-    # def __str__(self):
-    #     return "tnorm(%s [%.3g,%.3g])" % (self.did, self.loc, self.std)
-    #
-    # __repr__ = __str__
+    @staticmethod
+    def _check_beta(value):
+        if not value > 0.:
+            raise ValueError("TruncGenNorm needs beta > 0, got {:g}".format(value))
+
+    @staticmethod
+    def _check_scale(value):
+        if not value > 0.:
+            raise ValueError("TruncGenNorm needs std > 0, got {:g}".format(value))
+
+    def _scale_from_support(self, a, b):
+        """scale that spans the support between the ppf limits
+
+        gennorm is a location-scale family, so ppf(q) = loc + scale*z(q, beta)
+        with z the standardized quantile. Requiring ppf(p_lo) = a and
+        ppf(p_hi) = b then gives scale directly, no optimizer needed.
+
+        :param a: lower bound of the support
+        :param b: upper bound of the support
+        :rtype: float
+        :return: scale
+        """
+        z_lo = gennorm.ppf(self.ppf_lim[0], beta=self.beta)
+        z_hi = gennorm.ppf(self.ppf_lim[1], beta=self.beta)
+        if not z_lo < z_hi:
+            raise ValueError("TruncGenNorm needs ppf=[p_lo, p_hi] with p_lo < p_hi, "
+                             "got {!r}".format(self.ppf_lim))
+        return (b - a) / (z_hi - z_lo)
+
+    def _refresh(self):
+        """drop the cached distribution and rebuild the alpha levels"""
+        self._distr = None
+        self.discretize(alpha0=self.clip, alpha1=None,
+                        alpha_levels=self.number_of_alpha_levels)
 
     def _get_loc(self):
+        """mean value
+
+        :rtype: float
+        :return: mean value aka location
+        """
         return self._loc
 
     def _set_loc(self, value):
-        self._loc = value
+        self._loc = float(value)
+        self._refresh()
 
     mean = loc = property(fget=_get_loc, fset=_set_loc)
 
     def _get_scale(self):
+        """standard deviation
+
+        :rtype: float
+        :return: standard deviation
+        """
         return self._scale
 
     def _set_scale(self, value):
+        value = float(value)
+        self._check_scale(value)
         self._scale = value
+        self._refresh()
 
     std = scale = property(fget=_get_scale, fset=_set_scale)
 
+    def _get_beta(self):
+        """shape parameter
+
+        :rtype: float
+        :return: beta
+        """
+        return self._beta
+
+    def _set_beta(self, value):
+        value = float(value)
+        self._check_beta(value)
+        self._beta = value
+        self._refresh()
+
+    beta = property(fget=_get_beta, fset=_set_beta)
+
     @property
     def distr(self):
-        def obj(s, args=None):
-            """args = [min, max, beta, ppf]"""
+        """generalized normal distribution behind the membership function
 
-            loc = (args[1]+args[0])/2.
-            beta = args[2]
-            ppf = args[3]
-            d = gennorm(loc=loc, scale=s, beta=beta)
-            r = sum((d.ppf([1.-ppf, .5,  ppf]) - np.array([args[0], loc, args[1]]))**2)
-            return r
+        :return: distribution object
+        """
         if self._distr is None:
-            from scipy.optimize import minimize
-            res = minimize(obj, [.1], method='Nelder-Mead', tol=1e-6, args=[self.clip[0],self.clip[1], self.beta, .999])
-            # res = scipy.optimize.minimize_scalar(obj, bounds=[1e-10, 1], args=[1.,4., beta, .999], tol=1e-10)
-            # print("res", res.x)
-            self._distr = gennorm(loc=self.mean, scale=res.x, beta=self.beta)
+            self._distr = gennorm(loc=self.loc, scale=self.scale, beta=self.beta)
         return self._distr
 
     def discretize(self, alpha0, alpha1, alpha_levels):
