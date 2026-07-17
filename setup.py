@@ -17,7 +17,7 @@ def extract_version():
 
 DOWNLOAD_URL = 'https://github.com/lepy/phuzzy'
 CLASSIFIERS = [
-    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
     'Environment :: Console',
     'Operating System :: OS Independent',
     'Intended Audience :: Science/Research',
