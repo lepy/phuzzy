@@ -81,6 +81,46 @@ class FuzzyNumber(object):
 
     df = property(fget=_get_df, fset=_set_df, doc="number of alpha levels")
 
+    @classmethod
+    def _validate_alpha0(cls, alpha0):
+        """check the support and return it as floats
+
+        :param alpha0: [a, b]
+        :rtype: tuple
+        :return: (a, b)
+        """
+        if alpha0 is None or len(alpha0) != 2:
+            raise ValueError("{} needs alpha0=[a, b], got {!r}".format(cls.__name__, alpha0))
+        a, b = float(alpha0[0]), float(alpha0[1])
+        if not a <= b:
+            raise ValueError("{} needs alpha0=[a, b] with a <= b, got [{:g}, {:g}]".format(
+                cls.__name__, a, b))
+        return a, b
+
+    @classmethod
+    def _validate_alpha1(cls, alpha1, a, b):
+        """check the core against the support and return it as floats
+
+        A core outside the support is not a fuzzy number, so [c, d] must
+        satisfy a <= c <= d <= b. Accepts [c] for a single-point core.
+
+        :param alpha1: [c] or [c, d]
+        :param a: lower bound of the support
+        :param b: upper bound of the support
+        :rtype: tuple
+        :return: (c, d)
+        """
+        if alpha1 is None or not 1 <= len(alpha1) <= 2:
+            raise ValueError("{} needs alpha1=[c] or [c, d], got {!r}".format(cls.__name__, alpha1))
+        c, d = float(alpha1[0]), float(alpha1[-1])
+        if not c <= d:
+            raise ValueError("{} needs alpha1=[c, d] with c <= d, got [{:g}, {:g}]".format(
+                cls.__name__, c, d))
+        if not (a <= c and d <= b):
+            raise ValueError("{} needs the core alpha1=[{:g}, {:g}] inside the support "
+                             "alpha0=[{:g}, {:g}]".format(cls.__name__, c, d, a, b))
+        return c, d
+
     def discretize(self, alpha0, alpha1, alpha_levels):
         """discretize shape function
 
@@ -936,11 +976,12 @@ class Triangle(FuzzyNumber):
         :param number_of_alpha_levels: number of alpha levels, default=11
         """
         FuzzyNumber.__init__(self, **kwargs)
-        alpha0 = kwargs.get("alpha0")
+        a, b = self._validate_alpha0(kwargs.get("alpha0"))
         alpha1 = kwargs.get("alpha1")
         if alpha1 is None:
-            alpha1 = [(alpha0[0]+ alpha0[1]) / 2.]
-        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
+            alpha1 = [(a + b) / 2.]
+        c, _ = self._validate_alpha1(alpha1, a, b)
+        self.discretize(alpha0=[a, b], alpha1=[c], alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
         """discretize shape function
@@ -985,7 +1026,11 @@ class Triangle(FuzzyNumber):
             means.append(mean)
 
         mean = np.array(means).mean()
-        kwargs["alpha1"] = [mean]
+        # 3*mean - a - b inverts mean = (a+b+c)/3 for the peak, but that
+        # estimate leaves [a, b] once the data is not triangular -- a spike
+        # with outliers drives it far outside. A triangle's peak lies in its
+        # support by definition, so clip rather than build an invalid number.
+        kwargs["alpha1"] = [float(np.clip(mean, datamin, datamax))]
         p = cls(**kwargs)
         return p
 
@@ -1032,15 +1077,18 @@ class Constant(Triangle):
     """triangle fuzzy number"""
 
     def __init__(self, **kwargs):
-        """Triangle(alpha0=[1, 4], alpha0=[2], name="x", number_of_alpha_levels=5)
+        """Constant(alpha0=[2], name="x", number_of_alpha_levels=5)
 
-        :param alpha0: alpha0 = [x_min, x_max]
-        :param alpha1: alpha1 = None | [x] | [x, x]
+        :param alpha0: alpha0 = [x], the constant value
         :param name: name of the fuzzy number
         :param number_of_alpha_levels: number of alpha levels, default=11
         """
         alpha0 = kwargs.get("alpha0")
-        kwargs["alpha0"] = [alpha0[0] - 1e-10, alpha0[0] + 1e-10]
+        if alpha0 is None or len(alpha0) < 1:
+            raise ValueError("Constant needs alpha0=[x], got {!r}".format(alpha0))
+        # a hair of width, so the triangle it inherits from stays well defined
+        x = float(alpha0[0])
+        kwargs["alpha0"] = [x - 1e-10, x + 1e-10]
 
         Triangle.__init__(self, **kwargs)
 
@@ -1072,9 +1120,9 @@ class Trapezoid(FuzzyNumber):
         """
 
         FuzzyNumber.__init__(self, **kwargs)
-        alpha0 = kwargs.get("alpha0")
-        alpha1 = kwargs.get("alpha1")
-        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
+        a, b = self._validate_alpha0(kwargs.get("alpha0"))
+        c, d = self._validate_alpha1(kwargs.get("alpha1"), a, b)
+        self.discretize(alpha0=[a, b], alpha1=[c, d], alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
         """discretize shape function
@@ -1085,13 +1133,10 @@ class Trapezoid(FuzzyNumber):
         :return: None
         """
 
-        # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
-        # assert isinstance(alpha1, collections.Sequence) and len(alpha1) == 2
         self._a = alpha0[0]
         self._b = alpha1[0]
         self._c = alpha1[1]
         self._d = alpha0[1]
-        # todo: check a <= c <= d <= b
         self.df = pd.DataFrame(columns=["alpha", "l", "r"],
                                data=[[0., alpha0[0], alpha0[1]], [1., alpha1[0], alpha1[1]]], dtype=float)
         self.df.sort_values(['alpha'], ascending=[True], inplace=True)
@@ -1158,19 +1203,18 @@ class Uniform(FuzzyNumber):
         """
 
         FuzzyNumber.__init__(self, **kwargs)
-        alpha0 = kwargs.get("alpha0")
-        self.discretize(alpha0=alpha0, alpha1=None, alpha_levels=self.number_of_alpha_levels)
+        a, b = self._validate_alpha0(kwargs.get("alpha0"))
+        self.discretize(alpha0=[a, b], alpha1=None, alpha_levels=self.number_of_alpha_levels)
 
     def discretize(self, alpha0, alpha1, alpha_levels):
         """discretize shape function
 
         :param alpha0: range at alpha=0
-        :param alpha1: range at alpha=1
+        :param alpha1: range at alpha=1, unused -- a uniform number has no peak
         :param alpha_levels: number of alpha levels
         :return: None
         """
 
-        # assert isinstance(alpha0, collections.Sequence) and len(alpha0) == 2
         self._a = alpha0[0]
         self._b = alpha0[1]
         self.df = pd.DataFrame(columns=["alpha", "l", "r"],

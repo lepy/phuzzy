@@ -36,10 +36,15 @@ class Superellipse(FuzzyNumber):
 
         """
         FuzzyNumber.__init__(self, **kwargs)
-        alpha0 = kwargs.get("alpha0")
-        self.m = kwargs.get("m") or 2.
-        self.n = kwargs.get("n") or self.m
-        self.discretize(alpha0=alpha0, alpha1=None, alpha_levels=self.number_of_alpha_levels)
+        a, b = self._validate_alpha0(kwargs.get("alpha0"))
+        # `is None` rather than `or`: a given 0 must be rejected, not defaulted
+        m, n = kwargs.get("m"), kwargs.get("n")
+        self.m = float(m) if m is not None else 2.
+        self.n = float(n) if n is not None else self.m
+        for label, value in (("m", self.m), ("n", self.n)):
+            if not value > 0.:
+                raise ValueError("Superellipse needs {} > 0, got {:g}".format(label, value))
+        self.discretize(alpha0=[a, b], alpha1=None, alpha_levels=self.number_of_alpha_levels)
 
     def shape(self, x):
         """shape function
