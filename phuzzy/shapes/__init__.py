@@ -1003,36 +1003,25 @@ class Triangle(FuzzyNumber):
 
     @classmethod
     def from_data(cls, **kwargs):
-        """instantiate fuzzy number from attributes
+        """estimate a triangle from sample data
 
-        :param kwargs:
-        :rtype: phuzzy.FuzzyNumber or derived object
+        The support is the observed range. The peak matches the triangle's
+        mean to the sample mean: mean = (a+b+c)/3 inverts to c = 3*mean - a - b.
+
+        That estimate leaves [a, b] once the data is not triangular -- a spike
+        with outliers drives it far outside -- so it is clipped, where a
+        triangle's peak lies by definition.
+
+        :param data: sample points
+        :rtype: phuzzy.Triangle or derived object
         :return: fuzzy number
         """
-
-        n = kwargs.get("n", 100)
-        data = kwargs.get("data")
-        data = np.asarray(data, float)
-        datamin = data.min()
-        datamax = data.max()
+        data = np.asarray(kwargs.get("data"), float)
+        datamin, datamax = data.min(), data.max()
         kwargs["alpha0"] = [datamin, datamax]
-        means = []
-        mean = 3 * data.mean() - datamin - datamax
-        means.append(mean)
-        for _ in range(n):
-            train_data = np.random.choice(data, int(len(data) * 50))
-            # mean = 3 * train_data.mean() - train_data.min() - train_data.max()
-            mean = 3 * train_data.mean() - (train_data.min() + datamin) / 2 - (train_data.max() + datamax) / 2
-            means.append(mean)
-
-        mean = np.array(means).mean()
-        # 3*mean - a - b inverts mean = (a+b+c)/3 for the peak, but that
-        # estimate leaves [a, b] once the data is not triangular -- a spike
-        # with outliers drives it far outside. A triangle's peak lies in its
-        # support by definition, so clip rather than build an invalid number.
-        kwargs["alpha1"] = [float(np.clip(mean, datamin, datamax))]
-        p = cls(**kwargs)
-        return p
+        kwargs["alpha1"] = [float(np.clip(3. * data.mean() - datamin - datamax,
+                                          datamin, datamax))]
+        return cls(**kwargs)
 
     def pdf(self, x):
         """https://en.wikipedia.org/wiki/Triangular_distribution"""
