@@ -8,6 +8,7 @@ module drives the accessors, distribution functions and defuzzification.
 import numpy as np
 import pandas as pd
 import pytest
+from scipy.integrate import trapezoid
 
 import phuzzy
 from phuzzy.shapes import FuzzyNumber
@@ -121,7 +122,7 @@ def test_base_pdf_integrates_to_one():
     """TruncNorm does not override pdf, so this exercises FuzzyNumber.pdf."""
     p = _tn(levels=21)
     xs = np.linspace(0.5, 3.5, 20001)
-    assert np.trapezoid(p.pdf(xs), xs) == pytest.approx(1.0, abs=1e-3)
+    assert trapezoid(p.pdf(xs), xs) == pytest.approx(1.0, abs=1e-3)
 
 
 def test_base_pdf_is_zero_outside_the_support():
