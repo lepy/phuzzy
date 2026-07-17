@@ -28,9 +28,7 @@
 from phuzzy.shapes import FuzzyNumber
 import numpy as np
 import pandas as pd
-from scipy.stats import truncnorm, gennorm, lognorm
-from scipy.optimize import minimize
-from scipy.interpolate import interp1d
+from scipy.stats import truncnorm, gennorm, lognorm, norm
 
 
 class TruncNorm(FuzzyNumber):
@@ -212,100 +210,162 @@ class TruncGenNorm(FuzzyNumber):
 
 
 class TruncLogNorm(FuzzyNumber):
-    """Truncated log-normal distributed membership function"""
+    r"""Log-normal distributed membership function, truncated to alpha0
 
-    def __init__(self, **kwargs):  # , mean=0., std=1., clip=None, ppf=None):
-        """create a TruncLogNorm object
+    The membership is the log-normal pdf rescaled to peak at one,
 
-        :param kwargs:
+    .. math::
 
-        .. code-block:: python
+        \mu(x) = \frac{f(x)}{f(x_{mode})}, \quad x_{mode} = c \cdot e^{-s^2}
 
-            TruncLogNorm(alpha0=[1, 3], alpha1=None, number_of_alpha_levels=17)
+    for a log-normal with median :math:`c` (``center``) and shape :math:`s`
+    (``sigma``), truncated to the support :math:`[a, b]` given by ``alpha0``.
+    Being right skewed, its core (:math:`\alpha=1`) sits at the mode, left of
+    the median.
 
-        """
+    ``center`` and ``sigma`` default to the values that place the ``ppf``
+    quantiles exactly on the support:
+
+    .. math::
+
+        s = \frac{\ln(b/a)}{\Phi^{-1}(p_{hi}) - \Phi^{-1}(p_{lo})}, \quad
+        c = a \cdot e^{-s\,\Phi^{-1}(p_{lo})}
+
+    which for the default symmetric limits makes ``center`` the geometric mean
+    :math:`\sqrt{ab}`.
+
+    .. code-block:: python
+
+        TruncLogNorm(alpha0=[1, 3], number_of_alpha_levels=17)
+
+    :param alpha0: support [a, b], requires 0 < a < b
+    :param mean: median of the distribution, alias ``center``
+    :param std: shape parameter, the standard deviation of ln(x), alias ``sigma``
+    :param ppf: quantile pair the support corresponds to, default [.001, .999]
+    """
+
+    def __init__(self, **kwargs):
         FuzzyNumber.__init__(self, **kwargs)
         alpha0 = kwargs.get("alpha0")
-        alpha1 = kwargs.get("alpha1")
-        self.clip = kwargs.get("alpha0")
+        if alpha0 is None or len(alpha0) != 2:
+            raise ValueError("TruncLogNorm needs alpha0=[a, b], got {!r}".format(alpha0))
+
+        a, b = float(alpha0[0]), float(alpha0[1])
+        if not 0. < a < b:
+            # a log-normal lives on (0, inf)
+            raise ValueError("TruncLogNorm needs 0 < a < b, got alpha0=[{:g}, {:g}]".format(a, b))
+        self.clip = [a, b]
+
         self.ppf_lim = kwargs.get("ppf") or [.001, .999]
-        self._center = kwargs.get("mean") or np.array(alpha0).mean()
-        self._sigma = kwargs.get("std") or np.log(1 + (alpha0[1] - alpha0[0]) / (
-                2 * np.array(alpha0).mean()))  # Approximate initial sigma for log-normal skewness
+        z_lo, z_hi = norm.ppf(self.ppf_lim[0]), norm.ppf(self.ppf_lim[1])
+        if not z_lo < z_hi:
+            raise ValueError("TruncLogNorm needs ppf=[p_lo, p_hi] with p_lo < p_hi, "
+                             "got {!r}".format(self.ppf_lim))
+
+        # place the ppf quantiles on a and b: solving
+        #   a = c*exp(s*z_lo), b = c*exp(s*z_hi)  for s and c
+        # `is None` rather than `or`: a given 0 must be rejected, not defaulted
+        sigma, center = kwargs.get("std"), kwargs.get("mean")
+        self._sigma = float(sigma) if sigma is not None else np.log(b / a) / (z_hi - z_lo)
+        self._check_sigma(self._sigma)
+        self._center = (float(center) if center is not None
+                        else float(np.exp(np.log(a) - self._sigma * z_lo)))
+        self._check_center(self._center)
+
         self._distr = None
-        self.discretize(alpha0=alpha0, alpha1=alpha1, alpha_levels=self.number_of_alpha_levels)
+        self.discretize(alpha0=self.clip, alpha1=kwargs.get("alpha1"),
+                        alpha_levels=self.number_of_alpha_levels)
+
+    @staticmethod
+    def _check_center(value):
+        if not value > 0.:
+            raise ValueError("TruncLogNorm needs center > 0, got {:g}".format(value))
+
+    @staticmethod
+    def _check_sigma(value):
+        if not value > 0.:
+            raise ValueError("TruncLogNorm needs sigma > 0, got {:g}".format(value))
+
+    def _refresh(self):
+        """drop the cached distribution and rebuild the alpha levels"""
+        self._distr = None
+        self.discretize(alpha0=self.clip, alpha1=None,
+                        alpha_levels=self.number_of_alpha_levels)
 
     def _get_center(self):
+        """median of the distribution
+
+        :rtype: float
+        :return: median
+        """
         return float(self._center)
 
     def _set_center(self, value):
-        self._center = float(value)
+        value = float(value)
+        self._check_center(value)
+        self._center = value
+        self._refresh()
 
     mean = center = property(fget=_get_center, fset=_set_center)
 
     def _get_sigma(self):
+        """shape parameter, the standard deviation of ln(x)
+
+        :rtype: float
+        :return: shape parameter
+        """
         return float(self._sigma)
 
     def _set_sigma(self, value):
-        self._sigma = float(value)
+        value = float(value)
+        self._check_sigma(value)
+        self._sigma = value
+        self._refresh()
 
     std = sigma = property(fget=_get_sigma, fset=_set_sigma)
 
     @property
-    def distr(self):
-        def obj(params, args=None):
-            # sigma is kept positive by the bounds on the minimize call below
-            sigma, log_center = params
-            center = np.exp(log_center)
-            d = lognorm(s=sigma, scale=center)
-            ppf_low, ppf_high = args[2]
-            ppfs = [ppf_low, 0.5, ppf_high]
-            targets = [max(0, args[0]), self.center, args[1]]  # Vermeide negativen Target
-            r = np.sum((d.ppf(ppfs) - targets) ** 2)
-            return r
+    def mode(self):
+        """peak of the membership function, left of the median
 
+        :rtype: float
+        :return: mode
+        """
+        return self.center * np.exp(-self.sigma ** 2)
+
+    @property
+    def distr(self):
+        """log-normal distribution behind the membership function
+
+        :return: distribution object
+        """
         if self._distr is None:
-            res = minimize(obj, [self.sigma, np.log(self.center)], method='L-BFGS-B',
-                           bounds=[(0.01, None), (None, None)], tol=1e-6,
-                           args=[self.clip[0], self.clip[1], self.ppf_lim])
-            sigma, log_center = res.x
-            self._distr = lognorm(s=sigma, scale=np.exp(log_center))
+            self._distr = lognorm(s=self.sigma, scale=self.center)
         return self._distr
 
     def discretize(self, alpha0, alpha1, alpha_levels):
-        nn = 501
-        x = np.linspace(alpha0[0], alpha0[1], nn)
-        pdf = self.distr.pdf(x)
-        alphas = pdf / pdf.max()
+        """discretize the membership function
 
-        # Find mode index
-        mode_idx = np.argmax(alphas)
-        x_left = x[:mode_idx + 1]
-        alphas_left = alphas[:mode_idx + 1]
-        x_right = x[mode_idx:]
-        alphas_right = alphas[mode_idx:]
+        mu(x) = f(x)/f(mode) inverts in closed form: with u = ln(x/center),
+        ln(mu) = -u^2/(2s^2) - u - s^2/2, so (u + s^2)^2 = -2 s^2 ln(mu) and
 
-        # Interpolators for left and right sides
-        inv_left = interp1d(alphas_left, x_left, kind='linear', fill_value='extrapolate')
+            x = mode * exp(+- s*sqrt(-2 ln(alpha)))
 
-        # Reverse right for increasing alphas
-        alphas_right_rev = alphas_right[::-1]
-        x_right_rev = x_right[::-1]
-        inv_right = interp1d(alphas_right_rev, x_right_rev, kind='linear', fill_value='extrapolate')
+        :param alpha0: support [a, b]
+        :param alpha1: unused, the core is the mode
+        :param alpha_levels: number of alpha levels
+        :return: None
+        """
+        a, b = float(alpha0[0]), float(alpha0[1])
+        alphas = np.linspace(0., 1., int(alpha_levels))
 
-        # Generate discrete alpha levels from 0 to 1
-        alpha_vals = np.linspace(0, 1, alpha_levels)
-        data = []
-        for alpha in alpha_vals:
-            if alpha == 0:
-                l = alpha0[0]
-                r = alpha0[1]
-            else:
-                l = inv_left(alpha)
-                r = inv_right(alpha)
-            data.append([alpha, l, r])
+        with np.errstate(divide="ignore"):
+            # alpha=0 gives an infinite half width, which the clip below turns
+            # into the support bounds -- that is what truncation means here
+            half_width = self.sigma * np.sqrt(-2. * np.log(alphas))
 
-        self.df = pd.DataFrame(columns=["alpha", "l", "r"], data=data, dtype=float)
-        self.df["l"] = self.df["l"].clip(lower=0)
-        self.convert_df(alpha_levels=alpha_levels)
-        self.df.sort_values(['alpha'], ascending=[True], inplace=True)
+        mode = self.mode
+        l = np.clip(mode * np.exp(-half_width), a, b)
+        r = np.clip(mode * np.exp(half_width), a, b)
+
+        self.df = pd.DataFrame({"alpha": alphas, "l": l, "r": r}, dtype=float)
