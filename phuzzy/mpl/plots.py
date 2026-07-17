@@ -86,8 +86,8 @@ def plot_xy_3d(x, y, height=200, width=200):
     axxy.set_xlabel("x")
     axxy.set_ylabel("y")
 
-    axx.get_shared_x_axes().join(axx, axxy)
-    axy.get_shared_y_axes().join(axy, axxy)
+    axx.sharex(axxy)
+    axy.sharey(axxy)
 
     x.plot(ax=axx)
     y.vplot(ax=axy)
@@ -102,11 +102,11 @@ def plot_xy_3d(x, y, height=200, width=200):
 
     fig.tight_layout()
     bbox = ax3d_.get_position()
-    ax3d = fig.gca(projection='3d')
+    ax3d = fig.add_subplot(2, 2, 2, projection='3d')
     ax3d.set_position(bbox)
     ax3d_.axis('off')
-    ax3d = plot_3d(x, y, ax=ax3d)
-    axs[0,1] = ax3d
+    _, ax3d = plot_3d(x, y, ax=ax3d)
+    axs[0, 1] = ax3d
 
     return fig, axs
 
