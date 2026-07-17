@@ -112,12 +112,9 @@ class MPL_Mixin():
 
         if xlim is not None:
             ax.set_xlim(xlim)
-        try:
-            fig.tight_layout()
-            if filepath:
-                fig.savefig(filepath, dpi=90)
-        except UnboundLocalError:
-            pass
+        fig.tight_layout()
+        if filepath:
+            fig.savefig(filepath, dpi=90)
 
         if show is True:
             plt.show()
@@ -133,6 +130,8 @@ class MPL_Mixin():
             H = 100.  # mm
             B = 100.  # mm
             fig, ax = plt.subplots(dpi=90, facecolor='w', edgecolor='k', figsize=(B / 25.4, H / 25.4))
+        else:
+            fig = ax.get_figure()
 
         if title is True:
             ax.set_title("%s" % self.__class__.__name__)
@@ -185,12 +184,9 @@ class MPL_Mixin():
 
         if xlim is not None:
             ax.set_xlim(xlim)
-        try:
-            fig.tight_layout()
-            if filepath:
-                fig.savefig(filepath, dpi=90)
-        except UnboundLocalError:
-            pass
+        fig.tight_layout()
+        if filepath:
+            fig.savefig(filepath, dpi=90)
 
         if show is True:
             plt.show()
