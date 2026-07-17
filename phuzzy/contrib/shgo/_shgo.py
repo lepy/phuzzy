@@ -8,7 +8,7 @@ import logging
 import warnings
 import scipy.optimize
 import scipy.spatial
-import shgo.shgo_m.sobol_seq as sobol_seq
+import phuzzy.contrib.shgo.shgo_m.sobol_seq as sobol_seq
 from phuzzy.contrib.shgo.shgo_m.triangulation import Complex
 
 __all__ = ['shgo']
