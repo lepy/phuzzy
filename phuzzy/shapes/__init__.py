@@ -103,12 +103,14 @@ class FuzzyNumber(object):
             self._number_of_alpha_levels = int(alpha_levels)
         df.sort_values(['alpha'], ascending=[True], inplace=True)
         # print("!",df)
-        xs_l = df.l.values
+        # to_numpy(copy=True): .values hands out a read-only view under
+        # pandas' copy-on-write, and these arrays get written to below
+        xs_l = df.l.to_numpy(copy=True)
         xs_l[xs_l == 0] = zero
-        alphas_l = df["alpha"].values
-        xs_r = df.r.values[::-1]
+        alphas_l = df["alpha"].to_numpy()
+        xs_r = df.r.to_numpy(copy=True)[::-1]
         xs_r[xs_r == 0] = zero
-        alphas_r = df["alpha"].values[::-1]
+        alphas_r = df["alpha"].to_numpy()[::-1]
 
         alphas_new = np.linspace(0., 1., int(self.number_of_alpha_levels))
         xs_l_new = np.interp(alphas_new, alphas_l, xs_l)

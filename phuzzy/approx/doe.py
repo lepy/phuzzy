@@ -298,7 +298,7 @@ class DOE(object):
         doe.loc[0] = np.zeros(dim)
         doelhs = pd.DataFrame(pydoe.bbdesign(dim), columns=[x.name for x in self.designvars.values()])
         doe = pd.concat([doe, doelhs], ignore_index=True)
-        doe['alpha'] = 0
+        doe['alpha'] = 0.
         for i, designvar in enumerate(self.designvars.values()):
             # bbdesign is coded in [-1, 1], unlike the [0, 1] of lhs
             doe.iloc[:, i] = (doe.iloc[:, i] + 1.) / 2. * (designvar.max() - designvar.min()) + designvar.min()
@@ -315,7 +315,8 @@ class DOE(object):
         # doe = pd.DataFrame([[x.ppf(.5) for x in self.designvars.values()]], columns=[x.name for x in self.designvars.values()])
         doe = pd.DataFrame(columns=[x.name for x in self.designvars.values()])
         doe_cc_raw = pd.DataFrame(pydoe.ccdesign(dim, face='ccf'), columns=[x.name for x in self.designvars.values()])
-        doe_cc_raw['alpha'] = 0
+        # float: each alpha level writes its membership value into this column
+        doe_cc_raw['alpha'] = 0.
         samples = []
         # for alphalevel in [0, len(dv0.df)-1]:  # [0, -1, len(dv0.df)//2]:
         for alphalevel in [0, len(dv0.df) // 2, len(dv0.df) - 1]:  # [0, -1, len(dv0.df)//2]:
