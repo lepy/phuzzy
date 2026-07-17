@@ -8,7 +8,7 @@ nested. TruncLogNorm has its own stricter rules, see test_trunclognorm.py.
 
 import numpy as np
 import pytest
-from scipy.stats import gennorm
+from scipy.stats import gennorm, norm
 
 import phuzzy
 
@@ -201,6 +201,30 @@ def test_truncgennorm_honours_custom_ppf_limits():
 def test_truncgennorm_rejects_reversed_ppf_limits():
     with pytest.raises(ValueError, match=r"p_lo < p_hi"):
         phuzzy.TruncGenNorm(alpha0=[1, 4], ppf=[.99, .01], number_of_alpha_levels=5)
+
+
+# -- TruncNorm scale ------------------------------------------------------
+
+def test_truncnorm_scale_puts_the_ppf_limits_on_the_support():
+    """ppf= used to be accepted and ignored; std came from a fixed (b-a)/6."""
+    a, b = 1., 4.
+    p = phuzzy.TruncNorm(alpha0=[a, b], number_of_alpha_levels=5)
+    underlying = norm(loc=p.mean, scale=p.std)
+    assert underlying.ppf(.001) == pytest.approx(a)
+    assert underlying.ppf(.999) == pytest.approx(b)
+
+
+def test_truncnorm_honours_custom_ppf_limits():
+    a, b = 1., 4.
+    p = phuzzy.TruncNorm(alpha0=[a, b], ppf=[.01, .99], number_of_alpha_levels=5)
+    underlying = norm(loc=p.mean, scale=p.std)
+    assert underlying.ppf(.01) == pytest.approx(a)
+    assert underlying.ppf(.99) == pytest.approx(b)
+
+
+def test_truncnorm_rejects_reversed_ppf_limits():
+    with pytest.raises(ValueError, match=r"p_lo < p_hi"):
+        phuzzy.TruncNorm(alpha0=[1, 4], ppf=[.99, .01], number_of_alpha_levels=5)
 
 
 # -- from_data ------------------------------------------------------------
