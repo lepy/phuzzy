@@ -15,10 +15,7 @@ import copy
 #     from scipy.integrate import cumtrapz as cumulative_trapezoid
 # except ImportError as e:
 #     logger.debug(e)
-try:
-    from scipy.integrate import cumulative_trapezoid
-except ImportError as e:
-    logger.warn(e)
+from scipy.integrate import cumulative_trapezoid, trapezoid
 import scipy.stats
 
 
@@ -375,7 +372,8 @@ class FuzzyNumber(object):
                                    "res_l": x ** old1.min(),
                                    "res_r": x ** old1.max()
                                    })
-                if old1.has_zero is True:
+                if old1.has_zero():
+                    # the exponent range covers 0, so x**0 == 1 is attainable
                     _t["res_0"] = 1
                 else:
                     _t["res_0"] = np.nan
@@ -413,11 +411,12 @@ class FuzzyNumber(object):
             new.df = df
             new.name = "{}^{}".format(self.name, other)
         else:
+            # __rpow__ is other ** self, so self is the exponent here
             old0, old1 = self._unify(other)
-            quotients = np.vstack([old0.df.l ** old1.df.l,
-                                   old0.df.l ** old1.df.r,
-                                   old0.df.r ** old1.df.l,
-                                   old0.df.r ** old1.df.r])
+            quotients = np.vstack([old1.df.l ** old0.df.l,
+                                   old1.df.l ** old0.df.r,
+                                   old1.df.r ** old0.df.l,
+                                   old1.df.r ** old0.df.r])
             df = pd.DataFrame.from_dict({"alpha": old0.df.alpha,
                                          "l"    : np.nanmin(quotients, axis=0),
                                          "r"    : np.nanmax(quotients, axis=0)})
@@ -425,7 +424,7 @@ class FuzzyNumber(object):
                       alpha1=df.iloc[-1][["l", "r"]].values,
                       number_of_alpha_levels=len(df))
             new.df = df
-            new.name = "{}^{}".format(self.name, other.name)
+            new.name = "{}^{}".format(other.name, self.name)
         new.make_convex()
         return new
 
@@ -510,6 +509,9 @@ class FuzzyNumber(object):
         if isinstance(other, (int, float)):
             return False  # (self.min() >= other) and (self.max() <= other)
         elif other.__class__ is self.__class__:
+            if self.df.shape != other.df.shape:
+                # a different number of alpha levels, so not the same number
+                return False
             return np.allclose(self.df.values, other.df.values)
         else:
             return NotImplemented
@@ -723,7 +725,7 @@ class FuzzyNumber(object):
 
         y_ = np.hstack((self.df.alpha, self.df.alpha[::-1]))
         x_ = np.hstack((self.df.l, self.df.r[::-1]))
-        I = np.trapz(y_, x_)
+        I = trapezoid(y_, x_)
         y = np.interp(x, x_, y_ / I, left=0., right=0.)
         return y
 
