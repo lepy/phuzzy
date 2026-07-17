@@ -87,7 +87,7 @@ class Alpha_Level_Optimization():
                     if self.start_at is None:
                         if all(comp_bounds) == True:  # if all bounds are constants
                             ## calculate objective value
-                            zmin = self.objective_function(bounds[:, 0])
+                            zmin = self._objective_function(bounds[:, 0])
 
                             ## safe values in list
                             zmin_value_list.append(np.array(zmin))
@@ -260,22 +260,16 @@ class Alpha_Level_Optimization():
         :return:                CSV of Dataframe
         """
         if df == 'simple':
-            if filepath is None:
-                datatype_str = '_results.csv'
-                self._df.to_csv(self.name + datatype_str, sep=';', encoding='utf8', index=None, header=True)
-            else:
-                if filepath[-2:] != '\\': filepath = filepath + '\\'
-                datatype_str = '_results.csv'
-                self._df.to_csv(filepath + self.name + datatype_str, sep=';', encoding='utf8', index=None, header=True)
+            data, datatype_str = self._df, '_results.csv'
         elif df == 'extended':
-            if filepath is None:
-                datatype_str = '_extended_results.csv'
-                self.df_extanded.to_csv(self.name + datatype_str, sep=';', encoding='utf8', index=None, header=True)
-            else:
-                if filepath[-2:] != '\\': filepath = filepath + '\\'
-                datatype_str = '_extended_results.csv'
-                self.df_extanded.to_csv(filepath + self.name + datatype_str, sep=';', encoding='utf8', index=None,
-                                        header=True)
+            data, datatype_str = self.df_extanded, '_extended_results.csv'
+        else:
+            raise ValueError("Please define -simple- or -extended- in df")
+
+        target = Path(self.name + datatype_str)
+        if filepath is not None:
+            target = Path(filepath) / target
+        data.to_csv(target, sep=';', encoding='utf8', index=None, header=True)
 
     def defuzzification(self, method='mean'):
         """
@@ -284,7 +278,9 @@ class Alpha_Level_Optimization():
         """
         self.zmax_values = np.flip(self.zmax_values)
         if method == 'alpha_one':
-            self.determin_objective = ((self.alpha1['l'] + self.alpha1['r']) / 2)
+            # the alpha=1 row, mirroring FuzzyNumber.alpha1
+            alpha1 = self.df.iloc[-1]
+            self.determin_objective = ((alpha1['l'] + alpha1['r']) / 2)
 
         elif method == 'mean':
             if self.zmin_values[-1] == self.zmax_values[0]:
