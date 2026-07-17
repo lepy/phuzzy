@@ -254,9 +254,8 @@ class TruncLogNorm(FuzzyNumber):
     @property
     def distr(self):
         def obj(params, args=None):
+            # sigma is kept positive by the bounds on the minimize call below
             sigma, log_center = params
-            if sigma <= 0:  # Strafen für ungültige sigma
-                return np.inf
             center = np.exp(log_center)
             d = lognorm(s=sigma, scale=center)
             ppf_low, ppf_high = args[2]
